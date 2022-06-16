@@ -1,0 +1,23 @@
+{
+  "name": "dilmahtea.me-workers",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dilmaheu/dilmahtea.me-workers.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dilmaheu/dilmahtea.me-workers/issues"
+  },
+  "homepage": "https://github.com/dilmaheu/dilmahtea.me-workers#readme",
+  "devDependencies": {
+    "lerna": "^5.1.0"
+  }
+}
