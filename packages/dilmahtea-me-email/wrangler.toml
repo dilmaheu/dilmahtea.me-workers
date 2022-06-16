@@ -1,0 +1,8 @@
+name = "dilmahtea-me-email"
+type = "javascript"
+
+account_id = "f0f636c746c8673c3905e9104b385251"
+workers_dev = true
+route = ""
+zone_id = "8706d2d761787a2c0824ebf42adf5fbd"
+compatibility_date = "2022-06-08"
