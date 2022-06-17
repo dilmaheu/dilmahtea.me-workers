@@ -11,7 +11,6 @@ const handleRequest = async (request) => {
 }
 
 const submitHandler = async (request) => {
-  const FORM_URL = `${request.headers.get('origin')}/crowdfunding-confirmation`
   const body = await request.formData()
 
   const {
@@ -24,7 +23,10 @@ const submitHandler = async (request) => {
     street,
     postal_code,
     perk,
+    locale
   } = Object.fromEntries(body)
+
+  const FORM_URL = `${request.headers.get('origin')}${locale == 'en' ? '' : '/' + locale}/crowdfunding-confirmation`
 
   const reqBody = {
     'First Name': first_name,
