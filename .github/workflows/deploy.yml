@@ -25,3 +25,9 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: "packages/dilmahtea-me-email"
+
+      - name: Publish stripe Worker
+        uses: cloudflare/wrangler-action@1.3.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          workingDirectory: "packages/dilmahtea-me-stripe"
