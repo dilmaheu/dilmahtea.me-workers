@@ -14,7 +14,7 @@ const headers = new Headers({
   'Access-Control-Max-Age': '-1',
 })
 
-function reply(message, status) {
+const reply = (message, status) => {
   return new Response(message, { status, headers })
 }
 
@@ -24,7 +24,6 @@ function reply(message, status) {
 const create = async request => {
   // Accomodates preview deployments AND custom domains
   // @example "https://<hash>.<branch>.<project>.pages.dev"
-  const { origin } = new URL(request.url)
   const body = await request.formData()
 
   const {
@@ -38,7 +37,22 @@ const create = async request => {
     postal_code,
     perk,
     locale,
+    price,
   } = Object.fromEntries(body)
+
+  const formObject = JSON.stringify({
+    first_name,
+    last_name,
+    email,
+    favorite_tea,
+    country,
+    city,
+    street,
+    postal_code,
+    perk,
+    locale,
+    price,
+  })
 
   try {
     // Create new Checkout Session for the order.
@@ -57,7 +71,7 @@ const create = async request => {
           // Or, inline price data:
           price_data: {
             currency: 'eur',
-            unit_amount: 2000,
+            unit_amount: price || 2000,
             product_data: {
               name: `${perk}-plan`,
             },
@@ -73,7 +87,7 @@ const create = async request => {
         locale == 'en' ? '' : '/' + locale
       }/payment-failure`,
     })
-
+    await CROWDFUNDING.put(email, formObject)
     return Response.redirect(session.url, 303)
   } catch (err) {
     console.log(err.message)
@@ -84,7 +98,7 @@ const create = async request => {
 /**
  * GET /api/checkout?sessionid=XYZ
  */
-const lookup = async function(request) {
+const lookup = async request => {
   const { searchParams } = new URL(request.url)
 
   const ident = searchParams.get('sessionid')
@@ -134,5 +148,7 @@ addEventListener('fetch', event => {
     return event.respondWith(handleRequest(request))
   }
 
-  // event.respondWith(handleRequest(event.request))
+  return event.respondWith(
+    new Response(`Method or Path Not Allowed`, { headers, status: 405 }),
+  )
 })

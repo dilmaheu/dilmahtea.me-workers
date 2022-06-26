@@ -14,20 +14,26 @@ jobs:
       - name: Checkout GitHub repo
         uses: actions/checkout@v2
 
-      - name: Publish form Worker
+      - name: Publish Form Worker
         uses: cloudflare/wrangler-action@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: "packages/dilmahtea-me-form"
 
-      - name: Publish email Worker
+      - name: Publish Email Worker
         uses: cloudflare/wrangler-action@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: "packages/dilmahtea-me-email"
 
-      - name: Publish stripe Worker
+      - name: Publish Stripe Worker
         uses: cloudflare/wrangler-action@1.3.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: "packages/dilmahtea-me-stripe"
+
+      - name: Publish Stripe Webhook Worker
+        uses: cloudflare/wrangler-action@1.3.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          workingDirectory: "packages/dilmahtea-me-stripe-webhook"

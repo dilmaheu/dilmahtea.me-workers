@@ -10,38 +10,28 @@ const handleRequest = async (request) => {
   return submitHandler(request)
 }
 
+const reply = (message, status) => {
+  return new Response(message, { status, headers })
+}
+
 const submitHandler = async (request) => {
-  const body = await request.formData()
-
-  const {
-    first_name,
-    last_name,
-    email,
-    favorite_tea,
-    country,
-    city,
-    street,
-    postal_code,
-    perk,
-    locale
-  } = Object.fromEntries(body)
-
-  const FORM_URL = `${request.headers.get('origin')}${locale == 'en' ? '' : '/' + locale}/crowdfunding-confirmation`
+  const body = await request.json()
 
   const reqBody = {
-    'First Name': first_name,
-    'Last Name': last_name,
-    Email: email,
-    'Favorite Tea': favorite_tea,
-    Country: country,
-    City: city,
-    Street: street,
-    'Postal Code': postal_code,
-    Perk: perk,
+    'First Name': body.first_name,
+    'Last Name': body.last_name,
+    Email: body.email,
+    'Favorite Tea': body.favorite_tea,
+    Country: body.country,
+    City: body.city,
+    Street: body.street,
+    'Postal Code': body.postal_code,
+    Perk: body.perk,
   }
 
   const createRow = await createBaserowRecord(reqBody)
-  return Response.redirect(FORM_URL)
+
+  return reply(JSON.stringify({created: true}), 200)
   // return new Response(JSON.stringify(createRow), { status: 200, headers })
 }
 
@@ -52,7 +42,7 @@ const createBaserowRecord = (body) => {
       method: 'POST',
       body: JSON.stringify(body),
       headers: {
-        Authorization: `Token F1DeH7c3HW8UQGA5HPmfe4ILDJhCG0Xo`,
+        Authorization: `Token ${BASEROW_TOKEN}`,
         'Content-Type': 'application/json',
       },
     },
