@@ -1,8 +1,5 @@
 name = "dilmahtea-me-form"
-type = "javascript"
-
+main = "./index.js"
 account_id = "f0f636c746c8673c3905e9104b385251"
 workers_dev = true
-route = ""
-zone_id = ""
 compatibility_date = "2022-06-01"
