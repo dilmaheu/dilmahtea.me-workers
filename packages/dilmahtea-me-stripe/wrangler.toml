@@ -1,12 +1,16 @@
 name = "dilmahtea-me-stripe"
-type = "webpack"
-
 account_id = "f0f636c746c8673c3905e9104b385251"
 workers_dev = true
-route = ""
-zone_id = ""
 compatibility_date = "2022-06-21"
+main = "./dist/worker.js"
 
-kv_namespaces = [
-  { binding = "CROWDFUNDING", preview_id = "178f6309789141938fd626f93f508f22", id = "c971dd86589647799fb64dde47563fac" }
-]
+[[kv_namespaces]]
+binding = "CROWDFUNDING"
+preview_id = "178f6309789141938fd626f93f508f22"
+id = "c971dd86589647799fb64dde47563fac"
+
+[build]
+command = "npm run build"
+
+[build.upload]
+format = "service-worker"

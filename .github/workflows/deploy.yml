@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+env:
+  STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+  STRIPE_SIGNING_KEY: ${{ secrets.STRIPE_SIGNING_KEY }}
+
 jobs:
   deploy:
     name: Deploy Cloudflare Workers
