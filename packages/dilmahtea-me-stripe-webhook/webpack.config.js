@@ -27,7 +27,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      STRIPE_SECRET_KEY: JSON.stringify(process.env.STRIPE_API_KEY),
+      STRIPE_SECRET_KEY: JSON.stringify(process.env.STRIPE_SECRET_KEY),
       STRIPE_SIGNING_SECRET: JSON.stringify(process.env.STRIPE_SIGNING_SECRET),
     }),
     new webpack.ProvidePlugin({

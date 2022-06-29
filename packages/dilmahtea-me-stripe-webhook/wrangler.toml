@@ -21,6 +21,3 @@ environment = "production"
 
 [build]
 command = "npm run build"
-
-[build.upload]
-format = "service-worker"
