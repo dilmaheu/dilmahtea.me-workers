@@ -67,15 +67,18 @@ async function handleRequest(request) {
     sig,
     STRIPE_SIGNING_SECRET,
   )
-  if (Object.keys(event) < 1)
+  if (!event['data'])
     reply(
       JSON.stringify({ error: 'Issue with trying to get Stripe Event' }),
       400,
     )
   const paymentIntent = event.data.object
-  const charges = paymentIntent.charges.data
+  const charges = paymentIntent.charges['data']
+  if (!charges) {
+    reply(JSON.stringify({ error: 'No Charges have been made' }), 400)
+  }
   let email
-  if (charges.length > 0) {
+  if (charges) {
     email = charges[0].billing_details.email
   }
   const storedValue = await CROWDFUNDING.get(email)
