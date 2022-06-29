@@ -71,7 +71,7 @@ const create = async request => {
           // Or, inline price data:
           price_data: {
             currency: 'eur',
-            unit_amount: price || 2000,
+            unit_amount: perk == "gold" ? 25000 : perk == "platinum" ? 50000 : perk == "diamond" ? 100000 : 12000,
             product_data: {
               name: `${perk}-plan`,
             },
