@@ -30,6 +30,21 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: "packages/dilmahtea-me-email"
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - name: Install Stripe Dependencies
+        run: npm install
+        with:
+          workingDirectory: "packages/dilmahtea-me-stripe"
+
+      - name: Install Stripe WebHook Dependencies
+        run: npm install
+        with:
+          workingDirectory: "packages/dilmahtea-me-stripe-webhook"
+
       - name: Publish Stripe Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
