@@ -141,14 +141,16 @@ addEventListener('fetch', event => {
   const { request } = event
   const url = new URL(request.url)
 
-  if (url.pathname == '/' && request.method === 'OPTIONS') {
-    return event.respondWith(handleOptions(request, headers))
-  }
-  if (url.pathname == '/' && request.method === 'POST') {
-    return event.respondWith(handleRequest(request, headers))
-  }
+  return event.respondWith(handleRequest(request))
 
-  return event.respondWith(
-    reply(JSON.stringify({ error: `Method or Path Not Allowed` }), 405),
-  )
+  // if (url.pathname == '/' && request.method === 'OPTIONS') {
+  //   return event.respondWith(handleOptions(request))
+  // }
+  // if (url.pathname == '/' && request.method === 'POST') {
+  //   return event.respondWith(handleRequest(request))
+  // }
+
+  // return event.respondWith(
+  //   reply(JSON.stringify({ error: `Method or Path Not Allowed` }), 405),
+  // )
 })
