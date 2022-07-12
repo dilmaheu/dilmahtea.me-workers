@@ -2,13 +2,13 @@
  * Respond with hello worker text
  * @param {Request} request
  */
-const htmlContent = (first_name) => `
+const htmlContent = (first_name,perk,price) => `
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your funds have been received, successfully</title>
+    <title>${(locale=='nl') ? 'Je betaling is succesvol ontvangen. Dank hiervoor!' : 'Your funds are successfully received. Thank you for backing us!'}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -67,7 +67,7 @@ const htmlContent = (first_name) => `
               color: #e3dfde;
             "
           >
-            Your funding is successfully received. Thank you for supporting us!
+            ${(locale=='nl') ? 'Je betaling is succesvol ontvangen.<br />Dank hiervoor!' : 'Your funds are successfully received.<br />Thank you for backing us!' }
           </h1>
         </div>
 
@@ -93,26 +93,9 @@ const htmlContent = (first_name) => `
                 color: #000;
               "
             >
-              <p>Dear ${first_name},</p>
-              <p style="white-space: pre-line">
-                This is just a quick email to say that we’ve received your
-                payment. Be sure that money will be spent for good deeds and
-                you are appreciated contributor. Thank you for your kindness. If
-                you have any questions or suggestions, don’t hesitate to drop an
-                email at
-                <a
-                  href="mailto:dilmah@support.com"
-                  style="
-                    font-style: italic;
-                    display: inline;
-                    border-bottom: 1px solid #4e878a;
-                    text-decoration: none;
-                    color: #4e878a;
-                  "
-                  >dilmah@support.com</a
-                >
-                and we’ll be happy to assist. Truly yours, Dilmah Team
-              </p>
+              <p>${(locale=='nl') ? 'Beste' : 'Dear'} ${first_name},</p>
+              <p style="white-space: pre-line">${(locale=='nl') ? 'Graag bevestigen we dat we jouw betaling in goede orde hebben ontvangen.\n\nNogmaals dank voor jouw verrtouwen en bijdrage aan een Sri Lankaans familiebedrijf. Alle opbrengsten van jouw kopje thee gaan terug naar de bron waar wij, Sri Lankanen, de mensheid, de ecologie en onze lokale economie ondersteunen.\n\nBinnen een week ontvang je een mail met alle belangrijke informatie rondom jouw bijdrage aan onze crowdfunding.\n\nMocht je vragen of suggesties hebben, aarzel dan niet om een e-mail te sturen naar <a href="mailto:hello@dilmahtea.me" style="font-style: italic;display: inline;border-bottom: 1px solid #4e878a;text-decoration: none;color: #4e878a;">hello@dilmahtea.me</a> en wij staan voor je klaar.\n\nMet de hartelijkste groetjes,\nTeam Dilmah' 
+              : 'This e-mail is to confirm that we have received your payment.\n\nYour support means so much to us! With your contribution we serve more cups of kindness in Europe. All our proceeds flow back to the source, Sri Lanka, sustainably benefiting humanity, ecology and our local economy.\n\nYou will receive an e-mail to welcome you within a week. The welcoming mail explains all details with regards to the package you have selected.\n\nShould you have any questions or suggestions, don\u2019t hesitate to drop us an email at <a href="mailto:hello@dilmahtea.me" style="font-style: italic;display: inline;border-bottom: 1px solid #4e878a;text-decoration: none;color: #4e878a;">hello@dilmahtea.me</a> and we\u2019ll be happy to assist.\n\nTruly yours,\nTeam Dilmah'}</p>
             </div>
 
             <div
@@ -126,15 +109,15 @@ const htmlContent = (first_name) => `
               "
             >
               <h2 style="font-weight: 600; line-height: 140%">
-                Funding Summary
+                ${(locale=='nl') ? 'Besteloverzicht' : 'Funding Summary'}
               </h2>
               <p style="padding-top: 40px">
-                <span style="float: left">Basic</span>
-                <span style="float: right">&#36;25</span>
+                <span style="float: left">${perk}</span>
+                <span style="float: right">&euro;${price}</span>
               </p>
               <div style="padding-top: 15px">
-                <span style="float: left">Tax</span>
-                <span style="float: right">&#36;0</span>
+                <span style="float: left">${(locale=='nl') ? 'BTW': 'Tax'}</span>
+                <span style="float: right">&euro;0</span>
               </div>
               <div
                 style="
@@ -144,8 +127,8 @@ const htmlContent = (first_name) => `
                 "
               ></div>
               <p style="padding-top: 15px; font-size: 28px; font-weight: 600">
-                <span style="float: left">Total</span>
-                <span style="float: right">&#36;25</span>
+                <span style="float: left">${(locale=='nl') ? 'Totaal' : 'Total'}</span>
+                <span style="float: right">&euro;${price}</span>
               </p>
             </div>
 
@@ -159,7 +142,7 @@ const htmlContent = (first_name) => `
               "
             >
               <h3 style="font-weight: 600; line-height: 120%">
-                Billing Details
+                ${(locale=='nl') ? 'Factuurgegevens' : 'Billing Details'}
               </h3>
               <address
                 style="
@@ -168,8 +151,7 @@ const htmlContent = (first_name) => `
                   white-space: pre-line;
                 "
               >
-                Smiles Davis 600 Montgometry Str San Francisco, CA 94111<br />United
-                States
+                Postjesweg 1,<br/>1057 DT Amsterdam,<br/>The Netherlands
               </address>
             </div>
           </div>
@@ -193,39 +175,12 @@ const htmlContent = (first_name) => `
           color: #e3dfde;
         "
         role="contentinfo"
-      >
-        <div style="display: block; text-align: center">
-          <a
-            href="#"
-            style="
-              text-underline-offset: 2px;
-              text-decoration: underline;
-              -webkit-text-decoration-color: rgba(227, 223, 222, 0.5);
-              text-decoration-color: rgba(227, 223, 222, 0.7);
-              color: #e3dfde;
-            "
-          >
-            Privacy Policy
-          </a>
-          <span>|</span>
-          <a
-            href="#"
-            style="
-              text-underline-offset: 2px;
-              text-decoration: underline;
-              -webkit-text-decoration-color: rgba(227, 223, 222, 0.5);
-              text-decoration-color: rgba(227, 223, 222, 0.7);
-              color: #e3dfde;
-            "
-          >
-            Contact Support
-          </a>
+      >        
+        <div style="margin-top: 15px">
+          Postjesweg 1, 1057 DT Amsterdam, The Netherlands
         </div>
         <div style="margin-top: 15px">
-          323 Montgomery Str, Suite 234, Dpt 2354, San Francisco, CA 94111
-        </div>
-        <div style="margin-top: 15px">
-          © 2022 Dilmah Ceylon Tea Company PLC.
+          \xA9 2022 Dilmah Europe B.V.
         </div>
       </div>
     </div>
@@ -246,6 +201,7 @@ const headers = new Headers({
 })
 
 const sendEmail = async (body) => {
+  const price = body.perk == "Tea Lover" ? 250 : body.perk == "Tea Freak" ? 500 : body.perk == "Tea Hero" ? 1000 : 0;
   const send_request = new Request('https://api.mailchannels.net/tx/v1/send', {
     method: 'POST',
     headers: {
@@ -259,13 +215,13 @@ const sendEmail = async (body) => {
       ],
       from: {
         email: 'hello@dilmahtea.me',
-        name: 'Dilmah Tea',
+        name: 'Dilmah Europe',
       },
       subject: 'Funds Have Been Confirmed',
       content: [
         {
           type: 'text/html',
-          value: htmlContent(body.first_name),
+          value: htmlContent(body.first_name,body.perk, price),
         },
       ],
     }),

@@ -71,7 +71,7 @@ const create = async request => {
           // Or, inline price data:
           price_data: {
             currency: 'eur',
-            unit_amount: perk == "gold" ? 25000 : perk == "platinum" ? 50000 : perk == "diamond" ? 100000 : 12000,
+            unit_amount: perk == "Tea Lover" ? 25000 : perk == "Tea Freak" ? 50000 : perk == "Tea Hero" ? 100000 : 0,
             product_data: {
               name: `${perk}-plan`,
             },
@@ -142,10 +142,10 @@ addEventListener('fetch', event => {
   const url = new URL(request.url)
 
   if (url.pathname == '/' && request.method === 'OPTIONS') {
-    return event.respondWith(handleOptions(request))
+    return event.respondWith(handleOptions(request, headers))
   }
   if (url.pathname == '/' && request.method === 'POST') {
-    return event.respondWith(handleRequest(request))
+    return event.respondWith(handleRequest(request, headers))
   }
 
   return event.respondWith(
