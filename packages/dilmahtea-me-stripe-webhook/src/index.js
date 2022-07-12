@@ -96,6 +96,7 @@ async function handleRequest(request) {
         first_name: parsedValue.first_name,
         last_name: parsedValue.last_name,
         email: parsedValue.email,
+        perk: parsedValue.perk,
       }),
     )
     await FORM.fetch(formRequest)
