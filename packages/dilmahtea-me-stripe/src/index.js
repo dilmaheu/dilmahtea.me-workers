@@ -146,13 +146,12 @@ addEventListener('fetch', event => {
     urlPathname = urlPathname.slice(0, -1)
   }
 
-  console.log(urlPathname)
-
-  if (
-    urlPathname === '/stripe' &&
-    ['OPTIONS', 'POST'].includes(request.method)
-  ) {
+  if (urlPathname === '/stripe' && request.method === 'OPTIONS') {
     return event.respondWith(handleOptions(request))
+  }
+
+  if (urlPathname === '/stripe' && request.method === 'POST') {
+    return event.respondWith(handleRequest(request))
   }
 
   return event.respondWith(
