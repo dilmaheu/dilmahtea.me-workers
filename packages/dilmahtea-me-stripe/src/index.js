@@ -139,16 +139,22 @@ async function handleRequest(request) {
 
 addEventListener('fetch', event => {
   const { request } = event
-  const url = new URL(request.url)
 
-  // return event.respondWith(handleRequest(request))
+  let { pathname: urlPathname } = new URL(request.url)
 
-  if (url.pathname == '/' && request.method === 'OPTIONS') {
+  if (urlPathname.endsWith('/')) {
+    urlPathname = urlPathname.slice(0, -1)
+  }
+
+  console.log(urlPathname)
+
+  if (
+    urlPathname === '/stripe' &&
+    ['OPTIONS', 'POST'].includes(request.method)
+  ) {
     return event.respondWith(handleOptions(request))
   }
-  if (url.pathname == '/' && request.method === 'POST') {
-    return event.respondWith(handleRequest(request))
-  }
+
   return event.respondWith(
     reply(JSON.stringify({ error: `Method or Path Not Allowed` }), 405),
   )
