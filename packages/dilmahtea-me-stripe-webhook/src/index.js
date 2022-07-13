@@ -53,27 +53,47 @@ const handleOptions = request => {
 }
 
 async function handleRequest(request) {
+  console.log({ request })
+
   const isJson = checkWebHookRequest(request)
+
+  console.log({ isJson })
+
   if (!isJson)
     return reply(
       JSON.stringify({ error: 'Bad request ensure json format' }),
       400,
     )
   const sig = request.headers.get('stripe-signature')
+
+  console.log({ sig })
+
   const body = await request.text()
+
+  console.log({ body })
+
   // Use Stripe to ensure that this is an authentic webhook request event from Stripe
   const event = await stripe.webhooks.constructEvent(
     body,
     sig,
     STRIPE_SIGNING_SECRET,
   )
+
+  console.log({ event })
+
   if (!event['data'])
     reply(
       JSON.stringify({ error: 'Issue with trying to get Stripe Event' }),
       400,
     )
   const paymentIntent = event.data.object
+
+  console.log({ paymentIntent })
+
   const charges = paymentIntent.charges['data']
+
+  console.log({ charges })
+
   if (!charges) {
     reply(JSON.stringify({ error: 'No Charges have been made' }), 400)
   }
@@ -81,15 +101,27 @@ async function handleRequest(request) {
   if (charges) {
     email = charges[0].billing_details.email
   }
+
+  console.log({ email })
+
   const storedValue = await CROWDFUNDING.get(email)
+
+  console.log({ storedValue })
+
   // Handle the event
   if (event.type == 'payment_intent.succeeded' && email && storedValue) {
     // Create Baserow Record
     const parsedValue = JSON.parse(storedValue)
+
+    console.log({ parsedValue })
+
     const formRequest = createRequest(
       'https://dilmahtea-me-form.dilmah.workers.dev',
       storedValue,
     )
+
+    console.log({ formRequest })
+
     const emailRequest = createRequest(
       'https://dilmahtea-me-email.dilmah.workers.dev',
       JSON.stringify({
@@ -99,9 +131,14 @@ async function handleRequest(request) {
         perk: parsedValue.perk,
       }),
     )
+
+    console.log({ emailRequest })
+
     await FORM.fetch(formRequest)
     await EMAIL.fetch(emailRequest)
     await CROWDFUNDING.delete(email)
+
+    console.log({ message: "finished" })
   }
   if (
     event.type == 'payment_intent.payment_failed' ||
