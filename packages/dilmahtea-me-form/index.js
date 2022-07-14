@@ -73,10 +73,10 @@ addEventListener('fetch', (event) => {
   const { request } = event
   const url = new URL(request.url)
 
-  if (url.pathname == '/' && request.method === 'OPTIONS') {
+  if (url.pathname == '/stripe' && request.method === 'OPTIONS') {
     return event.respondWith(handleOptions(request, headers))
   }
-  if (url.pathname == '/' && request.method === 'POST') {
+  if (url.pathname == '/stripe' && request.method === 'POST') {
     return event.respondWith(handleRequest(request, headers))
   }
   return event.respondWith(
