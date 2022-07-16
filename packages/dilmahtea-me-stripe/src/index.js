@@ -1,6 +1,6 @@
 import Stripe from 'stripe'
 
-const stripe = new Stripe(STRIPE_SECRET_KEY, {
+const stripe = new Stripe(STRIPE_SECRET_KEY_CODE, {
   // Cloudflare Workers use the Fetch API for their API requests.
   httpClient: Stripe.createFetchHttpClient(),
   apiVersion: '2020-08-27',
@@ -71,7 +71,14 @@ const create = async request => {
           // Or, inline price data:
           price_data: {
             currency: 'eur',
-            unit_amount: perk == "Tea Lover" ? 25000 : perk == "Tea Freak" ? 50000 : perk == "Tea Hero" ? 100000 : 0,
+            unit_amount:
+              perk == 'Tea Lover'
+                ? 25000
+                : perk == 'Tea Freak'
+                ? 50000
+                : perk == 'Tea Hero'
+                ? 100000
+                : 0,
             product_data: {
               name: `${perk}-plan`,
             },
