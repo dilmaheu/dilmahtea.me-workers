@@ -148,11 +148,11 @@ addEventListener('fetch', event => {
     urlPathname = urlPathname.slice(0, -1)
   }
 
-  if (urlPathname === '/stripe' && request.method === 'OPTIONS') {
+  if (urlPathname === '/pay' && request.method === 'OPTIONS') {
     return event.respondWith(handleOptions(request))
   }
 
-  if (urlPathname === '/stripe' && request.method === 'POST') {
+  if (urlPathname === '/pay' && request.method === 'POST') {
     return event.respondWith(handleRequest(request))
   }
 
