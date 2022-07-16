@@ -97,7 +97,7 @@ async function handleRequest(request) {
     const parsedValue = JSON.parse(storedValue)
 
     const formRequest = createRequest(
-      'https://dilmahtea-me-form.dilmah.workers.dev',
+      'https://dilmahtea-me-baserow.dilmah.workers.dev',
       storedValue,
     )
 
@@ -111,7 +111,7 @@ async function handleRequest(request) {
       }),
     )
 
-    await FORM.fetch(formRequest)
+    await BASEROW.fetch(formRequest)
     await EMAIL.fetch(emailRequest)
     await CROWDFUNDING.delete(email)
   }

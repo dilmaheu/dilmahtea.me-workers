@@ -15,8 +15,8 @@ service = "dilmahtea-me-email"
 environment = "production"
 
 [[services]]
-binding = "FORM"
-service = "dilmahtea-me-form"
+binding = "BASEROW"
+service = "dilmahtea-me-baserow"
 environment = "production"
 
 [build]
