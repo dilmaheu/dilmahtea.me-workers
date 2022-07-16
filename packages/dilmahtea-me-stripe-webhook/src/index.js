@@ -140,7 +140,7 @@ addEventListener('fetch', event => {
   }
 
   if (
-    urlPathname === '/pay' &&
+    urlPathname === '/pay-webhook' &&
     request.method === 'POST' &&
     request.headers.get('stripe-signature')
   ) {
