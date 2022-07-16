@@ -38,6 +38,8 @@ const create = async request => {
     perk,
     locale,
     price,
+    origin_url,
+    plan_name,
   } = Object.fromEntries(body)
 
   const formObject = JSON.stringify({
@@ -52,6 +54,8 @@ const create = async request => {
     perk,
     locale,
     price,
+    origin_url,
+    plan_name,
   })
 
   try {
@@ -71,16 +75,9 @@ const create = async request => {
           // Or, inline price data:
           price_data: {
             currency: 'eur',
-            unit_amount:
-              perk == 'Tea Lover'
-                ? 25000
-                : perk == 'Tea Freak'
-                ? 50000
-                : perk == 'Tea Hero'
-                ? 100000
-                : 0,
+            unit_amount: price * 100,
             product_data: {
-              name: `${perk}-plan`,
+              name: `${perk} Plan`,
             },
           },
         },
@@ -90,9 +87,7 @@ const create = async request => {
       success_url: `${request.headers.get('origin')}${
         locale == 'en' ? '' : '/' + locale
       }/crowdfunding-confirmation`,
-      cancel_url: `${request.headers.get('origin')}${
-        locale == 'en' ? '' : '/' + locale
-      }/payment-failure`,
+      cancel_url: origin_url,
     })
     await CROWDFUNDING.put(email, formObject)
     return Response.redirect(session.url, 303)
