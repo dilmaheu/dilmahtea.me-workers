@@ -244,7 +244,7 @@ const sendEmail = async body => {
         email: 'hello@dilmahtea.me',
         name: 'Dilmah Europe',
       },
-      subject: 'Funds Have Been Confirmed',
+      subject: 'Crowdfunding betaalbevestiging',
       content: [
         {
           type: 'text/html',
