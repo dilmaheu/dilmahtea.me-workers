@@ -69,17 +69,27 @@ const handleOptions = (request) => {
   }
 }
 
-addEventListener('fetch', (event) => {
+addEventListener('fetch', event => {
   const { request } = event
-  const url = new URL(request.url)
 
-  if (url.pathname == '/' && request.method === 'OPTIONS') {
+  let { pathname: urlPathname } = new URL(request.url)
+
+  if (urlPathname.endsWith('/')) {
+    urlPathname = urlPathname.slice(0, -1)
+  }
+
+  if (urlPathname === '/crowdfunding-form' && request.method === 'OPTIONS') {
     return event.respondWith(handleOptions(request, headers))
   }
-  if (url.pathname == '/' && request.method === 'POST') {
+
+  if (urlPathname === '/crowdfunding-form' && request.method === 'POST') {
     return event.respondWith(handleRequest(request, headers))
   }
+
   return event.respondWith(
-    new Response(`Method or Path Not Allowed`, { headers, status: 405 }),
+    new Response(JSON.stringify({ error: `Method or Path Not Allowed` }), {
+      headers,
+      status: 405,
+    }),
   )
 })
