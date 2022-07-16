@@ -128,19 +128,26 @@ async function handleRequest(request) {
 
 addEventListener('fetch', event => {
   const { request } = event
-  const url = new URL(request.url)
 
-  if (url.pathname == '/' && request.method === 'OPTIONS') {
+  let { pathname: urlPathname } = new URL(request.url)
+
+  if (urlPathname.endsWith('/')) {
+    urlPathname = urlPathname.slice(0, -1)
+  }
+
+  if (urlPathname === '/pay-webhook' && request.method === 'OPTIONS') {
     return event.respondWith(handleOptions(request))
   }
 
   if (
-    url.pathname == '/' &&
+    urlPathname === '/pay' &&
     request.method === 'POST' &&
     request.headers.get('stripe-signature')
   ) {
     return event.respondWith(handleRequest(request))
   }
 
-  return event.respondWith(reply(`Method or Path Not Allowed`, 405))
+  return event.respondWith(
+    reply(JSON.stringify({ error: `Method or Path Not Allowed` }), 405),
+  )
 })
