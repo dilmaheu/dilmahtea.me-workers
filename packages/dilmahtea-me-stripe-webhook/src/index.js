@@ -97,12 +97,12 @@ async function handleRequest(request) {
     const parsedValue = JSON.parse(storedValue)
 
     const formRequest = createRequest(
-      'https://dilmahtea-me-baserow.dilmah.workers.dev',
+      'https://scripts.dilmahtea.me/crowdfunding-form',
       storedValue,
     )
 
     const emailRequest = createRequest(
-      'https://dilmahtea-me-email.dilmah.workers.dev',
+      'https://scripts.dilmahtea.me/crowdfunding-mail',
       JSON.stringify({
         first_name: parsedValue.first_name,
         last_name: parsedValue.last_name,
