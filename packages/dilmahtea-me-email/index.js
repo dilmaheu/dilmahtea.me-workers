@@ -95,7 +95,7 @@ const htmlContent = (first_name, perk, price) => `
               "
               >
                 <p>Beste ${first_name},</p>
-                <p style="white-space: pre-line">
+                <p>
                   Graag bevestigen we dat we jouw betaling in goede orde hebben ontvangen.
                 </p>
                 <p>
@@ -112,7 +112,7 @@ const htmlContent = (first_name, perk, price) => `
                   > en wij staan voor je klaar.
                 </p>
                 <p>
-                  Met de hartelijkste groetjes,
+                  Met de hartelijkste groetjes,<br />
                   Team Dilmah
                 </p>
               </div>
