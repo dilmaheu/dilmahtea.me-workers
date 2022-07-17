@@ -15,21 +15,36 @@ const reply = (message, status) => {
 }
 
 const submitHandler = async (request) => {
-  const body = await request.json()
+  const {
+    first_name,
+    last_name,
+    email,
+    favorite_tea,
+    country,
+    city,
+    street,
+    postal_code,
+    perk,
+    locale,
+    price,
+    origin_url,
+    plan_name,
+  } = await request.json()
 
   const reqBody = {
-    'First Name': body.first_name,
-    'Last Name': body.last_name,
-    Email: body.email,
-    'Favorite Tea': body.favorite_tea,
-    Country: body.country,
-    City: body.city,
-    Street: body.street,
-    'Postal Code': body.postal_code,
-    Perk: body.perk,
+    'First Name': first_name,
+    'Last Name': last_name,
+    Email: email,
+    'Favorite Tea': favorite_tea,
+    Country: country,
+    City: city,
+    Street: street,
+    'Postal Code': postal_code,
+    Perk: perk,
+    'Amount Paid': price
   }
 
-  const createRow = await createBaserowRecord(reqBody)
+  await createBaserowRecord(reqBody)
 
   return reply(JSON.stringify({created: true}), 200)
   // return new Response(JSON.stringify(createRow), { status: 200, headers })
