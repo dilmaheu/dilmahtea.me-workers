@@ -76,7 +76,8 @@ const htmlContent = (
               color: #e3dfde;
             "
             >
-              Je betaling is succesvol ontvangen.<br />Dank hiervoor!
+              Je betaling is succesvol ontvangen.
+              <br />Dank hiervoor!
             </h1>
           </div>
 
@@ -120,8 +121,8 @@ const htmlContent = (
                   > en wij staan voor je klaar.
                 </p>
                 <p>
-                  Met de hartelijkste groetjes,<br />
-                  Team Dilmah
+                  Met de hartelijkste groetjes,
+                  <br />Team Dilmah
                 </p>
               </div>
 
@@ -178,7 +179,9 @@ const htmlContent = (
                   white-space: pre-line;
                 "
                 >
-                  ${street},<br />${postal_code} ${city},<br />${country}
+                  ${street},
+                  <br />${postal_code} ${city},
+                  <br />${country}
                 </address>
               </div>
             </div>
