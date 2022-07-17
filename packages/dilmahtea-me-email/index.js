@@ -96,22 +96,24 @@ const htmlContent = (first_name, perk, price) => `
               >
                 <p>Beste ${first_name},</p>
                 <p style="white-space: pre-line">
-                  Graag bevestigen we dat we jouw betaling in goede orde hebben
-                  ontvangen. Nogmaals dank voor jouw verrtouwen en bijdrage aan
-                  een Sri Lankaans familiebedrijf. Alle opbrengsten van jouw
-                  kopje thee gaan terug naar de bron waar wij, Sri Lankanen, de
-                  mensheid, de ecologie en onze lokale economie ondersteunen.
-                  Binnen een week ontvang je een mail met alle belangrijke
-                  informatie rondom jouw bijdrage aan onze crowdfunding. Mocht
-                  je vragen of suggesties hebben, aarzel dan niet om een e-mail
-                  te sturen naar
-                  <a
+                  Graag bevestigen we dat we jouw betaling in goede orde hebben ontvangen.
+                </p>
+                <p>
+                  Nogmaals dank voor jouw verrtouwen en bijdrage aan een Sri Lankaans familiebedrijf. Alle opbrengsten van jouw kopje thee gaan terug naar de bron waar wij, Sri Lankanen, de mensheid, de ecologie en onze lokale economie ondersteunen.
+                </p>
+                <p>
+                  Binnen een week ontvang je een mail met alle belangrijke informatie rondom jouw bijdrage aan onze crowdfunding.
+                </p>
+                <p>                
+                  Mocht je vragen of suggesties hebben, aarzel dan niet om een e-mail te sturen naar <a
                     href="mailto:hello@dilmahtea.me"
                     style="font-style: italic;display: inline;border-bottom: 1px solid #4e878a;text-decoration: none;color: #4e878a;"
                     >hello@dilmahtea.me</a
-                  >
-                  en wij staan voor je klaar. Met de hartelijkste groetjes, Team
-                  Dilmah
+                  > en wij staan voor je klaar.
+                </p>
+                <p>
+                  Met de hartelijkste groetjes,
+                  Team Dilmah
                 </p>
               </div>
 
