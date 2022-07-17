@@ -58,6 +58,16 @@ const create = async request => {
     plan_name,
   })
 
+  const { origin: requestOrigin } = new URL(origin_url)
+
+  const success_url =
+    requestOrigin +
+    (locale == 'en' ? '' : '/') +
+    locale +
+    '/crowdfunding-confirmation'
+
+  const cancel_url = origin_url
+
   try {
     // Create new Checkout Session for the order.
     // Redirects the customer to s Stripe checkout page.
@@ -84,10 +94,8 @@ const create = async request => {
       ],
       // The `{CHECKOUT_SESSION_ID}` will be injected with the Stripe Session ID
       // success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
-      success_url: `${request.headers.get('origin')}${
-        locale == 'en' ? '' : '/' + locale
-      }/crowdfunding-confirmation`,
-      cancel_url: origin_url,
+      success_url,
+      cancel_url,
     })
     await CROWDFUNDING.put(email, formObject)
     return Response.redirect(session.url, 303)
