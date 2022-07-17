@@ -62,8 +62,7 @@ const create = async request => {
 
   const success_url =
     requestOrigin +
-    (locale == 'en' ? '' : '/') +
-    locale +
+    (locale == 'en' ? '' : `/${locale}`) +
     '/crowdfunding-confirmation'
 
   const cancel_url = origin_url
