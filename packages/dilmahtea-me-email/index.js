@@ -179,9 +179,7 @@ const htmlContent = (
                   white-space: pre-line;
                 "
                 >
-                  ${street},
-                  <br />${postal_code} ${city},
-                  <br />${country}
+                  ${street}<br />${postal_code} ${city}<br />${country}
                 </address>
               </div>
             </div>
