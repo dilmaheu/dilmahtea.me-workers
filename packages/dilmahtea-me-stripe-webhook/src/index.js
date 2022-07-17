@@ -93,9 +93,6 @@ async function handleRequest(request) {
 
   // Handle the event
   if (event.type == 'payment_intent.succeeded' && email && storedValue) {
-    // Create Baserow Record
-    const parsedValue = JSON.parse(storedValue)
-
     const formRequest = createRequest(
       'https://scripts.dilmahtea.me/crowdfunding-form',
       storedValue,
@@ -103,12 +100,7 @@ async function handleRequest(request) {
 
     const emailRequest = createRequest(
       'https://scripts.dilmahtea.me/crowdfunding-mail',
-      JSON.stringify({
-        first_name: parsedValue.first_name,
-        last_name: parsedValue.last_name,
-        email: parsedValue.email,
-        perk: parsedValue.perk,
-      }),
+      storedValue,
     )
 
     await BASEROW.fetch(formRequest)

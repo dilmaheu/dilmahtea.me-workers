@@ -3,7 +3,15 @@
  * @param {Request} request
  */
 
-const htmlContent = (first_name, perk, price) => `
+const htmlContent = (
+  first_name,
+  perk,
+  price,
+  country,
+  city,
+  street,
+  postal_code,
+) => `
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -170,7 +178,7 @@ const htmlContent = (first_name, perk, price) => `
                   white-space: pre-line;
                 "
                 >
-                  Postjesweg 1,<br />1057 DT Amsterdam,<br />The Netherlands
+                  ${street},<br />${postal_code} ${city},<br />${country}
                 </address>
               </div>
             </div>
@@ -220,14 +228,21 @@ const headers = new Headers({
 })
 
 const sendEmail = async body => {
-  const price =
-    body.perk == 'Tea Lover'
-      ? 250
-      : body.perk == 'Tea Freak'
-      ? 500
-      : body.perk == 'Tea Hero'
-      ? 1000
-      : 0
+  const {
+    first_name,
+    last_name,
+    email,
+    favorite_tea,
+    country,
+    city,
+    street,
+    postal_code,
+    perk,
+    locale,
+    price,
+    origin_url,
+    plan_name,
+  } = body
 
   const send_request = new Request('https://api.mailchannels.net/tx/v1/send', {
     method: 'POST',
@@ -237,9 +252,7 @@ const sendEmail = async body => {
     body: JSON.stringify({
       personalizations: [
         {
-          to: [
-            { email: body.email, name: `${body.first_name} ${body.last_name}` },
-          ],
+          to: [{ email: email, name: `${first_name} ${last_name}` }],
         },
       ],
       from: {
@@ -250,7 +263,15 @@ const sendEmail = async body => {
       content: [
         {
           type: 'text/html',
-          value: htmlContent(body.first_name, body.perk, price),
+          value: htmlContent(
+            first_name,
+            perk,
+            price,
+            country,
+            city,
+            street,
+            postal_code,
+          ),
         },
       ],
     }),
