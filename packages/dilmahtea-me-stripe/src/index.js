@@ -65,7 +65,20 @@ const create = async request => {
     (locale == 'en' ? '' : `/${locale}`) +
     '/crowdfunding-confirmation'
 
-  const cancel_url = origin_url
+  const searchParams = new URLSearchParams()
+
+  searchParams.set('first_name', first_name)
+  searchParams.set('last_name', last_name)
+  searchParams.set('email', email)
+  searchParams.set('favorite_tea', favorite_tea)
+  searchParams.set('country', country)
+  searchParams.set('city', city)
+  searchParams.set('street', street)
+  searchParams.set('postal_code', postal_code)
+
+  const queryString = searchParams.toString()
+
+  const cancel_url = `${origin_url}?${queryString}`
 
   try {
     // Create new Checkout Session for the order.
