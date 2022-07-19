@@ -92,16 +92,6 @@ async function handleRequest(request) {
   if (email) {
     const storedValue = await CROWDFUNDING.get(email)
 
-    // Handle the event
-    if (event.type == 'payment_intent.succeeded' && storedValue) {
-      const emailRequest = createRequest(
-        'https://scripts.dilmahtea.me/crowdfunding-mail',
-        storedValue,
-      )
-
-      await EMAIL.fetch(emailRequest)
-    }
-
     let payment_status
 
     switch (event.type) {
@@ -125,6 +115,16 @@ async function handleRequest(request) {
     )
 
     await BASEROW.fetch(baserowRequest)
+
+    if (event.type == 'payment_intent.succeeded' && storedValue) {
+      const emailRequest = createRequest(
+        'https://scripts.dilmahtea.me/crowdfunding-mail',
+        storedValue,
+      )
+
+      await EMAIL.fetch(emailRequest)
+    }
+
     await CROWDFUNDING.delete(email)
   }
 
