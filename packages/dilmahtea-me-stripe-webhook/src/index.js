@@ -109,9 +109,14 @@ async function handleRequest(request) {
         break
     }
 
+    const baserowRequestBody = JSON.stringify({
+      ...JSON.parse(storedValue),
+      payment_status,
+    })
+
     const baserowRequest = createRequest(
       'https://scripts.dilmahtea.me/crowdfunding-form',
-      { ...storedValue, payment_status },
+      baserowRequestBody,
     )
 
     await BASEROW.fetch(baserowRequest)
