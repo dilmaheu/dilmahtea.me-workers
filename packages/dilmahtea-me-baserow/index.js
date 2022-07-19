@@ -6,7 +6,7 @@ const headers = new Headers({
   'Access-Control-Max-Age': '-1',
 })
 
-const handleRequest = async (request) => {
+const handleRequest = async request => {
   return submitHandler(request)
 }
 
@@ -14,7 +14,7 @@ const reply = (message, status) => {
   return new Response(message, { status, headers })
 }
 
-const submitHandler = async (request) => {
+const submitHandler = async request => {
   const {
     first_name,
     last_name,
@@ -49,11 +49,11 @@ const submitHandler = async (request) => {
 
   await createBaserowRecord(reqBody)
 
-  return reply(JSON.stringify({created: true}), 200)
+  return reply(JSON.stringify({ created: true }), 200)
   // return new Response(JSON.stringify(createRow), { status: 200, headers })
 }
 
-const createBaserowRecord = (body) => {
+const createBaserowRecord = body => {
   return fetch(
     `https://api.baserow.io/api/database/rows/table/67746/?user_field_names=true`,
     {
@@ -64,10 +64,10 @@ const createBaserowRecord = (body) => {
         'Content-Type': 'application/json',
       },
     },
-  ).then((res) => res.json())
+  ).then(res => res.json())
 }
 
-const handleOptions = (request) => {
+const handleOptions = request => {
   if (
     request.headers.get('Origin') !== null &&
     request.headers.get('Access-Control-Request-Method') !== null &&
