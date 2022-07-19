@@ -43,6 +43,7 @@ const submitHandler = async (request) => {
     'Postal Code': postal_code,
     Perk: perk,
     'Amount Paid': price,
+    Locale: locale,
     'Payment Status': payment_status,
   }
 
