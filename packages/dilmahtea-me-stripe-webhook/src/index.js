@@ -89,30 +89,43 @@ async function handleRequest(request) {
 
   let email = charges[0].billing_details.email
 
-  const storedValue = await CROWDFUNDING.get(email)
+  if (email) {
+    const storedValue = await CROWDFUNDING.get(email)
 
-  // Handle the event
-  if (event.type == 'payment_intent.succeeded' && email && storedValue) {
-    const formRequest = createRequest(
+    // Handle the event
+    if (event.type == 'payment_intent.succeeded' && storedValue) {
+      const emailRequest = createRequest(
+        'https://scripts.dilmahtea.me/crowdfunding-mail',
+        storedValue,
+      )
+
+      await EMAIL.fetch(emailRequest)
+    }
+
+    let payment_status
+
+    switch (event.type) {
+      case 'payment_intent.succeeded':
+        payment_status = 'paid'
+        break
+      case 'payment_intent.payment_failed':
+        payment_status = 'failed'
+        break
+      case 'payment_intent.canceled':
+        payment_status = 'canceled'
+        break
+      default:
+        payment_status = 'unknown'
+        break
+    }
+
+    const baserowRequest = createRequest(
       'https://scripts.dilmahtea.me/crowdfunding-form',
-      storedValue,
+      { ...storedValue, payment_status },
     )
 
-    const emailRequest = createRequest(
-      'https://scripts.dilmahtea.me/crowdfunding-mail',
-      storedValue,
-    )
-
-    await BASEROW.fetch(formRequest)
-    await EMAIL.fetch(emailRequest)
+    await BASEROW.fetch(baserowRequest)
     await CROWDFUNDING.delete(email)
-  }
-
-  if (
-    event.type == 'payment_intent.payment_failed' ||
-    event.type == 'payment_intent.canceled'
-  ) {
-    if (email) await CROWDFUNDING.delete(email)
   }
 
   return reply(JSON.stringify({ received: true }), 200)

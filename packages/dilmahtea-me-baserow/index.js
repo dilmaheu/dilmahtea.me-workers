@@ -29,6 +29,7 @@ const submitHandler = async (request) => {
     price,
     origin_url,
     plan_name,
+    payment_status,
   } = await request.json()
 
   const reqBody = {
@@ -41,7 +42,8 @@ const submitHandler = async (request) => {
     Street: street,
     'Postal Code': postal_code,
     Perk: perk,
-    'Amount Paid': price
+    'Amount Paid': price,
+    'Payment Status': payment_status,
   }
 
   await createBaserowRecord(reqBody)
