@@ -32,7 +32,7 @@ const submitHandler = async request => {
     payment_status,
   } = await request.json()
 
-  const reqBody = {
+  const createRecordRequestBody = {
     'First Name': first_name,
     'Last Name': last_name,
     Email: email,
@@ -47,24 +47,42 @@ const submitHandler = async request => {
     'Payment Status': payment_status,
   }
 
-  await createBaserowRecord(reqBody)
-
-  return reply(JSON.stringify({ created: true }), 200)
-  // return new Response(JSON.stringify(createRow), { status: 200, headers })
-}
-
-const createBaserowRecord = body => {
-  return fetch(
+  const recordCreatedResponse = await fetch(
     `https://api.baserow.io/api/database/rows/table/67746/?user_field_names=true`,
     {
       method: 'POST',
-      body: JSON.stringify(body),
+      body: JSON.stringify(createRecordRequestBody),
       headers: {
         Authorization: `Token ${BASEROW_TOKEN}`,
         'Content-Type': 'application/json',
       },
     },
   ).then(res => res.json())
+
+  const { count: supportersCount, results: rows } = await fetch(
+    `https://api.baserow.io/api/database/rows/table/67746/?user_field_names=true&size=0&include=Amount+Paid`,
+    {
+      headers: {
+        Authorization: `Token ${BASEROW_TOKEN}`,
+      },
+    },
+  ).then(res => res.json())
+
+  const initialAmount = 0
+
+  const totalAmountRaised = rows.reduce((amountRaised, result) => {
+    const amount = parseInt(result['Amount Paid'])
+
+    return amountRaised + amount
+  }, initialAmount)
+
+  await BASEROW_STATS.put('Number of Supporters', supportersCount)
+  await BASEROW_STATS.put('Total Amount Raised', totalAmountRaised)
+
+  return new Response(
+    JSON.stringify({ created: true, response: recordCreatedResponse }),
+    { status: 200, headers },
+  )
 }
 
 const handleOptions = request => {
