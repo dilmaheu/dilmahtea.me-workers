@@ -1,0 +1,9 @@
+name = "dilmahtea-me-baserow-stats"
+main = "./index.js"
+account_id = "f0f636c746c8673c3905e9104b385251"
+workers_dev = true
+compatibility_date = "2022-07-20"
+
+[[kv_namespaces]]
+binding = "BASEROW_STATS"
+id = "abc253e545bf4c3ebdc1b8577e88967e"
