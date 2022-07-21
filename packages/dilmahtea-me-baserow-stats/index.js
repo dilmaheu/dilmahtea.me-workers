@@ -28,26 +28,6 @@ async function handleRequest(request) {
   )
 }
 
-const handleOptions = request => {
-  if (
-    request.headers.get('Origin') !== null &&
-    request.headers.get('Access-Control-Request-Method') !== null &&
-    request.headers.get('Access-Control-Request-Headers') !== null
-  ) {
-    // Handle CORS pre-flight request.
-    return new Response(null, {
-      headers,
-    })
-  } else {
-    // Handle standard OPTIONS request.
-    return new Response(null, {
-      headers: {
-        Allow: 'POST, OPTIONS',
-      },
-    })
-  }
-}
-
 addEventListener('fetch', event => {
   const { request } = event
 
