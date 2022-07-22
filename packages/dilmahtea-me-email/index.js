@@ -236,50 +236,13 @@ const sendEmail = async body => {
     plan_name,
   } = body
 
-  const emailLocale = locale === 'nl' ? 'nl-NL' : locale
+  const crowdfundingEmailData = JSON.parse(
+    await CROWDFUNDING_EMAIL.get('Crowdfunding Email'),
+  )
 
-  const query = `
-    {
-      crowdfundingEmail(locale: "${emailLocale}") {
-        data {
-          attributes {
-            From_name
-            From_email
-            Subject
-            Preview_text
-            Preheader_text
-            Body
-            Overview
-            Total
-            Invoice
-            VAT
-          }
-        }
-      }
+  const crowdfundingEmail = crowdfundingEmailData.locales[locale]
 
-      recurringElement {
-        data {
-          attributes {
-            Footer_text
-            Company_address
-          }
-        }
-      }
-    }
-  `
-
-  const response = await fetch(CMS_GRAPHQL_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${CMS_ACCESS_TOKEN}`,
-    },
-    body: JSON.stringify({
-      query,
-    }),
-  })
-
-  const { data } = await response.json()
+  const { Footer_text, Company_address } = crowdfundingEmailData
 
   const {
     From_name,
@@ -292,9 +255,7 @@ const sendEmail = async body => {
     Total,
     Invoice,
     VAT,
-  } = data.crowdfundingEmail.data.attributes
-
-  const { Footer_text, Company_address } = data.recurringElement.data.attributes
+  } = crowdfundingEmail
 
   const previewText = Preview_text + '&nbsp;'.repeat(100),
     preheaderText = Preheader_text.replaceAll('\n', '<br />'),
