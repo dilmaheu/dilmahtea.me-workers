@@ -77,9 +77,9 @@ async function handlePOST(request) {
       JSON.stringify({ message: 'BASEROW_STATS KV Namespace Updated' }),
       200,
     )
-  } else {
-    return reply(JSON.stringify({ error: 'Bad Request' }), 400)
   }
+
+  return reply(JSON.stringify({ error: 'Bad Request' }), 400)
 }
 
 function handleOptions(request) {
@@ -119,10 +119,10 @@ addEventListener('fetch', event => {
         return event.respondWith(handlePOST(request))
       case 'OPTIONS':
         return event.respondWith(handleOptions(request))
-      default:
-        return event.respondWith(
-          reply(JSON.stringify({ error: `Method or Path Not Allowed` }), 405),
-        )
     }
   }
+
+  return event.respondWith(
+    reply(JSON.stringify({ error: `Method or Path Not Allowed` }), 405),
+  )
 })
