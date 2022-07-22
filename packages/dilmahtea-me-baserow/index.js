@@ -59,31 +59,8 @@ const submitHandler = async request => {
     },
   ).then(res => res.json())
 
-  const { results: payments } = await fetch(
-    `https://api.baserow.io/api/database/rows/table/67746/?user_field_names=true&size=0&include=Amount+Paid,Payment+Status`,
-    {
-      headers: {
-        Authorization: `Token ${BASEROW_TOKEN}`,
-      },
-    },
-  ).then(res => res.json())
-
-  const paidPayments = payments.filter(row => row['Payment Status'] === 'paid')
-
-  const supportersCount = paidPayments.length
-
-  const initialAmount = 0
-
-  const totalAmountRaised = paidPayments.reduce(
-    (total, payment) => total + parseInt(payment['Amount Paid']),
-    initialAmount,
-  )
-
-  await BASEROW_STATS.put('Number of Supporters', supportersCount)
-  await BASEROW_STATS.put('Total Amount Raised', totalAmountRaised)
-
   return new Response(
-    JSON.stringify({ created: true, response: recordCreatedResponse }),
+    JSON.stringify({ recordCreated: true, response: recordCreatedResponse }),
     { status: 200, headers },
   )
 }
