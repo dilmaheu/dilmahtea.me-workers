@@ -60,12 +60,18 @@ async function handlePOST(request) {
     await BASEROW_STATS.put('Number of Supporters', supportersCount)
     await BASEROW_STATS.put('Total Amount Raised', totalAmountRaised)
 
+    // Trigger a rebuild of the dilmahtea.me website
+    await fetch(
+      'https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/7047f388-e0ba-42ca-9e7a-7d3bf6ed776d',
+      { method: 'POST' },
+    )
+
     return reply(
       JSON.stringify({ message: 'BASEROW_STATS KV Namespace Updated' }),
       200,
     )
   } else {
-    return reply(JSON.stringify({ error: 'Bad request' }), 400)
+    return reply(JSON.stringify({ error: 'Bad Request' }), 400)
   }
 }
 
