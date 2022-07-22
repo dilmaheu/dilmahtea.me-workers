@@ -123,7 +123,7 @@ async function handleRequest(request) {
 
     if (event.type == 'payment_intent.succeeded' && storedValue) {
       const emailRequest = createRequest(
-        'https://scripts.dilmahtea.me/crowdfunding-mail',
+        'https://dilmahtea-me-email.dilmah.workers.dev/crowdfunding-mail',
         storedValue,
       )
 
