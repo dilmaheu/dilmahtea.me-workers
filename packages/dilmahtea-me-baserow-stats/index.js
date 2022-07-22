@@ -33,7 +33,14 @@ async function handlePOST(request) {
 
   if (
     table_id === 67746 &&
-    ['rows.created', 'rows.updated', 'rows.deleted'].includes(event_type)
+    [
+      'row.created',
+      'row.updated',
+      'row.deleted',
+      'rows.created',
+      'rows.updated',
+      'rows.deleted',
+    ].includes(event_type)
   ) {
     const { results: payments } = await fetch(
       `https://api.baserow.io/api/database/rows/table/67746/?user_field_names=true&size=0&include=Amount+Paid,Payment+Status`,
