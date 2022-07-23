@@ -29,6 +29,18 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           workingDirectory: "packages/dilmahtea-me-baserow"
 
+      - name: Publish Baserow Stats Worker
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          workingDirectory: "packages/dilmahtea-me-baserow"
+
+      - name: Publish Crowdfunding Mail Store Worker
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          workingDirectory: "packages/dilmahtea-me-baserow"
+
       - name: Publish Email Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
