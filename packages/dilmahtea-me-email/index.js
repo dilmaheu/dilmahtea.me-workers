@@ -73,6 +73,9 @@ const sendEmail = async body => {
           value: crowdfundingEmailHTML,
         },
       ],
+      // dkim_domain: '',
+      // dkim_selector: 'mailchannels',
+      // dkim_private_key: DKIM_PRIVATE_KEY,
     }),
   })
 
