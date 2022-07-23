@@ -79,7 +79,7 @@ const sendEmail = async body => {
     }),
   })
 
-  console.log(await fetch(send_request).then(res => res.json()))
+  await fetch(send_request).then(res => res.json())
 
   return reply(JSON.stringify({ sent: true }), 200)
 }
