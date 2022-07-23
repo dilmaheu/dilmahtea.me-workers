@@ -73,9 +73,9 @@ const sendEmail = async body => {
           value: crowdfundingEmailHTML,
         },
       ],
-      // dkim_domain: '',
-      // dkim_selector: 'mailchannels',
-      // dkim_private_key: DKIM_PRIVATE_KEY,
+      dkim_domain: 'dilmahtea.me',
+      dkim_selector: 'mailchannels',
+      dkim_private_key: DKIM_PRIVATE_KEY,
     }),
   })
 
