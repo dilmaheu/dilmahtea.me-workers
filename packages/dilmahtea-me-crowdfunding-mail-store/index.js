@@ -20,11 +20,11 @@ const getHTMLEmail = (
   Total,
   Invoice,
   VAT,
-  Footer_text,
   Company_address,
   previewText,
   preheaderText,
   bodyText,
+  footerText,
 ) => `
   <!DOCTYPE html>
   <html lang="en">
@@ -205,7 +205,7 @@ const getHTMLEmail = (
             ${Company_address}
           </div>
           <div style="margin-top: 15px">
-            ${Footer_text}
+            ${footerText}
           </div>
         </div>
       </div>
@@ -283,6 +283,11 @@ async function handlePOST(request) {
         Company_address,
       } = data.recurringElement.data.attributes
 
+      const footerText = recurData.Footer_text.replaceAll(
+        '<current_year>',
+        new Date().getFullYear(),
+      )
+
       const [englishCrowdfundingEmail, dutchCrowdfundingEmail] = [
         data.englishCrowdfundingEmail.data.attributes,
         data.dutchCrowdfundingEmail.data.attributes,
@@ -320,11 +325,11 @@ async function handlePOST(request) {
           Total,
           Invoice,
           VAT,
-          Footer_text,
           Company_address,
           previewText,
           preheaderText,
           bodyText,
+          footerText,
         )
 
         return {
