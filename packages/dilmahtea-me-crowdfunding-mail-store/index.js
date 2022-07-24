@@ -283,7 +283,7 @@ async function handlePOST(request) {
         Company_address,
       } = data.recurringElement.data.attributes
 
-      const footerText = recurData.Footer_text.replaceAll(
+      const footerText = Footer_text.replaceAll(
         '<current_year>',
         new Date().getFullYear(),
       )
