@@ -217,7 +217,7 @@ async function handlePOST(request) {
   const { event, model } = await request.json()
 
   if (['entry.update', 'entry.publish'].includes(event)) {
-    if (model === 'crowdfunding-email') {
+    if (['crowdfunding-email', 'recurring-element'].includes(model)) {
       const query = `
         {
           englishCrowdfundingEmail: crowdfundingEmail(locale: "en") {
@@ -353,7 +353,7 @@ async function handlePOST(request) {
 
     return reply(
       JSON.stringify({
-        message: 'Crowdfunding Email has not Triggered the Webhook Event',
+        message: "Crowdfunding Email doesn't have to be Updated",
       }),
       200,
     )
