@@ -89,7 +89,16 @@ async function handlePOST(request) {
     }
 
     // add Baserow record for the event
-    let payment_status = event.type.split('payment_intent.')[1]
+    let payment_status
+
+    switch (event.type) {
+      case 'payment_intent.succeeded':
+        payment_status = 'paid'
+      case 'payment_intent.payment_failed':
+        payment_status = 'failed'
+      case 'payment_intent.canceled':
+        payment_status = 'cancelled'
+    }
 
     const baserowRequestBody = JSON.stringify({
       ...JSON.parse(storedValue),
