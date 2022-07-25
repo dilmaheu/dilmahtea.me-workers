@@ -18,11 +18,11 @@ const reply = (message, status) => new Response(message, { status, headers })
 
 const createRequest = (url, body) =>
   new Request(url, {
-    body,
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    method: 'POST',
+    body,
   })
 
 const checkWebHookRequest = async request => {
@@ -97,7 +97,7 @@ async function handlePOST(request) {
     })
 
     const baserowRequest = createRequest(
-      'https://scripts.dilmahtea.me/crowdfunding-form',
+      'https://crowdfunding-form.scripts.dilmahtea.me',
       baserowRequestBody,
     )
 
@@ -105,7 +105,7 @@ async function handlePOST(request) {
 
     if (event.type == 'payment_intent.succeeded' && storedValue) {
       const emailRequest = createRequest(
-        'https://dilmahtea-me-email.dilmah.workers.dev/crowdfunding-mail',
+        'https://crowdfunding-mail.dilmah.scripts.dilmahtea.me',
         storedValue,
       )
 
