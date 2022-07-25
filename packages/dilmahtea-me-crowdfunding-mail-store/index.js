@@ -367,7 +367,7 @@ async function handlePOST(request) {
   return reply(JSON.stringify({ error: 'Bad Request' }), 400)
 }
 
-function handleOptions(request) {
+function handleOPTIONS(request) {
   if (
     request.headers.get('Origin') !== null &&
     request.headers.get('Access-Control-Request-Method') !== null &&
@@ -397,7 +397,7 @@ addEventListener('fetch', event => {
       case 'POST':
         return event.respondWith(handlePOST(request))
       case 'OPTIONS':
-        return event.respondWith(handleOptions(request))
+        return event.respondWith(handleOPTIONS(request))
     }
   }
 

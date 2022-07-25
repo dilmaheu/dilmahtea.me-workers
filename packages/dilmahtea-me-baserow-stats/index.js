@@ -82,7 +82,7 @@ async function handlePOST(request) {
   return reply(JSON.stringify({ error: 'Bad Request' }), 400)
 }
 
-function handleOptions(request) {
+function handleOPTIONS(request) {
   if (
     request.headers.get('Origin') !== null &&
     request.headers.get('Access-Control-Request-Method') !== null &&
@@ -107,18 +107,14 @@ addEventListener('fetch', event => {
 
   let { pathname: urlPathname } = new URL(request.url)
 
-  if (urlPathname.endsWith('/')) {
-    urlPathname = urlPathname.slice(0, -1)
-  }
-
-  if (urlPathname === '/crowdfunding-stats') {
+  if (urlPathname === '/') {
     switch (request.method) {
       case 'GET':
         return event.respondWith(handleGET(request))
       case 'POST':
         return event.respondWith(handlePOST(request))
       case 'OPTIONS':
-        return event.respondWith(handleOptions(request))
+        return event.respondWith(handleOPTIONS(request))
     }
   }
 

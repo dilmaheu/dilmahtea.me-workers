@@ -33,25 +33,7 @@ const checkWebHookRequest = async request => {
   return true
 }
 
-const handleOptions = request => {
-  if (
-    request.headers.get('Origin') !== null &&
-    request.headers.get('Access-Control-Request-Method') !== null &&
-    request.headers.get('Access-Control-Request-Headers') !== null
-  ) {
-    // Handle CORS pre-flight request.
-    return reply(null, 200)
-  } else {
-    // Handle standard OPTIONS request.
-    return new Response(null, {
-      headers: {
-        Allow: 'POST, OPTIONS',
-      },
-    })
-  }
-}
-
-async function handleRequest(request) {
+async function handlePOST(request) {
   const isJson = checkWebHookRequest(request)
 
   if (!isJson) {
@@ -136,25 +118,37 @@ async function handleRequest(request) {
   return reply(JSON.stringify({ received: true }), 200)
 }
 
+const handleOPTIONS = request => {
+  if (
+    request.headers.get('Origin') !== null &&
+    request.headers.get('Access-Control-Request-Method') !== null &&
+    request.headers.get('Access-Control-Request-Headers') !== null
+  ) {
+    // Handle CORS pre-flight request.
+    return reply(null, 200)
+  } else {
+    // Handle standard OPTIONS request.
+    return new Response(null, {
+      headers: {
+        Allow: 'POST, OPTIONS',
+      },
+    })
+  }
+}
+
 addEventListener('fetch', event => {
   const { request } = event
 
   let { pathname: urlPathname } = new URL(request.url)
 
-  if (urlPathname.endsWith('/')) {
-    urlPathname = urlPathname.slice(0, -1)
-  }
+  if (urlPathname === '/') {
+    if (request.method === 'OPTIONS') {
+      return event.respondWith(handleOPTIONS(request))
+    }
 
-  if (urlPathname === '/pay-webhook' && request.method === 'OPTIONS') {
-    return event.respondWith(handleOptions(request))
-  }
-
-  if (
-    urlPathname === '/pay-webhook' &&
-    request.method === 'POST' &&
-    request.headers.get('stripe-signature')
-  ) {
-    return event.respondWith(handleRequest(request))
+    if (request.method === 'POST' && request.headers.get('stripe-signature')) {
+      return event.respondWith(handlePOST(request))
+    }
   }
 
   return event.respondWith(

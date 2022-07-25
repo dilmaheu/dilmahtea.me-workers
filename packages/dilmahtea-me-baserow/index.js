@@ -6,15 +6,11 @@ const headers = new Headers({
   'Access-Control-Max-Age': '-1',
 })
 
-const handleRequest = async request => {
-  return submitHandler(request)
-}
-
 const reply = (message, status) => {
   return new Response(message, { status, headers })
 }
 
-const submitHandler = async request => {
+const handlePOST = async request => {
   const {
     first_name,
     last_name,
@@ -65,7 +61,7 @@ const submitHandler = async request => {
   )
 }
 
-const handleOptions = request => {
+const handleOPTIONS = request => {
   if (
     request.headers.get('Origin') !== null &&
     request.headers.get('Access-Control-Request-Method') !== null &&
@@ -90,16 +86,13 @@ addEventListener('fetch', event => {
 
   let { pathname: urlPathname } = new URL(request.url)
 
-  if (urlPathname.endsWith('/')) {
-    urlPathname = urlPathname.slice(0, -1)
-  }
-
-  if (urlPathname === '/crowdfunding-form' && request.method === 'OPTIONS') {
-    return event.respondWith(handleOptions(request, headers))
-  }
-
-  if (urlPathname === '/crowdfunding-form' && request.method === 'POST') {
-    return event.respondWith(handleRequest(request, headers))
+  if (urlPathname === '/') {
+    switch (request.method) {
+      case 'POST':
+        return event.respondWith(handlePOST(request))
+      case 'OPTIONS':
+        return event.respondWith(handleOPTIONS(request))
+    }
   }
 
   return event.respondWith(

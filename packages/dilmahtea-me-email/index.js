@@ -84,7 +84,7 @@ const sendEmail = async body => {
   return reply(JSON.stringify({ sent: true }), 200)
 }
 
-const handleRequest = async request => {
+const handlePOST = async request => {
   const contentType = request.headers.get('content-type') || ''
 
   if (contentType.includes('application/json')) {
@@ -103,7 +103,7 @@ const handleRequest = async request => {
   reply('Wrong Method', 405)
 }
 
-const handleOptions = request => {
+const handleOPTIONS = request => {
   if (
     request.headers.get('Origin') !== null &&
     request.headers.get('Access-Control-Request-Method') !== null &&
@@ -128,16 +128,13 @@ addEventListener('fetch', event => {
 
   let { pathname: urlPathname } = new URL(request.url)
 
-  if (urlPathname.endsWith('/')) {
-    urlPathname = urlPathname.slice(0, -1)
-  }
-
-  if (urlPathname === '/crowdfunding-mail' && request.method === 'OPTIONS') {
-    return event.respondWith(handleOptions(request))
-  }
-
-  if (urlPathname === '/crowdfunding-mail' && request.method === 'POST') {
-    return event.respondWith(handleRequest(request))
+  if (urlPathname === '/') {
+    switch (request.method) {
+      case 'POST':
+        return event.respondWith(handlePOST(request))
+      case 'OPTIONS':
+        return event.respondWith(handleOPTIONS(request))
+    }
   }
 
   return event.respondWith(

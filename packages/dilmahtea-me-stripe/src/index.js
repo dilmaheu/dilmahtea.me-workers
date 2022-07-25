@@ -18,12 +18,7 @@ const reply = (message, status) => {
   return new Response(message, { status, headers })
 }
 
-/**
- * POST /api/checkout
- */
-const create = async request => {
-  // Accomodates preview deployments AND custom domains
-  // @example "https://<hash>.<branch>.<project>.pages.dev"
+const handlePOST = async request => {
   const body = await request.formData()
 
   const {
@@ -117,25 +112,7 @@ const create = async request => {
   }
 }
 
-/**
- * GET /api/checkout?sessionid=XYZ
- */
-const lookup = async request => {
-  const { searchParams } = new URL(request.url)
-
-  const ident = searchParams.get('sessionid')
-  if (!ident) return reply('Missing "sessionid" parameter', 400)
-
-  try {
-    const session = await stripe.checkout.sessions.retrieve(ident)
-    const output = JSON.stringify(session, null, 2)
-    return new Response(output, { headers })
-  } catch (err) {
-    return reply('Error retrieving Session JSON data', 500)
-  }
-}
-
-const handleOptions = request => {
+const handleOPTIONS = request => {
   if (
     request.headers.get('Origin') !== null &&
     request.headers.get('Access-Control-Request-Method') !== null &&
@@ -155,25 +132,18 @@ const handleOptions = request => {
   }
 }
 
-async function handleRequest(request) {
-  return create(request)
-}
-
 addEventListener('fetch', event => {
   const { request } = event
 
   let { pathname: urlPathname } = new URL(request.url)
 
-  if (urlPathname.endsWith('/')) {
-    urlPathname = urlPathname.slice(0, -1)
-  }
-
-  if (urlPathname === '/pay' && request.method === 'OPTIONS') {
-    return event.respondWith(handleOptions(request))
-  }
-
-  if (urlPathname === '/pay' && request.method === 'POST') {
-    return event.respondWith(handleRequest(request))
+  if (urlPathname === '/') {
+    switch (request.method) {
+      case 'POST':
+        return event.respondWith(handlePOST(request))
+      case 'OPTIONS':
+        return event.respondWith(handleOPTIONS(request))
+    }
   }
 
   return event.respondWith(
