@@ -61,51 +61,19 @@ async function handlePOST(request) {
     )
   }
 
-  // add Baserow record for the event
-  {
-    let payment_status
+  const paymentIntent = event.data.object
 
-    switch (event.type) {
-      case 'payment_intent.succeeded':
-        payment_status = 'paid'
-        break
-      case 'payment_intent.payment_failed':
-        payment_status = 'failed'
-        break
-      case 'payment_intent.canceled':
-        payment_status = 'canceled'
-        break
-      default:
-        payment_status = 'unknown'
-        break
-    }
+  const charges = paymentIntent.charges['data']
 
-    const baserowRequestBody = JSON.stringify({
-      ...JSON.parse(storedValue),
-      payment_status,
-    })
-
-    const baserowRequest = createRequest(
-      'https://crowdfunding-form.scripts.dilmahtea.me',
-      baserowRequestBody,
-    )
-
-    await BASEROW.fetch(baserowRequest)
+  if (!charges || charges.length === 0) {
+    return reply(JSON.stringify({ error: 'No Charges have been made' }), 400)
   }
 
-  // send thank you email if payment is successful
-  if (event.type === 'payment_intent.succeeded') {
-    const paymentIntent = event.data.object
+  let email = charges[0].billing_details.email
 
-    const charges = paymentIntent.charges['data']
-
-    if (!charges) {
-      reply(JSON.stringify({ error: 'No Charges have been made' }), 400)
-    }
-
-    let email = charges[0].billing_details.email
-
-    if (email) {
+  if (email) {
+    // send thank you email if payment is successful
+    if (event.type === 'payment_intent.succeeded') {
       const storedValue = await CROWDFUNDING.get(email)
 
       if (event.type == 'payment_intent.succeeded' && storedValue) {
@@ -119,6 +87,21 @@ async function handlePOST(request) {
 
       await CROWDFUNDING.delete(email)
     }
+
+    // add Baserow record for the event
+    let payment_status = event.type.split('payment_intent.')[1]
+
+    const baserowRequestBody = JSON.stringify({
+      ...JSON.parse(storedValue),
+      payment_status,
+    })
+
+    const baserowRequest = createRequest(
+      'https://crowdfunding-form.scripts.dilmahtea.me',
+      baserowRequestBody,
+    )
+
+    await BASEROW.fetch(baserowRequest)
   }
 
   return reply(JSON.stringify({ received: true }), 200)
