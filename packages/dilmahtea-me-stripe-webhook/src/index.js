@@ -61,19 +61,8 @@ async function handlePOST(request) {
     )
   }
 
-  const paymentIntent = event.data.object
-
-  const charges = paymentIntent.charges['data']
-
-  if (!charges) {
-    reply(JSON.stringify({ error: 'No Charges have been made' }), 400)
-  }
-
-  let email = charges[0].billing_details.email
-
-  if (email) {
-    const storedValue = await CROWDFUNDING.get(email)
-
+  // add Baserow record for the event
+  {
     let payment_status
 
     switch (event.type) {
@@ -102,17 +91,34 @@ async function handlePOST(request) {
     )
 
     await BASEROW.fetch(baserowRequest)
+  }
 
-    if (event.type == 'payment_intent.succeeded' && storedValue) {
-      const emailRequest = createRequest(
-        'https://crowdfunding-mail.dilmah.scripts.dilmahtea.me',
-        storedValue,
-      )
+  // send thank you email if payment is successful
+  if (event.type === 'payment_intent.succeeded') {
+    const paymentIntent = event.data.object
 
-      await EMAIL.fetch(emailRequest)
+    const charges = paymentIntent.charges['data']
+
+    if (!charges) {
+      reply(JSON.stringify({ error: 'No Charges have been made' }), 400)
     }
 
-    await CROWDFUNDING.delete(email)
+    let email = charges[0].billing_details.email
+
+    if (email) {
+      const storedValue = await CROWDFUNDING.get(email)
+
+      if (event.type == 'payment_intent.succeeded' && storedValue) {
+        const emailRequest = createRequest(
+          'https://crowdfunding-mail.dilmah.scripts.dilmahtea.me',
+          storedValue,
+        )
+
+        await EMAIL.fetch(emailRequest)
+      }
+
+      await CROWDFUNDING.delete(email)
+    }
   }
 
   return reply(JSON.stringify({ received: true }), 200)
