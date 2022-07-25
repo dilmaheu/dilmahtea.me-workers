@@ -94,10 +94,13 @@ async function handlePOST(request) {
     switch (event.type) {
       case 'payment_intent.succeeded':
         payment_status = 'paid'
+        break
       case 'payment_intent.payment_failed':
         payment_status = 'failed'
+        break
       case 'payment_intent.canceled':
-        payment_status = 'cancelled'
+        payment_status = 'canceled'
+        break
     }
 
     const baserowRequestBody = JSON.stringify({
