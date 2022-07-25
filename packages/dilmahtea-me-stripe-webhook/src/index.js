@@ -72,10 +72,10 @@ async function handlePOST(request) {
   let email = charges[0].billing_details.email
 
   if (email) {
+    const storedValue = await CROWDFUNDING.get(email)
+
     // send thank you email if payment is successful
     if (event.type === 'payment_intent.succeeded') {
-      const storedValue = await CROWDFUNDING.get(email)
-
       if (event.type == 'payment_intent.succeeded' && storedValue) {
         const emailRequest = createRequest(
           'https://crowdfunding-mail.dilmah.scripts.dilmahtea.me',
