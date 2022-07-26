@@ -43,7 +43,7 @@ async function handlePOST(request) {
     ].includes(event_type)
   ) {
     const { results: payments } = await fetch(
-      `https://api.baserow.io/api/database/rows/table/67746/?user_field_names=true&size=0&include=Amount+Paid,Payment+Status`,
+      `${BASEROW_API_URL}?user_field_names=true&size=0&include=Amount+Paid,Payment+Status`,
       {
         headers: {
           Authorization: `Token ${BASEROW_TOKEN}`,
@@ -68,10 +68,7 @@ async function handlePOST(request) {
     await BASEROW_STATS.put('Total Amount Raised', totalAmountRaised)
 
     // Trigger a rebuild of the dilmahtea.me website
-    await fetch(
-      'https://api.cloudflare.com/client/v4/pages/webhooks/deploy_hooks/7047f388-e0ba-42ca-9e7a-7d3bf6ed776d',
-      { method: 'POST' },
-    )
+    await fetch(CLOUDFLARE_PAGES_DEPLOY_HOOK, { method: 'POST' })
 
     return reply(
       JSON.stringify({ message: 'BASEROW_STATS KV Namespace Updated' }),
