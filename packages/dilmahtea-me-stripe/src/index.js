@@ -87,9 +87,6 @@ const handlePOST = async request => {
       line_items: [
         {
           quantity: 1,
-          // Reference existing item:
-          //   price: PRICE_ID
-          // Or, inline price data:
           price_data: {
             currency: 'eur',
             unit_amount: price * 100,
@@ -99,12 +96,14 @@ const handlePOST = async request => {
           },
         },
       ],
-      // The `{CHECKOUT_SESSION_ID}` will be injected with the Stripe Session ID
-      // success_url: `${origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       success_url,
       cancel_url,
     })
-    await CROWDFUNDING.put(email, formObject)
+
+    const paymentIntentID = session.payment_intent
+
+    await CROWDFUNDING.put(paymentIntentID, formObject)
+
     return Response.redirect(session.url, 303)
   } catch (err) {
     console.log(err.message)

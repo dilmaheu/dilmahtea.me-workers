@@ -54,7 +54,7 @@ async function handlePOST(request) {
     STRIPE_SIGNING_SECRET_KEY,
   )
 
-  if (!event['data']) {
+  if (!event.data) {
     reply(
       JSON.stringify({ error: 'Issue with trying to get Stripe Event' }),
       400,
@@ -63,58 +63,48 @@ async function handlePOST(request) {
 
   const paymentIntent = event.data.object
 
-  const charges = paymentIntent.charges['data']
+  const { id: paymentIntentId } = paymentIntent
 
-  if (!charges || charges.length === 0) {
-    return reply(JSON.stringify({ error: 'No Charges have been made' }), 400)
+  const storedValue = await CROWDFUNDING.get(paymentIntentId)
+
+  // send thank you email if payment is successful
+  if (event.type === 'payment_intent.succeeded') {
+    if (event.type == 'payment_intent.succeeded' && storedValue) {
+      const emailRequest = createRequest(
+        'https://crowdfunding-mail.dilmah.scripts.dilmahtea.me',
+        storedValue,
+      )
+
+      await EMAIL.fetch(emailRequest)
+    }
   }
 
-  let email = charges[0].billing_details.email
+  // add Baserow record for the event
+  let payment_status
 
-  if (email) {
-    const storedValue = await CROWDFUNDING.get(email)
-
-    // send thank you email if payment is successful
-    if (event.type === 'payment_intent.succeeded') {
-      if (event.type == 'payment_intent.succeeded' && storedValue) {
-        const emailRequest = createRequest(
-          'https://crowdfunding-mail.dilmah.scripts.dilmahtea.me',
-          storedValue,
-        )
-
-        await EMAIL.fetch(emailRequest)
-      }
-
-      await CROWDFUNDING.delete(email)
-    }
-
-    // add Baserow record for the event
-    let payment_status
-
-    switch (event.type) {
-      case 'payment_intent.succeeded':
-        payment_status = 'paid'
-        break
-      case 'payment_intent.payment_failed':
-        payment_status = 'failed'
-        break
-      case 'payment_intent.canceled':
-        payment_status = 'canceled'
-        break
-    }
-
-    const baserowRequestBody = JSON.stringify({
-      ...JSON.parse(storedValue),
-      payment_status,
-    })
-
-    const baserowRequest = createRequest(
-      'https://crowdfunding-form.scripts.dilmahtea.me',
-      baserowRequestBody,
-    )
-
-    await BASEROW.fetch(baserowRequest)
+  switch (event.type) {
+    case 'payment_intent.succeeded':
+      payment_status = 'paid'
+      break
+    case 'payment_intent.payment_failed':
+      payment_status = 'failed'
+      break
+    case 'payment_intent.canceled':
+      payment_status = 'canceled'
+      break
   }
+
+  const baserowRequestBody = JSON.stringify({
+    ...JSON.parse(storedValue),
+    payment_status,
+  })
+
+  const baserowRequest = createRequest(
+    'https://crowdfunding-form.scripts.dilmahtea.me',
+    baserowRequestBody,
+  )
+
+  await BASEROW.fetch(baserowRequest)
 
   return reply(JSON.stringify({ received: true }), 200)
 }
