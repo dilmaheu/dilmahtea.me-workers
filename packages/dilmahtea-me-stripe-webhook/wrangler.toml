@@ -23,4 +23,28 @@ service = "dilmahtea-me-baserow"
 environment = "production"
 
 [build]
-command = "npm run build"
+command = "node build"
+
+[env.development]
+name = "dilmahtea-me-stripe-webhook-dev"
+routes = [
+    { pattern = "dev.pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+]
+
+[env.development.build]
+command = "node build --dev"
+
+[[env.development.kv_namespaces]]
+binding = "CROWDFUNDING"
+preview_id = "178f6309789141938fd626f93f508f22"
+id = "c971dd86589647799fb64dde47563fac"
+
+[[env.development.services]]
+binding = "EMAIL"
+service = "dilmahtea-me-email"
+environment = "production"
+
+[[env.development.services]]
+binding = "BASEROW"
+service = "dilmahtea-me-baserow"
+environment = "production"

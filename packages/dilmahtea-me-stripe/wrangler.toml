@@ -13,7 +13,18 @@ preview_id = "178f6309789141938fd626f93f508f22"
 id = "c971dd86589647799fb64dde47563fac"
 
 [build]
-command = "npm run build"
+command = "node build"
 
-[build.upload]
-format = "service-worker"
+[env.development]
+name = "dilmahtea-me-stripe-dev"
+routes = [
+    { pattern = "dev.pay.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+]
+
+[env.development.build]
+command = "node build --dev"
+
+[[env.development.kv_namespaces]]
+binding = "CROWDFUNDING"
+id = "c971dd86589647799fb64dde47563fac"
+preview_id = "178f6309789141938fd626f93f508f22"

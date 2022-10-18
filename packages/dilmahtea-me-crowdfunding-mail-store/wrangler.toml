@@ -1,5 +1,5 @@
 name = "dilmahtea-me-crowdfunding-mail-store"
-main = "./index.js"
+main = "./src/prod.js"
 account_id = "f0f636c746c8673c3905e9104b385251"
 workers_dev = false
 compatibility_date = "2022-07-22"
@@ -8,5 +8,16 @@ routes = [
 ]
 
 [[kv_namespaces]]
+binding = "CROWDFUNDING_EMAIL"
+id = "083cbf62d5ac4918923b7f30d8f40b31"
+
+[env.development]
+name = "dilmahtea-me-crowdfunding-mail-store-dev"
+main = "./src/dev.js"
+routes = [
+    { pattern = "dev.crowdfunding-mail-store.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+]
+
+[[env.development.kv_namespaces]]
 binding = "CROWDFUNDING_EMAIL"
 id = "083cbf62d5ac4918923b7f30d8f40b31"
