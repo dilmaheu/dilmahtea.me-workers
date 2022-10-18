@@ -1,7 +1,7 @@
 name = "dilmahtea-me-baserow"
 main = "./index.js"
 account_id = "f0f636c746c8673c3905e9104b385251"
-workers_dev = true
+workers_dev = false
 compatibility_date = "2022-06-01"
 
 [[kv_namespaces]]
