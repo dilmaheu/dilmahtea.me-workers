@@ -39,7 +39,7 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "packages/dilmahtea-me-baserow"
+          workingDirectory: "packages/dilmahtea-me-crowdfunding-mail-store"
 
       - name: Publish Email Worker
         uses: cloudflare/wrangler-action@2.0.0
