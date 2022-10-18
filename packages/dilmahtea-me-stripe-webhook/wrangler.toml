@@ -3,6 +3,9 @@ account_id = "f0f636c746c8673c3905e9104b385251"
 workers_dev = false
 compatibility_date = "2022-06-26"
 main = "./dist/worker.js"
+routes = [
+    { pattern = "pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+]
 
 [[kv_namespaces]]
 binding = "CROWDFUNDING"

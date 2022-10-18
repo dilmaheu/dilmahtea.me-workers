@@ -3,6 +3,9 @@ main = "./index.js"
 account_id = "f0f636c746c8673c3905e9104b385251"
 workers_dev = false
 compatibility_date = "2022-07-20"
+routes = [
+    { pattern = "crowdfunding-stats.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+]
 
 [[kv_namespaces]]
 binding = "BASEROW_STATS"
