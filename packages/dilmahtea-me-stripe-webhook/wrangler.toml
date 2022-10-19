@@ -25,6 +25,6 @@ kv_namespaces = [
     { binding = "CROWDFUNDING", id = "c971dd86589647799fb64dde47563fac" }
 ]
 services = [
-    { binding = "EMAIL", service = "dilmahtea-me-email", environment = "production" },
-    { binding = "BASEROW", service = "dilmahtea-me-baserow", environment = "production" }
+    { binding = "EMAIL", service = "dilmahtea-me-email-dev", environment = "production" },
+    { binding = "BASEROW", service = "dilmahtea-me-baserow-dev", environment = "production" }
 ]
