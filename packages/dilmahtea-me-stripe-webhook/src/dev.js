@@ -71,7 +71,7 @@ async function handlePOST(request) {
   if (event.type === 'payment_intent.succeeded') {
     if (event.type == 'payment_intent.succeeded' && storedValue) {
       const emailRequest = createRequest(
-        'https://crowdfunding-mail.dilmah.scripts.dilmahtea.me',
+        'https://dev.crowdfunding-mail.dilmah.scripts.dilmahtea.me',
         storedValue,
       )
 
@@ -100,7 +100,7 @@ async function handlePOST(request) {
   })
 
   const baserowRequest = createRequest(
-    'https://crowdfunding-form.scripts.dilmahtea.me',
+    'https://dev.crowdfunding-form.scripts.dilmahtea.me',
     baserowRequestBody,
   )
 
