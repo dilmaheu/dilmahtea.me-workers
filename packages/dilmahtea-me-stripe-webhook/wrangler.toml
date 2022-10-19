@@ -1,50 +1,30 @@
 name = "dilmahtea-me-stripe-webhook"
 account_id = "f0f636c746c8673c3905e9104b385251"
-workers_dev = false
 compatibility_date = "2022-06-26"
 main = "./dist/worker.js"
+workers_dev = false
+build = { command = "node build" }
 routes = [
     { pattern = "pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
-
-[[kv_namespaces]]
-binding = "CROWDFUNDING"
-preview_id = "178f6309789141938fd626f93f508f22"
-id = "c971dd86589647799fb64dde47563fac"
-
-[[services]]
-binding = "EMAIL"
-service = "dilmahtea-me-email"
-environment = "production"
-
-[[services]]
-binding = "BASEROW"
-service = "dilmahtea-me-baserow"
-environment = "production"
-
-[build]
-command = "node build"
+kv_namespaces = [
+    { binding = "CROWDFUNDING", id = "c971dd86589647799fb64dde47563fac" }
+]
+services = [
+    { binding = "EMAIL", service = "dilmahtea-me-email", environment = "production" },
+    { binding = "BASEROW", service = "dilmahtea-me-baserow", environment = "production" }
+]
 
 [env.development]
 name = "dilmahtea-me-stripe-webhook-dev"
+build = { command = "node build --dev" }
 routes = [
     { pattern = "dev.pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
-
-[env.development.build]
-command = "node build --dev"
-
-[[env.development.kv_namespaces]]
-binding = "CROWDFUNDING"
-preview_id = "178f6309789141938fd626f93f508f22"
-id = "c971dd86589647799fb64dde47563fac"
-
-[[env.development.services]]
-binding = "EMAIL"
-service = "dilmahtea-me-email-dev"
-environment = "production"
-
-[[env.development.services]]
-binding = "BASEROW"
-service = "dilmahtea-me-baserow-dev"
-environment = "production"
+kv_namespaces = [
+    { binding = "CROWDFUNDING", id = "c971dd86589647799fb64dde47563fac" }
+]
+services = [
+    { binding = "EMAIL", service = "dilmahtea-me-email", environment = "production" },
+    { binding = "BASEROW", service = "dilmahtea-me-baserow", environment = "production" }
+]
