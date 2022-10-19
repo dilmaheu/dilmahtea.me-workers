@@ -22,7 +22,8 @@ routes = [
     { pattern = "dev.pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 kv_namespaces = [
-    { binding = "CROWDFUNDING", id = "c971dd86589647799fb64dde47563fac" }
+    { binding = "CROWDFUNDING", id = "c971dd86589647799fb64dde47563fac" },
+    { binding = "ECOMMERCE_PAYMENTS", id = "5086c43e26a14fa3a177ea876f514a8f" }
 ]
 services = [
     { binding = "EMAIL", service = "dilmahtea-me-email-dev", environment = "production" },

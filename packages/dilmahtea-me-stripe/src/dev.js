@@ -30,6 +30,7 @@ const handlePOST = async request => {
     city,
     street,
     postal_code,
+    shipping_method,
     perk,
     product_name,
     product_desc,
@@ -40,8 +41,6 @@ const handlePOST = async request => {
     success_url,
   } = Object.fromEntries(body)
 
-  console.log(locale)
-
   const formObject = JSON.stringify({
     first_name,
     last_name,
@@ -51,6 +50,7 @@ const handlePOST = async request => {
     city,
     street,
     postal_code,
+    shipping_method,
     perk,
     product_name,
     product_desc,
@@ -101,8 +101,14 @@ const handlePOST = async request => {
 
     const paymentIntentID = session.payment_intent
 
-    if (payment_type === 'crowdfunding') {
-      await CROWDFUNDING.put(paymentIntentID, formObject)
+    switch (payment_type) {
+      case 'crowdfunding':
+        await CROWDFUNDING.put(paymentIntentID, formObject)
+        break
+
+      case 'ecommerce':
+        await ECOMMERCE_PAYMENTS.put(paymentIntentID, formObject)
+        break
     }
 
     return Response.redirect(session.url, 303)

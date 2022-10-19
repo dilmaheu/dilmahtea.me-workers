@@ -25,62 +25,72 @@ const sendEmail = async body => {
     city,
     street,
     postal_code,
+    shipping_method,
     perk,
-    locale,
-    price,
     product_name,
+    product_desc,
+    price,
+    payment_type,
+    locale,
   } = body
 
-  const crowdfundingEmailData = JSON.parse(
-    await CROWDFUNDING_EMAIL.get('Crowdfunding Email'),
-  )
+  if (payment_type === 'crowdfunding') {
+    const crowdfundingEmailData = JSON.parse(
+      await CROWDFUNDING_EMAIL.get('Crowdfunding Email'),
+    )
 
-  const crowdfundingEmail = crowdfundingEmailData[locale]
+    const crowdfundingEmail = crowdfundingEmailData[locale]
 
-  const { Subject, From_name, From_email, htmlEmail } = crowdfundingEmail
+    const { Subject, From_name, From_email, htmlEmail } = crowdfundingEmail
 
-  const crowdfundingEmailHTML = htmlEmail
-    .replaceAll('${first_name}', first_name)
-    .replaceAll('${perk}', perk)
-    .replaceAll('${price}', price)
-    .replaceAll('${street}', street)
-    .replaceAll('${postal_code}', postal_code)
-    .replaceAll('${city}', city)
-    .replaceAll('${country}', country)
+    const crowdfundingEmailHTML = htmlEmail
+      .replaceAll('${first_name}', first_name)
+      .replaceAll('${perk}', perk)
+      .replaceAll('${price}', price)
+      .replaceAll('${street}', street)
+      .replaceAll('${postal_code}', postal_code)
+      .replaceAll('${city}', city)
+      .replaceAll('${country}', country)
 
-  const name = `${first_name} ${last_name}`
+    const name = `${first_name} ${last_name}`
 
-  const send_request = new Request('https://api.mailchannels.net/tx/v1/send', {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      personalizations: [
-        {
-          to: [{ email, name }],
-          dkim_domain: 'dilmahtea.me',
-          dkim_selector: 'mailchannels',
-          dkim_private_key: DKIM_PRIVATE_KEY,
+    const send_request = new Request(
+      'https://api.mailchannels.net/tx/v1/send',
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
         },
-      ],
-      from: {
-        email: From_email,
-        name: From_name,
+        body: JSON.stringify({
+          personalizations: [
+            {
+              to: [{ email, name }],
+              dkim_domain: 'dilmahtea.me',
+              dkim_selector: 'mailchannels',
+              dkim_private_key: DKIM_PRIVATE_KEY,
+            },
+          ],
+          from: {
+            email: From_email,
+            name: From_name,
+          },
+          subject: Subject,
+          content: [
+            {
+              type: 'text/html',
+              value: crowdfundingEmailHTML,
+            },
+          ],
+        }),
       },
-      subject: Subject,
-      content: [
-        {
-          type: 'text/html',
-          value: crowdfundingEmailHTML,
-        },
-      ],
-    }),
-  })
+    )
 
-  await fetch(send_request).then(res => res.json())
+    await fetch(send_request).then(res => res.json())
 
-  return reply(JSON.stringify({ sent: true }), 200)
+    return reply(JSON.stringify({ sent: true }), 200)
+  } else {
+    return reply(JSON.stringify({ sent: false }), 200)
+  }
 }
 
 const handlePOST = async request => {

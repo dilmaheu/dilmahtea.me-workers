@@ -61,11 +61,17 @@ async function handlePOST(request) {
     )
   }
 
-  const paymentIntent = event.data.object
+  const paymentIntent = event.data.object,
+    { id: paymentIntentId } = paymentIntent,
+    NAMESPACES = [ECOMMERCE_PAYMENTS, CROWDFUNDING]
 
-  const { id: paymentIntentId } = paymentIntent
+  let storedValue
 
-  const storedValue = await CROWDFUNDING.get(paymentIntentId)
+  for (const NAMESPACE of NAMESPACES) {
+    storedValue = await NAMESPACE.get(paymentIntentId)
+
+    if (storedValue) break
+  }
 
   // send thank you email if payment is successful
   if (event.type === 'payment_intent.succeeded') {
