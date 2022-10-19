@@ -23,8 +23,7 @@ const handlePOST = async request => {
     perk,
     locale,
     price,
-    origin_url,
-    plan_name,
+    product_name,
     payment_status,
   } = await request.json()
 

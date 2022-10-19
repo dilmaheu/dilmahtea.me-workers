@@ -28,8 +28,7 @@ const sendEmail = async body => {
     perk,
     locale,
     price,
-    origin_url,
-    plan_name,
+    product_name,
   } = body
 
   const crowdfundingEmailData = JSON.parse(
