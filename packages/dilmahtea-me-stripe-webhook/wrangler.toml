@@ -41,10 +41,10 @@ id = "c971dd86589647799fb64dde47563fac"
 
 [[env.development.services]]
 binding = "EMAIL"
-service = "dilmahtea-me-email"
+service = "dilmahtea-me-email-dev"
 environment = "production"
 
 [[env.development.services]]
 binding = "BASEROW"
-service = "dilmahtea-me-baserow"
+service = "dilmahtea-me-baserow-dev"
 environment = "production"
