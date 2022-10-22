@@ -103,6 +103,7 @@ async function handlePOST(request) {
   const baserowRequestBody = JSON.stringify({
     ...JSON.parse(storedValue),
     payment_status,
+    payment_intent_id: paymentIntentId,
   })
 
   const baserowRequest = createRequest(

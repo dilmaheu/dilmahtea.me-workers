@@ -28,6 +28,7 @@ const handlePOST = async request => {
     payment_type,
     locale,
     payment_status,
+    payment_intent_id,
   } = await request.json()
 
   const databaseTableID =
@@ -46,6 +47,8 @@ const handlePOST = async request => {
     City: city,
     Street: street,
     'Postal Code': postal_code,
+    'Payment Intent ID': payment_intent_id,
+    'Order Description': product_desc,
     'Shipping Method': shipping_method,
     Perk: perk,
     'Amount Paid': price,
@@ -64,12 +67,6 @@ const handlePOST = async request => {
       },
     },
   ).then(res => res.json())
-
-  console.log({
-    databaseTableID,
-    createRecordRequestBody,
-    recordCreatedResponse,
-  })
 
   return new Response(
     JSON.stringify({ recordCreated: true, response: recordCreatedResponse }),
