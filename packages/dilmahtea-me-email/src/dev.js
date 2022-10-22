@@ -34,63 +34,66 @@ const sendEmail = async body => {
     locale,
   } = body
 
-  if (payment_type === 'crowdfunding') {
-    const crowdfundingEmailData = JSON.parse(
-      await CROWDFUNDING_EMAIL.get('Crowdfunding Email'),
+  const mailName =
+    payment_type === 'crowdfunding'
+      ? 'Crowdfunding Email'
+      : 'Ecommerce Payment Confirmation Email'
+
+  const mailData = JSON.parse(await MAILS.get(mailName))
+
+  if (!mailData) {
+    return reply(
+      JSON.stringify({ message: 'Mail data not found in MAILS KV namespace' }),
+      400,
     )
-
-    const crowdfundingEmail = crowdfundingEmailData[locale]
-
-    const { Subject, From_name, From_email, htmlEmail } = crowdfundingEmail
-
-    const crowdfundingEmailHTML = htmlEmail
-      .replaceAll('${first_name}', first_name)
-      .replaceAll('${perk}', perk)
-      .replaceAll('${price}', price)
-      .replaceAll('${street}', street)
-      .replaceAll('${postal_code}', postal_code)
-      .replaceAll('${city}', city)
-      .replaceAll('${country}', country)
-
-    const name = `${first_name} ${last_name}`
-
-    const send_request = new Request(
-      'https://api.mailchannels.net/tx/v1/send',
-      {
-        method: 'POST',
-        headers: {
-          'content-type': 'application/json',
-        },
-        body: JSON.stringify({
-          personalizations: [
-            {
-              to: [{ email, name }],
-              dkim_domain: 'dilmahtea.me',
-              dkim_selector: 'mailchannels',
-              dkim_private_key: DKIM_PRIVATE_KEY,
-            },
-          ],
-          from: {
-            email: From_email,
-            name: From_name,
-          },
-          subject: Subject,
-          content: [
-            {
-              type: 'text/html',
-              value: crowdfundingEmailHTML,
-            },
-          ],
-        }),
-      },
-    )
-
-    await fetch(send_request).then(res => res.json())
-
-    return reply(JSON.stringify({ sent: true }), 200)
-  } else {
-    return reply(JSON.stringify({ sent: false }), 200)
   }
+
+  const mail = mailData[locale]
+
+  const { Subject, From_name, From_email, htmlEmail } = mail
+
+  const crowdfundingEmailHTML = htmlEmail
+    .replaceAll('${first_name}', first_name)
+    .replaceAll('${perk}', perk)
+    .replaceAll('${price}', price)
+    .replaceAll('${street}', street)
+    .replaceAll('${postal_code}', postal_code)
+    .replaceAll('${city}', city)
+    .replaceAll('${country}', country)
+
+  const name = `${first_name} ${last_name}`
+
+  const send_request = new Request('https://api.mailchannels.net/tx/v1/send', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({
+      personalizations: [
+        {
+          to: [{ email, name }],
+          dkim_domain: 'dilmahtea.me',
+          dkim_selector: 'mailchannels',
+          dkim_private_key: DKIM_PRIVATE_KEY,
+        },
+      ],
+      from: {
+        email: From_email,
+        name: From_name,
+      },
+      subject: Subject,
+      content: [
+        {
+          type: 'text/html',
+          value: crowdfundingEmailHTML,
+        },
+      ],
+    }),
+  })
+
+  await fetch(send_request).then(res => res.json())
+
+  return reply(JSON.stringify({ sent: true }), 200)
 }
 
 const handlePOST = async request => {

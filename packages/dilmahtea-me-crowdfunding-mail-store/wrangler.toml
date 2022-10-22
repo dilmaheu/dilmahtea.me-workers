@@ -16,6 +16,4 @@ main = "./src/dev.js"
 routes = [
     { pattern = "dev.crowdfunding-mail-store.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
-kv_namespaces = [
-    { binding = "CROWDFUNDING_EMAIL", id = "083cbf62d5ac4918923b7f30d8f40b31" }
-]
+kv_namespaces = [{ binding = "MAILS", id = "51f5be62eaf64aa8a9c69bccb81d396e" }]

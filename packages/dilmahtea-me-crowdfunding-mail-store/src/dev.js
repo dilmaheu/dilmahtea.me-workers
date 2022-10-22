@@ -345,7 +345,7 @@ async function handlePOST(request) {
         nl: dutchCrowdfundingEmail,
       }
 
-      await CROWDFUNDING_EMAIL.put(
+      await MAILS.put(
         'Crowdfunding Email',
         JSON.stringify(crowdfundingEmailData),
       )
