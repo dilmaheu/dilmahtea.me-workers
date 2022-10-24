@@ -15,7 +15,7 @@ const reply = (message, status) => {
   return new Response(message, { status, headers })
 }
 
-const getHTMLEmail = (
+const getHTMLEmail = ({
   Overview,
   Total,
   Invoice,
@@ -25,7 +25,7 @@ const getHTMLEmail = (
   preheaderText,
   bodyText,
   footerText,
-) => `
+}) => `
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -217,41 +217,93 @@ async function handlePOST(request) {
   const { event, model } = await request.json()
 
   if (['entry.update', 'entry.publish'].includes(event)) {
-    if (['crowdfunding-email', 'recurring-element'].includes(model)) {
+    if (
+      [
+        'ecommerce-payment-confirmation-mail',
+        'crowdfunding-email',
+        'recurring-element',
+      ].includes(model)
+    ) {
       const query = `
         {
-          englishCrowdfundingEmail: crowdfundingEmail(locale: "en") {
-            data {
-              attributes {
-                From_name
-                From_email
-                Subject
-                Preview_text
-                Preheader_text
-                Body
-                Overview
-                Total
-                Invoice
-                VAT
-              }
-            }
+          ${
+            model === 'ecommerce-payment-confirmation-mail'
+              ? `ecommercePaymentConfirmationMail {
+                  data {
+                    attributes {
+                      locale
+                      From_name
+                      From_email
+                      Subject
+                      Preview_text
+                      Preheader_text
+                      Body
+                      Overview
+                      Total
+                      Invoice
+                      VAT
+                      localizations {
+                        data {
+                          attributes {
+                            locale
+                            From_name
+                            From_email
+                            Subject
+                            Preview_text
+                            Preheader_text
+                            Body
+                            Overview
+                            Total
+                            Invoice
+                            VAT
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              `
+              : ''
           }
 
-          dutchCrowdfundingEmail: crowdfundingEmail(locale: "nl-NL") {
-            data {
-              attributes {
-                From_name
-                From_email
-                Subject
-                Preview_text
-                Preheader_text
-                Body
-                Overview
-                Total
-                Invoice
-                VAT
-              }
-            }
+          ${
+            model === 'crowdfunding-email'
+              ? `crowdfundingEmail {
+                  data {
+                    attributes {
+                      locale
+                      From_name
+                      From_email
+                      Subject
+                      Preview_text
+                      Preheader_text
+                      Body
+                      Overview
+                      Total
+                      Invoice
+                      VAT
+                      localizations {
+                        data {
+                          attributes {
+                            locale
+                            From_name
+                            From_email
+                            Subject
+                            Preview_text
+                            Preheader_text
+                            Body
+                            Overview
+                            Total
+                            Invoice
+                            VAT
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              `
+              : ''
           }
 
           recurringElement {
@@ -276,23 +328,35 @@ async function handlePOST(request) {
         }),
       })
 
-      const { data } = await response.json()
-
       const {
-        Footer_text,
-        Company_address,
-      } = data.recurringElement.data.attributes
+        data: {
+          ecommercePaymentConfirmationMail,
+          crowdfundingEmail,
+          recurringElement,
+        },
+      } = await response.json()
+
+      const { Footer_text, Company_address } = recurringElement.data.attributes
 
       const footerText = Footer_text.replaceAll(
         '<current_year>',
         new Date().getFullYear(),
       )
 
-      const [englishCrowdfundingEmail, dutchCrowdfundingEmail] = [
-        data.englishCrowdfundingEmail.data.attributes,
-        data.dutchCrowdfundingEmail.data.attributes,
-      ].map(mail => {
+      const mails = [
+        crowdfundingEmail?.data,
+        ecommercePaymentConfirmationMail?.data,
+      ]
+        .concat(crowdfundingEmail?.data.attributes.localizations.data)
+        .concat(
+          ecommercePaymentConfirmationMail?.data.attributes.localizations.data,
+        )
+        .filter(Boolean)
+        .map(({ attributes }) => attributes)
+
+      const htmlMailsEntries = mails.map(mail => {
         const {
+          locale,
           From_name,
           From_email,
           Subject,
@@ -312,15 +376,15 @@ async function handlePOST(request) {
             .replaceAll(
               '<from_email>',
               `
-            <a
-              href="mailto:${From_email}"
-              style="font-style: italic;display: inline;border-bottom: 1px solid #4e878a;text-decoration: none;color: #4e878a;"
-              >${From_email}</a
-            >
-          `,
+                <a
+                  href="mailto:${From_email}"
+                  style="font-style: italic;display: inline;border-bottom: 1px solid #4e878a;text-decoration: none;color: #4e878a;"
+                  >${From_email}</a
+                >
+              `,
             )
 
-        const htmlEmail = getHTMLEmail(
+        const htmlEmail = getHTMLEmail({
           Overview,
           Total,
           Invoice,
@@ -330,28 +394,30 @@ async function handlePOST(request) {
           preheaderText,
           bodyText,
           footerText,
-        )
+        })
 
-        return {
+        const mailData = {
           Subject,
           From_name,
           From_email,
           htmlEmail,
         }
+
+        return [locale.substring(0, 2), mailData]
       })
 
-      const crowdfundingEmailData = {
-        en: englishCrowdfundingEmail,
-        nl: dutchCrowdfundingEmail,
-      }
+      const htmlMails = Object.fromEntries(htmlMailsEntries),
+        mailKey = model
+          .split('-')
+          .map(string => string[0].toUpperCase() + string.slice(1))
+          .join(' ')
 
-      await MAILS.put(
-        'Crowdfunding Email',
-        JSON.stringify(crowdfundingEmailData),
-      )
+      await MAILS.put(mailKey, JSON.stringify(htmlMails))
 
       return reply(
-        JSON.stringify({ message: 'Crowdfunding Email Saved to KV Namespace' }),
+        JSON.stringify({
+          message: `${mailKey} Saved to 'Mails' KV Namespace`,
+        }),
         200,
       )
     }

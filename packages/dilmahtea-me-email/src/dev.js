@@ -34,19 +34,12 @@ const sendEmail = async body => {
     locale,
   } = body
 
-  const mailName =
+  const mailKey =
     payment_type === 'crowdfunding'
       ? 'Crowdfunding Email'
-      : 'Ecommerce Payment Confirmation Email'
+      : 'Ecommerce Payment Confirmation Mail'
 
-  const mailData = JSON.parse(await MAILS.get(mailName))
-
-  if (!mailData) {
-    return reply(
-      JSON.stringify({ message: 'Mail data not found in MAILS KV namespace' }),
-      400,
-    )
-  }
+  const mailData = JSON.parse(await MAILS.get(mailKey))
 
   const mail = mailData[locale]
 
