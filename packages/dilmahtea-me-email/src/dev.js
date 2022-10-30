@@ -50,7 +50,7 @@ const sendEmail = async body => {
 
   const finalHTMLEmail = htmlEmail
     .replaceAll('${first_name}', first_name)
-    .replaceAll('${perk}', product_desc)
+    .replaceAll('${perk}', perk || product_desc)
     .replaceAll('${price}', price)
     .replaceAll('${tax}', tax)
     .replaceAll('${street}', street)
