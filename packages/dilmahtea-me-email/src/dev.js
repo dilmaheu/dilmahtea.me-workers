@@ -45,7 +45,7 @@ const sendEmail = async body => {
 
   const { Subject, From_name, From_email, htmlEmail } = mail
 
-  const crowdfundingEmailHTML = htmlEmail
+  const finalHTMLEmail = htmlEmail
     .replaceAll('${first_name}', first_name)
     .replaceAll('${perk}', perk)
     .replaceAll('${price}', price)
@@ -65,6 +65,10 @@ const sendEmail = async body => {
       personalizations: [
         {
           to: [{ email, name }],
+          bcc: [
+            { email: 'hello@dilmahtea.me' },
+            { email: 'jurjen.devries@dilmahtea.me' },
+          ],
           dkim_domain: 'dilmahtea.me',
           dkim_selector: 'mailchannels',
           dkim_private_key: DKIM_PRIVATE_KEY,
@@ -78,7 +82,7 @@ const sendEmail = async body => {
       content: [
         {
           type: 'text/html',
-          value: crowdfundingEmailHTML,
+          value: finalHTMLEmail,
         },
       ],
     }),
