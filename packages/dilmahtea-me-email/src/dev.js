@@ -60,6 +60,14 @@ const sendEmail = async body => {
 
   const name = `${first_name} ${last_name}`
 
+  const BCCRecipients =
+    payment_type === 'ecommerce'
+      ? [
+          { email: 'hello@dilmahtea.me' },
+          { email: 'jurjen.devries@dilmahtea.me' },
+        ]
+      : []
+
   const send_request = new Request('https://api.mailchannels.net/tx/v1/send', {
     method: 'POST',
     headers: {
@@ -69,10 +77,7 @@ const sendEmail = async body => {
       personalizations: [
         {
           to: [{ email, name }],
-          bcc: [
-            { email: 'hello@dilmahtea.me' },
-            { email: 'jurjen.devries@dilmahtea.me' },
-          ],
+          bcc: BCCRecipients,
           dkim_domain: 'dilmahtea.me',
           dkim_selector: 'mailchannels',
           dkim_private_key: DKIM_PRIVATE_KEY,
