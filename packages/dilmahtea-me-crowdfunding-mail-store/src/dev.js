@@ -142,7 +142,7 @@ const getHTMLEmail = ({
                 </p>
                 <div style="padding-top: 15px">
                   <span style="float: left">${VAT}</span>
-                  <span style="float: right">&euro;0</span>
+                  <span style="float: right">&euro;\${tax}</span>
                 </div>
                 <div
                   style="
