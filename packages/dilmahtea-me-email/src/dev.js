@@ -25,11 +25,14 @@ const sendEmail = async body => {
     city,
     street,
     postal_code,
+    kindness_cause,
     shipping_method,
+    shipping_cost,
     perk,
     product_name,
     product_desc,
     price,
+    tax = 0,
     payment_type,
     locale,
   } = body
@@ -47,8 +50,9 @@ const sendEmail = async body => {
 
   const finalHTMLEmail = htmlEmail
     .replaceAll('${first_name}', first_name)
-    .replaceAll('${perk}', perk)
+    .replaceAll('${perk}', product_desc)
     .replaceAll('${price}', price)
+    .replaceAll('${tax}', tax)
     .replaceAll('${street}', street)
     .replaceAll('${postal_code}', postal_code)
     .replaceAll('${city}', city)
