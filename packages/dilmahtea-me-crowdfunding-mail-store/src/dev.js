@@ -25,7 +25,7 @@ const getHTMLEmail = ({
   preheaderText,
   bodyText,
   footerText,
-}) => `
+}) => html`
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -136,11 +136,27 @@ const getHTMLEmail = ({
                 <h2 style="font-weight: 600; line-height: 140%">
                   ${Overview}
                 </h2>
-                <p style="padding-top: 40px">
-                  <span style="float: left">\${perk}</span>
-                  <span style="float: right">&euro;\${price}</span>
+                <p 
+                  style="
+                    padding-top: 40px;
+                    gap: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-items: space-between;
+                  "
+                >
+                  <span>\${perk}</span>
+                  <span>&euro;\${price}</span=>
                 </p>
-                <div style="padding-top: 15px">
+                <div
+                  style="
+                    padding-top: 15px;
+                    gap: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-items: space-between;
+                  "
+                >
                   <span style="float: left">${VAT}</span>
                   <span style="float: right">&euro;\${tax}</span>
                 </div>
@@ -354,7 +370,7 @@ async function handlePOST(request) {
         .filter(Boolean)
         .map(({ attributes }) => attributes)
 
-      const htmlMailsEntries = mails.map(mail => {
+      const htmlMailsEntries = mails.map((mail) => {
         const {
           locale,
           From_name,
@@ -409,7 +425,7 @@ async function handlePOST(request) {
       const htmlMails = Object.fromEntries(htmlMailsEntries),
         mailKey = model
           .split('-')
-          .map(string => string[0].toUpperCase() + string.slice(1))
+          .map((string) => string[0].toUpperCase() + string.slice(1))
           .join(' ')
 
       await MAILS.put(mailKey, JSON.stringify(htmlMails))
@@ -453,7 +469,7 @@ function handleOPTIONS(request) {
   }
 }
 
-addEventListener('fetch', event => {
+addEventListener('fetch', (event) => {
   const { request } = event
 
   let { pathname } = new URL(request.url)
