@@ -13,6 +13,3 @@ main = "./src/dev.js"
 routes = [
     { pattern = "dev.crowdfunding-form.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
-kv_namespaces = [
-    { binding = "BASEROW_STATS", id = "abc253e545bf4c3ebdc1b8577e88967e" }
-]
