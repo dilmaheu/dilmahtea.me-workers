@@ -102,7 +102,7 @@ const handlePOST = async request => {
 
     const paymentIntentID = session.payment_intent
 
-    await CROWDFUNDING.put(paymentIntentID, formObject)
+    await CROWDFUNDINGS.put(paymentIntentID, formObject)
 
     return Response.redirect(session.url, 303)
   } catch (err) {

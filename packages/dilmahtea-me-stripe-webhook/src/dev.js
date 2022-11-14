@@ -63,7 +63,7 @@ async function handlePOST(request) {
 
   const paymentIntent = event.data.object,
     { id: paymentIntentId } = paymentIntent,
-    NAMESPACES = [ECOMMERCE_PAYMENTS, CROWDFUNDING]
+    NAMESPACES = [ECOMMERCE_PAYMENTS, CROWDFUNDINGS]
 
   let storedValue
 

@@ -109,7 +109,7 @@ const handlePOST = async request => {
 
     switch (payment_type) {
       case 'crowdfunding':
-        await CROWDFUNDING.put(paymentIntentID, formObject)
+        await CROWDFUNDINGS.put(paymentIntentID, formObject)
         break
 
       case 'ecommerce':

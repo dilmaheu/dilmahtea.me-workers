@@ -65,7 +65,7 @@ async function handlePOST(request) {
 
   const { id: paymentIntentId } = paymentIntent
 
-  const storedValue = await CROWDFUNDING.get(paymentIntentId)
+  const storedValue = await CROWDFUNDINGS.get(paymentIntentId)
 
   // send thank you email if payment is successful
   if (event.type === 'payment_intent.succeeded') {
