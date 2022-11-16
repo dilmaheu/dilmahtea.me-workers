@@ -3,7 +3,7 @@
  * @param {Request} request
  */
 
-const reply = (message, status) => {
+ const reply = (message, status) => {
   return new Response(message, { status, headers })
 }
 
@@ -25,31 +25,48 @@ const sendEmail = async body => {
     city,
     street,
     postal_code,
+    kindness_cause,
+    shipping_method,
+    shipping_cost,
     perk,
-    locale,
+    product_name,
+    product_desc,
     price,
-    origin_url,
-    plan_name,
+    tax = 0,
+    payment_type,
+    locale,
   } = body
 
-  const crowdfundingEmailData = JSON.parse(
-    await CROWDFUNDING_EMAIL.get('Crowdfunding Email'),
-  )
+  const mailKey =
+    payment_type === 'crowdfunding'
+      ? 'Crowdfunding Email'
+      : 'Ecommerce Payment Confirmation Mail'
 
-  const crowdfundingEmail = crowdfundingEmailData[locale]
+  const mailData = JSON.parse(await MAILS.get(mailKey))
 
-  const { Subject, From_name, From_email, htmlEmail } = crowdfundingEmail
+  const mail = mailData[locale]
 
-  const crowdfundingEmailHTML = htmlEmail
+  const { Subject, From_name, From_email, htmlEmail } = mail
+
+  const finalHTMLEmail = htmlEmail
     .replaceAll('${first_name}', first_name)
-    .replaceAll('${perk}', perk)
+    .replaceAll('${perk}', perk || product_desc)
     .replaceAll('${price}', price)
+    .replaceAll('${tax}', tax)
     .replaceAll('${street}', street)
     .replaceAll('${postal_code}', postal_code)
     .replaceAll('${city}', city)
     .replaceAll('${country}', country)
 
   const name = `${first_name} ${last_name}`
+
+  const BCCRecipients =
+    payment_type === 'ecommerce'
+      ? [
+          { email: 'hello@dilmahtea.me' },
+          { email: 'jurjen.devries@dilmahtea.me' },
+        ]
+      : []
 
   const send_request = new Request('https://api.mailchannels.net/tx/v1/send', {
     method: 'POST',
@@ -60,6 +77,7 @@ const sendEmail = async body => {
       personalizations: [
         {
           to: [{ email, name }],
+          bcc: BCCRecipients,
           dkim_domain: 'dilmahtea.me',
           dkim_selector: 'mailchannels',
           dkim_private_key: DKIM_PRIVATE_KEY,
@@ -73,7 +91,7 @@ const sendEmail = async body => {
       content: [
         {
           type: 'text/html',
-          value: crowdfundingEmailHTML,
+          value: finalHTMLEmail,
         },
       ],
     }),

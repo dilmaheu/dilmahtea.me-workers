@@ -20,13 +20,26 @@ const handlePOST = async request => {
     city,
     street,
     postal_code,
+    kindness_cause,
+    shipping_method,
+    shipping_cost,
     perk,
-    locale,
+    product_name,
+    product_desc,
     price,
-    origin_url,
-    plan_name,
+    tax,
+    payment_type,
+    locale,
     payment_status,
+    payment_intent_id,
   } = await request.json()
+
+  const databaseTableID =
+    payment_type === 'crowdfunding'
+      ? 67746
+      : payment_type === 'ecommerce'
+      ? 108632
+      : null
 
   const createRecordRequestBody = {
     'First Name': first_name,
@@ -37,14 +50,20 @@ const handlePOST = async request => {
     City: city,
     Street: street,
     'Postal Code': postal_code,
+    'Payment Intent ID': payment_intent_id,
+    'Order Description': product_desc,
+    'Cup of Kindness': kindness_cause,
+    'Shipping Method': shipping_method,
+    'Shipping Cost': shipping_cost,
     Perk: perk,
     'Amount Paid': price,
+    'Total Tax': tax,
     Locale: locale,
     'Payment Status': payment_status,
   }
 
   const recordCreatedResponse = await fetch(
-    `https://api.baserow.io/api/database/rows/table/67746/?user_field_names=true`,
+    `https://api.baserow.io/api/database/rows/table/${databaseTableID}/?user_field_names=true`,
     {
       method: 'POST',
       body: JSON.stringify(createRecordRequestBody),

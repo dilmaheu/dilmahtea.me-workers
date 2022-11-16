@@ -61,17 +61,23 @@ async function handlePOST(request) {
     )
   }
 
-  const paymentIntent = event.data.object
+  const paymentIntent = event.data.object,
+    { id: paymentIntentId } = paymentIntent,
+    NAMESPACES = [ECOMMERCE_PAYMENTS, CROWDFUNDINGS]
 
-  const { id: paymentIntentId } = paymentIntent
+  let storedValue
 
-  const storedValue = await CROWDFUNDINGS.get(paymentIntentId)
+  for (const NAMESPACE of NAMESPACES) {
+    storedValue = await NAMESPACE.get(paymentIntentId)
+
+    if (storedValue) break
+  }
 
   // send thank you email if payment is successful
   if (event.type === 'payment_intent.succeeded') {
     if (event.type == 'payment_intent.succeeded' && storedValue) {
       const emailRequest = createRequest(
-        'https://crowdfunding-mail.dilmah.scripts.dilmahtea.me',
+        'https://dev.crowdfunding-mail.dilmah.scripts.dilmahtea.me',
         storedValue,
       )
 
@@ -97,10 +103,11 @@ async function handlePOST(request) {
   const baserowRequestBody = JSON.stringify({
     ...JSON.parse(storedValue),
     payment_status,
+    payment_intent_id: paymentIntentId,
   })
 
   const baserowRequest = createRequest(
-    'https://crowdfunding-form.scripts.dilmahtea.me',
+    'https://dev.crowdfunding-form.scripts.dilmahtea.me',
     baserowRequestBody,
   )
 

@@ -30,11 +30,18 @@ const handlePOST = async request => {
     city,
     street,
     postal_code,
+    kindness_cause,
+    shipping_method,
+    shipping_cost,
     perk,
-    locale,
+    product_name,
+    product_desc,
     price,
+    tax,
+    payment_type,
+    locale,
     origin_url,
-    plan_name,
+    success_url,
   } = Object.fromEntries(body)
 
   const formObject = JSON.stringify({
@@ -46,19 +53,17 @@ const handlePOST = async request => {
     city,
     street,
     postal_code,
+    kindness_cause,
+    shipping_method,
+    shipping_cost,
     perk,
-    locale,
+    product_name,
+    product_desc,
     price,
-    origin_url,
-    plan_name,
+    tax,
+    payment_type,
+    locale,
   })
-
-  const { origin: requestOrigin } = new URL(origin_url)
-
-  const success_url =
-    requestOrigin +
-    (locale == 'en' ? '' : `/${locale}`) +
-    '/crowdfunding-confirmation'
 
   const searchParams = new URLSearchParams()
 
@@ -71,9 +76,8 @@ const handlePOST = async request => {
   searchParams.set('street', street)
   searchParams.set('postal_code', postal_code)
 
-  const queryString = searchParams.toString()
-
-  const cancel_url = `${origin_url}?${queryString}`
+  const queryString = searchParams.toString(),
+    cancel_url = origin_url + '?' + queryString
 
   try {
     // Create new Checkout Session for the order.
@@ -91,7 +95,8 @@ const handlePOST = async request => {
             currency: 'eur',
             unit_amount: price * 100,
             product_data: {
-              name: `${perk} Plan`,
+              name: product_name,
+              description: product_desc,
             },
           },
         },
@@ -102,7 +107,15 @@ const handlePOST = async request => {
 
     const paymentIntentID = session.payment_intent
 
-    await CROWDFUNDINGS.put(paymentIntentID, formObject)
+    switch (payment_type) {
+      case 'crowdfunding':
+        await CROWDFUNDINGS.put(paymentIntentID, formObject)
+        break
+
+      case 'ecommerce':
+        await ECOMMERCE_PAYMENTS.put(paymentIntentID, formObject)
+        break
+    }
 
     return Response.redirect(session.url, 303)
   } catch (err) {
