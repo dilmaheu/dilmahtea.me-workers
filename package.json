@@ -16,8 +16,5 @@
   "bugs": {
     "url": "https://github.com/dilmaheu/dilmahtea.me-workers/issues"
   },
-  "homepage": "https://github.com/dilmaheu/dilmahtea.me-workers#readme",
-  "devDependencies": {
-    "lerna": "^5.1.0"
-  }
+  "homepage": "https://github.com/dilmaheu/dilmahtea.me-workers#readme"
 }
