@@ -93,7 +93,7 @@ const handlePOST = async request => {
           quantity: 1,
           price_data: {
             currency: 'eur',
-            unit_amount: price * 100,
+            unit_amount: Math.round(price * 100),
             product_data: {
               name: product_name,
               description: product_desc,
