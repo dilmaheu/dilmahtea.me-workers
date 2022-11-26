@@ -119,8 +119,7 @@ const handlePOST = async request => {
 
     return Response.redirect(session.url, 303)
   } catch (err) {
-    console.log(err.message)
-    return reply('Error creating session', 500)
+    return reply(JSON.stringify(err), 500)
   }
 }
 
