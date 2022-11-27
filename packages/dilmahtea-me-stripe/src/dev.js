@@ -19,7 +19,8 @@ const reply = (message, status) => {
 }
 
 const handlePOST = async request => {
-  const body = await request.formData()
+  const body = await request.formData(),
+    request_headers = Object.fromEntries(request.headers)
 
   const {
     first_name,
@@ -36,6 +37,7 @@ const handlePOST = async request => {
     perk,
     product_name,
     product_desc,
+    cart,
     price,
     tax,
     payment_type,
@@ -59,10 +61,13 @@ const handlePOST = async request => {
     perk,
     product_name,
     product_desc,
+    cart,
     price,
     tax,
     payment_type,
     locale,
+    origin_url,
+    request_headers,
   })
 
   const searchParams = new URLSearchParams()

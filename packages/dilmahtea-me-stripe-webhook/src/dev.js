@@ -65,27 +65,17 @@ async function handlePOST(request) {
     { id: paymentIntentId } = paymentIntent,
     NAMESPACES = [ECOMMERCE_PAYMENTS, CROWDFUNDINGS]
 
-  let storedValue
+  let paymentIntentData
 
   for (const NAMESPACE of NAMESPACES) {
-    storedValue = await NAMESPACE.get(paymentIntentId)
+    paymentIntentData = await NAMESPACE.get(paymentIntentId)
 
-    if (storedValue) break
+    if (paymentIntentData) break
   }
 
-  // send thank you email if payment is successful
-  if (event.type === 'payment_intent.succeeded') {
-    if (event.type == 'payment_intent.succeeded' && storedValue) {
-      const emailRequest = createRequest(
-        'https://dev.crowdfunding-mail.dilmah.scripts.dilmahtea.me',
-        storedValue,
-      )
+  const parsedPaymentIntentData = JSON.parse(paymentIntentData),
+    { payment_type, origin_url } = parsedPaymentIntentData
 
-      await EMAIL.fetch(emailRequest)
-    }
-  }
-
-  // add Baserow record for the event
   let payment_status
 
   switch (event.type) {
@@ -100,8 +90,55 @@ async function handlePOST(request) {
       break
   }
 
+  const promises = []
+
+  // send thank you email if payment is successful
+  if (payment_status === 'paid' && paymentIntentData) {
+    const emailRequest = createRequest(
+      'https://dev.crowdfunding-mail.dilmah.scripts.dilmahtea.me',
+      paymentIntentData,
+    )
+
+    promises.push(EMAIL.fetch(emailRequest))
+
+    const { hostname: domain } = new URL(origin_url)
+
+    if (
+      /* domain === 'dilmahtea.me' && */
+      payment_type === 'ecommerce'
+    ) {
+      const { cart, request_headers } = parsedPaymentIntentData,
+        purchasedProducts = Object.values(JSON.parse(cart)),
+        purchaseEventRequestHeaders = new Headers(request_headers)
+
+      purchaseEventRequestHeaders.set('Content-Type', 'application/json')
+
+      purchasedProducts.forEach(product => {
+        promises.push(
+          fetch('https://plausible.io/api/event', {
+            method: 'POST',
+            headers: Object.fromEntries(purchaseEventRequestHeaders),
+            body: JSON.stringify({
+              name: 'Purchase',
+              url: origin_url,
+              domain: 'dilmahtea.me',
+              props: {
+                SKU: product.sku,
+                Title: JSON.parse(product.names).en,
+                Currency: 'EUR',
+                Price: product.price,
+                Quantity: product.quantity,
+                Category: 'Tea',
+              },
+            }),
+          }),
+        )
+      })
+    }
+  }
+
   const baserowRequestBody = JSON.stringify({
-    ...JSON.parse(storedValue),
+    ...parsedPaymentIntentData,
     payment_status,
     payment_intent_id: paymentIntentId,
   })
@@ -111,7 +148,9 @@ async function handlePOST(request) {
     baserowRequestBody,
   )
 
-  await BASEROW.fetch(baserowRequest)
+  promises.push(BASEROW.fetch(baserowRequest))
+
+  await Promise.all(promises)
 
   return reply(JSON.stringify({ received: true }), 200)
 }
