@@ -1,7 +1,7 @@
 name = "dilmahtea-me-stats"
 account_id = "f0f636c746c8673c3905e9104b385251"
 compatibility_date = "2022-06-01"
-main = "./src/prod.js"
+main = "./worker.js"
 workers_dev = false
 routes = [
     { pattern = "*dilmahtea.me/rpcq/*", zone_name = "dilmahtea.me" }
