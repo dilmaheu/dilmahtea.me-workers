@@ -103,10 +103,7 @@ async function handlePOST(request) {
 
     const { hostname: domain } = new URL(origin_url)
 
-    if (
-      /* domain === 'dilmahtea.me' && */
-      payment_type === 'ecommerce'
-    ) {
+    if (domain === 'dilmahtea.me' && payment_type === 'ecommerce') {
       const { cart, request_headers } = parsedPaymentIntentData,
         purchasedProducts = Object.values(JSON.parse(cart)),
         purchaseEventRequestHeaders = new Headers(request_headers)
