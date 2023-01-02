@@ -3,7 +3,7 @@
  * @param {Request} request
  */
 
- const headers = new Headers({
+const headers = new Headers({
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': '*',

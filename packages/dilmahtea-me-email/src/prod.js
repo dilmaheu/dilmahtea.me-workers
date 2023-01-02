@@ -3,7 +3,7 @@
  * @param {Request} request
  */
 
- const reply = (message, status) => {
+const reply = (message, status) => {
   return new Response(message, { status, headers })
 }
 
