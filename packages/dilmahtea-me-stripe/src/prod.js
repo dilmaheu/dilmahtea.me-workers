@@ -19,7 +19,8 @@ const reply = (message, status) => {
 }
 
 const handlePOST = async request => {
-  const body = await request.formData()
+  const body = await request.formData(),
+    request_headers = Object.fromEntries(request.headers)
 
   const {
     first_name,
@@ -36,6 +37,7 @@ const handlePOST = async request => {
     perk,
     product_name,
     product_desc,
+    cart,
     price,
     tax,
     payment_type,
@@ -59,10 +61,13 @@ const handlePOST = async request => {
     perk,
     product_name,
     product_desc,
+    cart,
     price,
     tax,
     payment_type,
     locale,
+    origin_url,
+    request_headers,
   })
 
   const searchParams = new URLSearchParams()
@@ -93,7 +98,7 @@ const handlePOST = async request => {
           quantity: 1,
           price_data: {
             currency: 'eur',
-            unit_amount: price * 100,
+            unit_amount: Math.round(price * 100),
             product_data: {
               name: product_name,
               description: product_desc,
@@ -119,8 +124,7 @@ const handlePOST = async request => {
 
     return Response.redirect(session.url, 303)
   } catch (err) {
-    console.log(err.message)
-    return reply('Error creating session', 500)
+    return reply(JSON.stringify(err), 500)
   }
 }
 
