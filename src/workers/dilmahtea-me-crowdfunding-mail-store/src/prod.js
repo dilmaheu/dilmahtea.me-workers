@@ -25,7 +25,7 @@ const getHTMLEmail = ({
   preheaderText,
   bodyText,
   footerText,
-}) => html`
+}) => `
   <!DOCTYPE html>
   <html lang="en">
     <head>

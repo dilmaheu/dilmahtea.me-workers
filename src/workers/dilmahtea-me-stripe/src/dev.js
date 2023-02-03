@@ -1,10 +1,10 @@
-import Stripe from 'stripe'
+import Stripe from 'stripe';
 
 const stripe = new Stripe(STRIPE_DEVELOPMENT_SECRET_KEY_CODE, {
   // Cloudflare Workers use the Fetch API for their API requests.
   httpClient: Stripe.createFetchHttpClient(),
   apiVersion: '2020-08-27',
-})
+});
 
 const headers = new Headers({
   'Content-Type': 'application/json',
@@ -12,15 +12,24 @@ const headers = new Headers({
   'Access-Control-Allow-Headers': '*',
   'Access-Control-Allow-Methods': 'OPTIONS, POST',
   'Access-Control-Max-Age': '-1',
-})
+});
 
 const reply = (message, status) => {
-  return new Response(message, { status, headers })
-}
+  return new Response(message, { status, headers });
+};
 
 const handlePOST = async request => {
   const body = await request.formData(),
-    request_headers = Object.fromEntries(request.headers)
+    data = Object.fromEntries(body);
+
+  const { getValidatedData } = await import('../../utils/getValidatedData.js'),
+    validatedData = getValidatedData(data);
+
+  if (validatedData.errors) {
+    return reply(JSON.stringify(validatedData), 400);
+  }
+
+  const request_headers = Object.fromEntries(request.headers);
 
   const {
     first_name,
@@ -44,45 +53,23 @@ const handlePOST = async request => {
     locale,
     origin_url,
     success_url,
-  } = Object.fromEntries(body)
+  } = validatedData;
 
-  const formObject = JSON.stringify({
-    first_name,
-    last_name,
-    email,
-    favorite_tea,
-    country,
-    city,
-    street,
-    postal_code,
-    kindness_cause,
-    shipping_method,
-    shipping_cost,
-    perk,
-    product_name,
-    product_desc,
-    cart,
-    price,
-    tax,
-    payment_type,
-    locale,
-    origin_url,
-    request_headers,
-  })
+  const paymentData = JSON.stringify({ ...validatedData, request_headers });
 
-  const searchParams = new URLSearchParams()
+  const searchParams = new URLSearchParams();
 
-  searchParams.set('first_name', first_name)
-  searchParams.set('last_name', last_name)
-  searchParams.set('email', email)
-  searchParams.set('favorite_tea', favorite_tea)
-  searchParams.set('country', country)
-  searchParams.set('city', city)
-  searchParams.set('street', street)
-  searchParams.set('postal_code', postal_code)
+  searchParams.set('first_name', first_name);
+  searchParams.set('last_name', last_name);
+  searchParams.set('email', email);
+  searchParams.set('favorite_tea', favorite_tea);
+  searchParams.set('country', country);
+  searchParams.set('city', city);
+  searchParams.set('street', street);
+  searchParams.set('postal_code', postal_code);
 
   const queryString = searchParams.toString(),
-    cancel_url = origin_url + '?' + queryString
+    cancel_url = origin_url + '?' + queryString;
 
   try {
     // Create new Checkout Session for the order.
@@ -108,25 +95,25 @@ const handlePOST = async request => {
       ],
       success_url,
       cancel_url,
-    })
+    });
 
-    const paymentIntentID = session.payment_intent
+    const paymentIntentID = session.payment_intent;
 
     switch (payment_type) {
       case 'crowdfunding':
-        await CROWDFUNDINGS.put(paymentIntentID, formObject)
-        break
+        await CROWDFUNDINGS.put(paymentIntentID, paymentData);
+        break;
 
       case 'ecommerce':
-        await ECOMMERCE_PAYMENTS.put(paymentIntentID, formObject)
-        break
+        await ECOMMERCE_PAYMENTS.put(paymentIntentID, paymentData);
+        break;
     }
 
-    return Response.redirect(session.url, 303)
+    return Response.redirect(session.url, 303);
   } catch (err) {
-    return reply(JSON.stringify(err), 500)
+    return reply(JSON.stringify(err), 500);
   }
-}
+};
 
 const handleOPTIONS = request => {
   if (
@@ -137,32 +124,32 @@ const handleOPTIONS = request => {
     // Handle CORS pre-flight request.
     return new Response(null, {
       headers,
-    })
+    });
   } else {
     // Handle standard OPTIONS request.
     return new Response(null, {
       headers: {
         Allow: 'POST, OPTIONS',
       },
-    })
+    });
   }
-}
+};
 
 addEventListener('fetch', event => {
-  const { request } = event
+  const { request } = event;
 
-  let { pathname: urlPathname } = new URL(request.url)
+  let { pathname: urlPathname } = new URL(request.url);
 
   if (urlPathname === '/') {
     switch (request.method) {
       case 'POST':
-        return event.respondWith(handlePOST(request))
+        return event.respondWith(handlePOST(request));
       case 'OPTIONS':
-        return event.respondWith(handleOPTIONS(request))
+        return event.respondWith(handleOPTIONS(request));
     }
   }
 
   return event.respondWith(
     reply(JSON.stringify({ error: `Method or Path Not Allowed` }), 405),
-  )
-})
+  );
+});

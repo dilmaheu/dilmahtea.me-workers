@@ -11,6 +11,15 @@ const reply = (message, status) => {
 }
 
 const handlePOST = async request => {
+  const data = await request.json()
+
+  const { getValidatedData } = await import('../../utils/getValidatedData.js'),
+    validatedData = getValidatedData(data)
+
+  if (validatedData.errors) {
+    return reply(JSON.stringify(validatedData), 400)
+  }
+
   const {
     first_name,
     last_name,
@@ -26,13 +35,16 @@ const handlePOST = async request => {
     perk,
     product_name,
     product_desc,
+    cart,
     price,
     tax,
     payment_type,
     locale,
+    origin_url,
+    success_url,
     payment_status,
     payment_intent_id,
-  } = await request.json()
+  } = validatedData
 
   const databaseTableID =
     payment_type === 'crowdfunding'

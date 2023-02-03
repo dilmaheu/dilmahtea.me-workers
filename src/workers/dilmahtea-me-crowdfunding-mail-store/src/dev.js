@@ -25,7 +25,7 @@ const getHTMLEmail = ({
   preheaderText,
   bodyText,
   footerText,
-}) => html`
+}) => `
   <!DOCTYPE html>
   <html lang="en">
     <head>
@@ -370,7 +370,7 @@ async function handlePOST(request) {
         .filter(Boolean)
         .map(({ attributes }) => attributes)
 
-      const htmlMailsEntries = mails.map((mail) => {
+      const htmlMailsEntries = mails.map(mail => {
         const {
           locale,
           From_name,
@@ -425,7 +425,7 @@ async function handlePOST(request) {
       const htmlMails = Object.fromEntries(htmlMailsEntries),
         mailKey = model
           .split('-')
-          .map((string) => string[0].toUpperCase() + string.slice(1))
+          .map(string => string[0].toUpperCase() + string.slice(1))
           .join(' ')
 
       await MAILS.put(mailKey, JSON.stringify(htmlMails))
@@ -469,7 +469,7 @@ function handleOPTIONS(request) {
   }
 }
 
-addEventListener('fetch', (event) => {
+addEventListener('fetch', event => {
   const { request } = event
 
   let { pathname } = new URL(request.url)

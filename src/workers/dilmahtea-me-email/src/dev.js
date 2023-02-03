@@ -15,7 +15,7 @@ const headers = new Headers({
   'Access-Control-Max-Age': '-1',
 })
 
-const sendEmail = async body => {
+const sendEmail = async data => {
   const {
     first_name,
     last_name,
@@ -31,11 +31,14 @@ const sendEmail = async body => {
     perk,
     product_name,
     product_desc,
+    cart,
     price,
     tax = 0,
     payment_type,
     locale,
-  } = body
+    origin_url,
+    success_url,
+  } = data
 
   const mailKey =
     payment_type === 'crowdfunding'
@@ -108,13 +111,21 @@ const handlePOST = async request => {
   if (contentType.includes('application/json')) {
     const requestBody = await request.json()
 
+    const { getValidatedData } = await import(
+        '../../utils/getValidatedData.js'
+      ),
+      validatedData = getValidatedData(requestBody)
+
+    if (validatedData.errors) {
+      return reply(JSON.stringify(validatedData), 400)
+    }
+
     if (
-      requestBody['first_name'] &&
-      requestBody['last_name'] &&
-      requestBody['email'] &&
-      requestBody['first_name']
+      validatedData['first_name'] &&
+      validatedData['last_name'] &&
+      validatedData['email']
     ) {
-      return sendEmail(requestBody)
+      return sendEmail(validatedData)
     }
   }
 

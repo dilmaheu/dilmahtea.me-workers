@@ -27,73 +27,73 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "packages/dilmahtea-me-baserow"
+          workingDirectory: "src/workers/dilmahtea-me-baserow"
 
       - name: Publish Baserow Worker (Development)
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "packages/dilmahtea-me-baserow"
+          workingDirectory: "src/workers/dilmahtea-me-baserow"
           command: "publish --env development"
 
       - name: Publish Baserow Stats Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "packages/dilmahtea-me-baserow"
+          workingDirectory: "src/workers/dilmahtea-me-baserow"
 
       - name: Publish Baserow Stats Worker (Development)
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "packages/dilmahtea-me-baserow"
+          workingDirectory: "src/workers/dilmahtea-me-baserow"
           command: "publish --env development"
 
       - name: Publish Crowdfunding Mail Store Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "packages/dilmahtea-me-crowdfunding-mail-store"
+          workingDirectory: "src/workers/dilmahtea-me-crowdfunding-mail-store"
 
       - name: Publish Crowdfunding Mail Store Worker (Development)
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "packages/dilmahtea-me-baserow"
+          workingDirectory: "src/workers/dilmahtea-me-baserow"
           command: "publish --env development"
 
       - name: Publish Email Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "packages/dilmahtea-me-email"
+          workingDirectory: "src/workers/dilmahtea-me-email"
 
       - name: Publish Email Worker (Development)
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "packages/dilmahtea-me-email"
+          workingDirectory: "src/workers/dilmahtea-me-email"
           command: "publish --env development"
 
       - name: Publish Stats Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "packages/dilmahtea-me-stats"
+          workingDirectory: "src/workers/dilmahtea-me-stats"
 
       - name: Publish Stripe Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           preCommands: npm install
-          workingDirectory: "packages/dilmahtea-me-stripe"
+          workingDirectory: "src/workers/dilmahtea-me-stripe"
 
       - name: Publish Stripe Worker (Development)
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           preCommands: npm install
-          workingDirectory: "packages/dilmahtea-me-stripe"
+          workingDirectory: "src/workers/dilmahtea-me-stripe"
           command: "publish --env development"
 
       - name: Publish Stripe Webhook Worker
@@ -101,12 +101,12 @@ jobs:
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           preCommands: npm install
-          workingDirectory: "packages/dilmahtea-me-stripe-webhook"
+          workingDirectory: "src/workers/dilmahtea-me-stripe-webhook"
 
       - name: Publish Stripe Webhook Worker (Development)
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           preCommands: npm install
-          workingDirectory: "packages/dilmahtea-me-stripe-webhook"
+          workingDirectory: "src/workers/dilmahtea-me-stripe-webhook"
           command: "publish --env development"

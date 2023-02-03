@@ -2,7 +2,7 @@ name = "dilmahtea-me-crowdfunding-mail-store"
 account_id = "f0f636c746c8673c3905e9104b385251"
 compatibility_date = "2022-07-22"
 main = "./src/prod.js"
-workers_dev = false
+workers_dev = true
 routes = [
     { pattern = "crowdfunding-mail-store.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
