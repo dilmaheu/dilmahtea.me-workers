@@ -1,46 +1,12 @@
-import Validator from '@chantouchsek/validatorjs';
+import Validator from "@chantouchsek/validatorjs";
 
 const query = `
   {        
-    checkoutInformation {
-      data {
-        attributes {
-          countries
-        }
-      }
-    }
-
     crowdfundingPlans {
       data {
         attributes {
           Perk
           Price_EUR_excl_VAT
-        }
-      }
-    }
-
-    checkoutShipping {
-      data {
-        attributes {
-          shipping_methods
-        }
-      }
-    }
-
-    checkoutKindness {
-      data {
-        attributes {
-          Kindness_Causes {
-            cause
-          }
-        }
-      }
-    }
-
-    checkoutInformation {
-      data {
-        attributes {
-          countries
         }
       }
     }
@@ -81,29 +47,53 @@ const query = `
         }
       }
     }
+
+    countries {
+      data {
+        attributes {
+          name
+        }
+      }
+    }
+
+    kindnessCauses {
+      data {
+        attributes {
+          cause
+        }
+      }
+    }
+
+    shippingMethods {
+      data {
+        attributes {
+          method
+          cost
+        }
+      }
+    }
   }
 `;
 
 const response = await fetch(CMS_GRAPHQL_ENDPOINT, {
-  method: 'POST',
+  method: "POST",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     Authorization: `Bearer ${CMS_ACCESS_TOKEN}`,
   },
   body: JSON.stringify({ query }),
 });
 
+const responseData = await response.json();
+
 const {
   data: {
-    checkoutInformation: { data: checkoutInformation },
     crowdfundingPlans: { data: crowdfundingPlans },
-    checkoutShipping: { data: checkoutShipping },
-    checkoutKindness: { data: checkoutKindness },
     recurringElement: { data: recurringElement },
     i18NLocales: { data: i18NLocales },
     products: { data: productsData },
   },
-} = await response.json();
+} = responseData;
 
 const crowdfundingPerks = {};
 
@@ -111,24 +101,8 @@ crowdfundingPlans.forEach(({ attributes: { Perk, Price_EUR_excl_VAT } }) => {
   crowdfundingPerks[Perk] = Price_EUR_excl_VAT;
 });
 
-const countries = checkoutInformation.attributes.countries.split('\n');
-
-const shippingMethods = {};
-
-checkoutShipping.attributes.shipping_methods
-  .split('\n')
-  .forEach(methodDetails => {
-    const [method, cost] = methodDetails.split(' - ');
-
-    shippingMethods[method] = cost;
-  });
-
-const kindnessCauses = checkoutKindness.attributes.Kindness_Causes.map(
-  ({ cause }) => cause,
-);
-
 const locales = i18NLocales.map(({ attributes: { code } }) =>
-  code.substring(0, 2),
+  code.substring(0, 2)
 );
 
 const products = [];
@@ -141,7 +115,7 @@ productsData.forEach(({ attributes }) => {
   [{ attributes }, ...localizations.data].forEach(
     ({ attributes: { locale, Title } }) => {
       names[locale.substring(0, 2)] = Title;
-    },
+    }
   );
 
   const size = Weight_tea + Weight_tea_unit;
@@ -154,16 +128,31 @@ productsData.forEach(({ attributes }) => {
   };
 });
 
+const countries = responseData.data.countries.data.map(
+    ({ attributes: { name } }) => name
+  ),
+  kindnessCauses = responseData.data.kindnessCauses.data.map(
+    ({ attributes: { cause } }) => cause
+  );
+
+const shippingMethods = {};
+
+responseData.data.shippingMethods.data.forEach(
+  ({ attributes: { method, cost } }) => {
+    shippingMethods[method] = cost;
+  }
+);
+
 const companyName = recurringElement.attributes.Company_name;
 
-const paymentTypes = ['ecommerce', 'crowdfunding'];
+const paymentTypes = ["ecommerce", "crowdfunding"];
 
 export function getValidatedData(data) {
-  const isCrowdfundingPayment = data.payment_type === 'crowdfunding';
+  const isCrowdfundingPayment = data.payment_type === "crowdfunding";
 
   Validator.register(
-    'cart',
-    function(cart) {
+    "cart",
+    function (cart) {
       if (isCrowdfundingPayment || !cart) return false;
 
       cart = JSON.parse(cart);
@@ -189,7 +178,7 @@ export function getValidatedData(data) {
           return false;
 
         const taxIncludedPrice = (price + tax) * cartProductQuantity,
-          totalTax = tax * cartProductQuantity;
+          totalTax = Math.round(tax * cartProductQuantity * 100) / 100;
 
         if (
           cartProductSKU !== sku ||
@@ -206,7 +195,7 @@ export function getValidatedData(data) {
 
       return true;
     },
-    'Invalid cart data.',
+    "Invalid cart data."
   );
 
   data.tax &&= +data.tax;
@@ -227,14 +216,14 @@ export function getValidatedData(data) {
 
     product_desc = Object.values(cart)
       .map(({ names, quantity }) => `${quantity}x ${JSON.parse(names)[locale]}`)
-      .join(', ');
+      .join(", ");
 
     [tax, price] = Object.values(cart).reduce(
       ([totalTax, totalPrice], { tax, price }) => [
         totalTax + tax,
         totalPrice + price,
       ],
-      [0, 0],
+      [0, 0]
     );
 
     tax = Math.round(tax * 100) / 100;
@@ -244,45 +233,45 @@ export function getValidatedData(data) {
   }
 
   const validator = new Validator(data, {
-    first_name: 'required|string',
-    last_name: 'required|string',
-    email: 'required|email',
+    first_name: "required|string",
+    last_name: "required|string",
+    email: "required|email",
     favorite_tea: [
-      'required_if:payment_type,crowdfunding',
-      isCrowdfundingPayment ? 'string' : { in: [] },
+      "required_if:payment_type,crowdfunding",
+      isCrowdfundingPayment ? "string" : { in: [] },
     ],
     country: [
-      'required',
-      { in: isCrowdfundingPayment ? 'Netherlands' : countries },
+      "required",
+      { in: isCrowdfundingPayment ? "Netherlands" : countries },
     ],
-    city: 'required|string',
-    street: 'required|string',
-    postal_code: 'required|regex:/^[\\w- ]+$/',
+    city: "required|string",
+    street: "required|string",
+    postal_code: "required|regex:/^[\\w- ]+$/",
     kindness_cause: [
-      'required_if:payment_type,ecommerce',
+      "required_if:payment_type,ecommerce",
       { in: isCrowdfundingPayment ? [] : kindnessCauses },
     ],
     shipping_method: [
-      'required_if:payment_type,ecommerce',
+      "required_if:payment_type,ecommerce",
       { in: isCrowdfundingPayment ? [] : Object.keys(shippingMethods) },
     ],
     shipping_cost: [
-      'required_if:payment_type,ecommerce',
+      "required_if:payment_type,ecommerce",
       { in: isCrowdfundingPayment ? [] : [+shippingMethods[shipping_method]] },
     ],
     perk: [
-      'required_if:payment_type,crowdfunding',
+      "required_if:payment_type,crowdfunding",
       { in: isCrowdfundingPayment ? Object.keys(crowdfundingPerks) : [] },
     ],
-    cart: 'required_if:payment_type,ecommerce|cart',
-    product_name: ['required', { in: [companyName] }],
-    product_desc: ['required', { in: [product_desc] }],
-    price: ['required', { in: [total] }],
-    tax: ['required_if:payment_type,ecommerce', { in: [tax] }],
-    payment_type: ['required', { in: paymentTypes }],
-    locale: ['required', { in: locales }],
-    origin_url: 'required|url',
-    success_url: 'required|url',
+    cart: "required_if:payment_type,ecommerce|cart",
+    product_name: ["required", { in: [companyName] }],
+    product_desc: ["required", { in: [product_desc] }],
+    price: ["required", { in: [total] }],
+    tax: ["required_if:payment_type,ecommerce", { in: [tax] }],
+    payment_type: ["required", { in: paymentTypes }],
+    locale: ["required", { in: locales }],
+    origin_url: "required|url",
+    success_url: "required|url",
   });
 
   try {

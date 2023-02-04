@@ -22,8 +22,11 @@ const handlePOST = async request => {
   const body = await request.formData(),
     data = Object.fromEntries(body);
 
-  const { getValidatedData } = await import('../../utils/getValidatedData.js'),
-    validatedData = getValidatedData(data);
+  const { getValidatedData } = await import(
+    '../../../utils/getValidatedData.js'
+  );
+
+  validatedData = getValidatedData(data);
 
   if (validatedData.errors) {
     return reply(JSON.stringify(validatedData), 400);

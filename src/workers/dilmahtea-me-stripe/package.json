@@ -22,10 +22,5 @@
     "esbuild": "^0.15.11",
     "stripe": "^9.9.0",
     "validatorjs": "^3.22.1"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "@chantouchsek/validatorjs@1.2.0": "patches/@chantouchsek__validatorjs@1.2.0.patch"
-    }
   }
 }

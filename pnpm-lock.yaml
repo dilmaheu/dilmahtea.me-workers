@@ -1,0 +1,26 @@
+lockfileVersion: 5.4
+
+patchedDependencies:
+  '@chantouchsek/validatorjs@1.2.0':
+    hash: 4gb2zmb6mqghiijfcjtouanqp4
+    path: patches/@chantouchsek__validatorjs@1.2.0.patch
+
+specifiers:
+  '@chantouchsek/validatorjs': ^1.2.0
+
+dependencies:
+  '@chantouchsek/validatorjs': 1.2.0_4gb2zmb6mqghiijfcjtouanqp4
+
+packages:
+
+  /@chantouchsek/validatorjs/1.2.0_4gb2zmb6mqghiijfcjtouanqp4:
+    resolution: {integrity: sha512-MUJtsGHJ2drltJgb9Kl5JzTxyhCaos/OgAS55KKFGDqT9BhO3nEa2W81RfGWJxLXdbSwSBb8YLHNGVSM7tQuZw==}
+    engines: {node: ^12.20.0 || >=14.13.0}
+    dependencies:
+      lodash: 4.17.21
+    dev: false
+    patched: true
+
+  /lodash/4.17.21:
+    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
+    dev: false
