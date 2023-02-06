@@ -16,13 +16,5 @@
   "bugs": {
     "url": "https://github.com/dilmaheu/dilmahtea.me-workers/issues"
   },
-  "homepage": "https://github.com/dilmaheu/dilmahtea.me-workers#readme",
-  "dependencies": {
-    "@chantouchsek/validatorjs": "^1.2.0"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "@chantouchsek/validatorjs@1.2.0": "patches/@chantouchsek__validatorjs@1.2.0.patch"
-    }
-  }
+  "homepage": "https://github.com/dilmaheu/dilmahtea.me-workers#readme"
 }
