@@ -112,9 +112,10 @@ const handlePOST = async request => {
     const requestBody = await request.json()
 
     const { getValidatedData } = await import(
-        '../../utils/getValidatedData.js'
-      ),
-      validatedData = getValidatedData(requestBody)
+      '../../../utils/getValidatedData.js'
+    )
+
+    const validatedData = getValidatedData(requestBody)
 
     if (validatedData.errors) {
       return reply(JSON.stringify(validatedData), 400)

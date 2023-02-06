@@ -13,8 +13,11 @@ const reply = (message, status) => {
 const handlePOST = async request => {
   const data = await request.json()
 
-  const { getValidatedData } = await import('../../utils/getValidatedData.js'),
-    validatedData = getValidatedData(data)
+  const { getValidatedData } = await import(
+    '../../../utils/getValidatedData.js'
+  )
+
+  const validatedData = getValidatedData(data)
 
   if (validatedData.errors) {
     return reply(JSON.stringify(validatedData), 400)
