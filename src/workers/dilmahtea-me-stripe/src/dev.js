@@ -26,7 +26,7 @@ const handlePOST = async request => {
     '../../../utils/getValidatedData.js'
   );
 
-  validatedData = getValidatedData(data);
+  const validatedData = getValidatedData(data);
 
   if (validatedData.errors) {
     return reply(JSON.stringify(validatedData), 400);
