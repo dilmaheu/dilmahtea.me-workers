@@ -115,13 +115,13 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          preCommands: npm install
+          preCommands: npx pnpm install
           workingDirectory: "src/workers/dilmahtea-me-validator"
 
       - name: Publish Validator Worker (Development)
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          preCommands: npm install
+          preCommands: npx pnpm install
           workingDirectory: "src/workers/dilmahtea-me-validator"
           command: "publish --env development"
