@@ -11,6 +11,9 @@ kv_namespaces = [
     { binding = "CROWDFUNDINGS", id = "c971dd86589647799fb64dde47563fac" },
     { binding = "ECOMMERCE_PAYMENTS", id = "5086c43e26a14fa3a177ea876f514a8f" }
 ]
+services = [
+    { binding = "VALIDATOR", service = "dilmahtea-me-validator", environment = "production" },
+]
 
 [env.development]
 name = "dilmahtea-me-stripe-dev"
@@ -21,4 +24,7 @@ routes = [
 kv_namespaces = [
     { binding = "CROWDFUNDINGS", id = "c971dd86589647799fb64dde47563fac" },
     { binding = "ECOMMERCE_PAYMENTS", id = "5086c43e26a14fa3a177ea876f514a8f" }
+]
+services = [
+    { binding = "VALIDATOR", service = "dilmahtea-me-validator-dev", environment = "production" },
 ]

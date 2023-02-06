@@ -6,10 +6,16 @@ workers_dev = false
 routes = [
     { pattern = "crowdfunding-form.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
+services = [
+    { binding = "VALIDATOR", service = "dilmahtea-me-validator", environment = "production" },
+]
 
 [env.development]
 name = "dilmahtea-me-baserow-dev"
 main = "./src/dev.js"
 routes = [
     { pattern = "dev.crowdfunding-form.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+]
+services = [
+    { binding = "VALIDATOR", service = "dilmahtea-me-validator-dev", environment = "production" },
 ]

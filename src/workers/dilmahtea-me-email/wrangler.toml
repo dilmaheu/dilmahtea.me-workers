@@ -7,6 +7,9 @@ routes = [
     { pattern = "crowdfunding-mail.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 kv_namespaces = [{ binding = "MAILS", id = "51f5be62eaf64aa8a9c69bccb81d396e" }]
+services = [
+    { binding = "VALIDATOR", service = "dilmahtea-me-validator", environment = "production" },
+]
 
 [env.development]
 name = "dilmahtea-me-email-dev"
@@ -15,3 +18,6 @@ routes = [
     { pattern = "dev.crowdfunding-mail.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 kv_namespaces = [{ binding = "MAILS", id = "51f5be62eaf64aa8a9c69bccb81d396e" }]
+services = [
+    { binding = "VALIDATOR", service = "dilmahtea-me-validator-dev", environment = "production" },
+]

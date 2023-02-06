@@ -22,11 +22,15 @@ const handlePOST = async request => {
   const body = await request.formData(),
     data = Object.fromEntries(body);
 
-  const { getValidatedData } = await import(
-    '../../../utils/getValidatedData.js'
-  );
-
-  const validatedData = getValidatedData(data);
+  const validatedData = await VALIDATOR.fetch(
+    new Request('https://validator.scripts.dilmahtea.me', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    }),
+  ).then(response => response.json());
 
   if (validatedData.errors) {
     return reply(JSON.stringify(validatedData), 400);
