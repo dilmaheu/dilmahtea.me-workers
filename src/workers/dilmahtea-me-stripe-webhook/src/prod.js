@@ -95,7 +95,7 @@ async function handlePOST(request) {
   // send thank you email if payment is successful
   if (payment_status === 'paid' && paymentIntentData) {
     const emailRequest = createRequest(
-      'https://dev.crowdfunding-mail.dilmah.scripts.dilmahtea.me',
+      'https://crowdfunding-mail.dilmah.scripts.dilmahtea.me',
       paymentIntentData,
     )
 
@@ -141,7 +141,7 @@ async function handlePOST(request) {
   })
 
   const baserowRequest = createRequest(
-    'https://dev.crowdfunding-form.scripts.dilmahtea.me',
+    'https://crowdfunding-form.scripts.dilmahtea.me',
     baserowRequestBody,
   )
 
