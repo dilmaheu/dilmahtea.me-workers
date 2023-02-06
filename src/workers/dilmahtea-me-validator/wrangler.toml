@@ -1,0 +1,15 @@
+name = "dilmahtea-me-validator"
+account_id = "f0f636c746c8673c3905e9104b385251"
+compatibility_date = "2022-06-01"
+main = "./src/prod.js"
+workers_dev = false
+routes = [
+    { pattern = "validator.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+]
+
+[env.development]
+name = "dilmahtea-me-validator-dev"
+main = "./src/dev.js"
+routes = [
+    { pattern = "dev.validator.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+]

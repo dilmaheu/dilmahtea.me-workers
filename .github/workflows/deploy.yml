@@ -110,3 +110,18 @@ jobs:
           preCommands: npm install
           workingDirectory: "src/workers/dilmahtea-me-stripe-webhook"
           command: "publish --env development"
+
+      - name: Publish Validator Worker
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          preCommands: npm install
+          workingDirectory: "src/workers/dilmahtea-me-validator"
+
+      - name: Publish Validator Worker (Development)
+        uses: cloudflare/wrangler-action@2.0.0
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          preCommands: npm install
+          workingDirectory: "src/workers/dilmahtea-me-validator"
+          command: "publish --env development"

@@ -1,7 +1,7 @@
 import Validator from "@chantouchsek/validatorjs";
 
 const query = `
-  {        
+  {
     crowdfundingPlans {
       data {
         attributes {
@@ -18,7 +18,7 @@ const query = `
         }
       }
     }
-    
+
     i18NLocales {
       data {
         attributes {
@@ -75,84 +75,106 @@ const query = `
   }
 `;
 
-const response = await fetch(CMS_GRAPHQL_ENDPOINT, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${CMS_ACCESS_TOKEN}`,
-  },
-  body: JSON.stringify({ query }),
+const headers = new Headers({
+  "Content-Type": "application/json",
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "*",
+  "Access-Control-Allow-Methods": "OPTIONS, POST",
+  "Access-Control-Max-Age": "-1",
 });
 
-const responseData = await response.json();
+const reply = (message, status) => {
+  return new Response(message, { status, headers });
+};
 
-const {
-  data: {
-    crowdfundingPlans: { data: crowdfundingPlans },
-    recurringElement: { data: recurringElement },
-    i18NLocales: { data: i18NLocales },
-    products: { data: productsData },
-  },
-} = responseData;
+const handlePOST = async (request) => {
+  // process data for validation
+  const CMSResponse = await fetch(CMS_GRAPHQL_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${CMS_ACCESS_TOKEN}`,
+    },
+    body: JSON.stringify({ query }),
+  });
 
-const crowdfundingPerks = {};
+  const CMSData = await CMSResponse.json();
 
-crowdfundingPlans.forEach(({ attributes: { Perk, Price_EUR_excl_VAT } }) => {
-  crowdfundingPerks[Perk] = Price_EUR_excl_VAT;
-});
+  const {
+    data: {
+      crowdfundingPlans: { data: crowdfundingPlans },
+      recurringElement: { data: recurringElement },
+      i18NLocales: { data: i18NLocales },
+      products: { data: productsData },
+    },
+  } = CMSData;
 
-const locales = i18NLocales.map(({ attributes: { code } }) =>
-  code.substring(0, 2)
-);
+  const crowdfundingPerks = {};
 
-const products = [];
+  crowdfundingPlans.forEach(({ attributes: { Perk, Price_EUR_excl_VAT } }) => {
+    crowdfundingPerks[Perk] = Price_EUR_excl_VAT;
+  });
 
-productsData.forEach(({ attributes }) => {
-  const { SKU, Price, Weight_tea, Weight_tea_unit, localizations } = attributes;
+  const locales = i18NLocales.map(({ attributes: { code } }) =>
+    code.substring(0, 2)
+  );
 
-  const names = {};
+  const products = [];
 
-  [{ attributes }, ...localizations.data].forEach(
-    ({ attributes: { locale, Title } }) => {
-      names[locale.substring(0, 2)] = Title;
+  productsData.forEach(({ attributes }) => {
+    const {
+      SKU,
+      Price,
+      Weight_tea,
+      Weight_tea_unit,
+      localizations,
+    } = attributes;
+
+    const names = {};
+
+    [{ attributes }, ...localizations.data].forEach(
+      ({ attributes: { locale, Title } }) => {
+        names[locale.substring(0, 2)] = Title;
+      }
+    );
+
+    const size = Weight_tea + Weight_tea_unit;
+
+    products[SKU] = {
+      sku: SKU,
+      names,
+      price: Price,
+      size,
+    };
+  });
+
+  const countries = CMSData.data.countries.data.map(
+      ({ attributes: { name } }) => name
+    ),
+    kindnessCauses = CMSData.data.kindnessCauses.data.map(
+      ({ attributes: { cause } }) => cause
+    );
+
+  const shippingMethods = {};
+
+  CMSData.data.shippingMethods.data.forEach(
+    ({ attributes: { method, cost } }) => {
+      shippingMethods[method] = cost;
     }
   );
 
-  const size = Weight_tea + Weight_tea_unit;
+  const companyName = recurringElement.attributes.Company_name;
 
-  products[SKU] = {
-    sku: SKU,
-    names,
-    price: Price,
-    size,
-  };
-});
+  const paymentTypes = ["ecommerce", "crowdfunding"];
 
-const countries = responseData.data.countries.data.map(
-    ({ attributes: { name } }) => name
-  ),
-  kindnessCauses = responseData.data.kindnessCauses.data.map(
-    ({ attributes: { cause } }) => cause
-  );
+  // validate data
+  const data = await request.json();
 
-const shippingMethods = {};
-
-responseData.data.shippingMethods.data.forEach(
-  ({ attributes: { method, cost } }) => {
-    shippingMethods[method] = cost;
-  }
-);
-
-const companyName = recurringElement.attributes.Company_name;
-
-const paymentTypes = ["ecommerce", "crowdfunding"];
-
-export function getValidatedData(data) {
   const isCrowdfundingPayment = data.payment_type === "crowdfunding";
 
   Validator.register(
     "cart",
-    function (cart) {
+    function(cart) {
       if (isCrowdfundingPayment || !cart) return false;
 
       cart = JSON.parse(cart);
@@ -257,7 +279,9 @@ export function getValidatedData(data) {
     ],
     shipping_cost: [
       "required_if:payment_type,ecommerce",
-      { in: isCrowdfundingPayment ? [] : [+shippingMethods[shipping_method]] },
+      {
+        in: isCrowdfundingPayment ? [] : [+shippingMethods[shipping_method]],
+      },
     ],
     perk: [
       "required_if:payment_type,crowdfunding",
@@ -275,13 +299,54 @@ export function getValidatedData(data) {
   });
 
   try {
-    return validator.validated();
+    const response = validator.validated();
+
+    return reply(JSON.stringify(response), 200);
   } catch ({ message }) {
     const errors = validator.errors.all();
 
-    return {
-      message,
-      errors,
-    };
+    return reply(JSON.stringify({ message, errors }), 400);
   }
-}
+};
+
+const handleOPTIONS = (request) => {
+  if (
+    request.headers.get("Origin") !== null &&
+    request.headers.get("Access-Control-Request-Method") !== null &&
+    request.headers.get("Access-Control-Request-Headers") !== null
+  ) {
+    // Handle CORS pre-flight request.
+    return new Response(null, {
+      headers,
+    });
+  } else {
+    // Handle standard OPTIONS request.
+    return new Response(null, {
+      headers: {
+        Allow: "POST, OPTIONS",
+      },
+    });
+  }
+};
+
+addEventListener("fetch", (event) => {
+  const { request } = event;
+
+  let { pathname: urlPathname } = new URL(request.url);
+
+  if (urlPathname === "/") {
+    switch (request.method) {
+      case "POST":
+        return event.respondWith(handlePOST(request));
+      case "OPTIONS":
+        return event.respondWith(handleOPTIONS(request));
+    }
+  }
+
+  return event.respondWith(
+    new Response(JSON.stringify({ error: `Method or Path Not Allowed` }), {
+      headers,
+      status: 405,
+    })
+  );
+});
