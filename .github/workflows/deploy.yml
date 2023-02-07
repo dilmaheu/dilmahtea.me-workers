@@ -46,7 +46,7 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-baserow"
+          workingDirectory: "src/workers/dilmahtea-me-crowdfunding-mail-store"
           command: "publish --env development"
 
       - name: Publish Stats Worker
