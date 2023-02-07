@@ -8,12 +8,9 @@ routes = [
     { pattern = "pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 kv_namespaces = [
+    { binding = "MAILS", id = "51f5be62eaf64aa8a9c69bccb81d396e" },
     { binding = "CROWDFUNDINGS", id = "c971dd86589647799fb64dde47563fac" },
     { binding = "ECOMMERCE_PAYMENTS", id = "5086c43e26a14fa3a177ea876f514a8f" }
-]
-services = [
-    { binding = "EMAIL", service = "dilmahtea-me-email", environment = "production" },
-    { binding = "BASEROW", service = "dilmahtea-me-baserow", environment = "production" }
 ]
 
 [env.development]
@@ -23,10 +20,7 @@ routes = [
     { pattern = "dev.pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 kv_namespaces = [
+    { binding = "MAILS", id = "51f5be62eaf64aa8a9c69bccb81d396e" },
     { binding = "CROWDFUNDINGS", id = "c971dd86589647799fb64dde47563fac" },
     { binding = "ECOMMERCE_PAYMENTS", id = "5086c43e26a14fa3a177ea876f514a8f" }
-]
-services = [
-    { binding = "EMAIL", service = "dilmahtea-me-email-dev", environment = "production" },
-    { binding = "BASEROW", service = "dilmahtea-me-baserow-dev", environment = "production" }
 ]

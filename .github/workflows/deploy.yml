@@ -23,19 +23,6 @@ jobs:
         with:
           node-version: "16"
 
-      - name: Publish Baserow Worker
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-baserow"
-
-      - name: Publish Baserow Worker (Development)
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-baserow"
-          command: "publish --env development"
-
       - name: Publish Baserow Stats Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
@@ -62,19 +49,6 @@ jobs:
           workingDirectory: "src/workers/dilmahtea-me-baserow"
           command: "publish --env development"
 
-      - name: Publish Email Worker
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-email"
-
-      - name: Publish Email Worker (Development)
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-email"
-          command: "publish --env development"
-
       - name: Publish Stats Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
@@ -85,14 +59,14 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          preCommands: npm install
+          preCommands: npx pnpm install
           workingDirectory: "src/workers/dilmahtea-me-stripe"
 
       - name: Publish Stripe Worker (Development)
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          preCommands: npm install
+          preCommands: npx pnpm install
           workingDirectory: "src/workers/dilmahtea-me-stripe"
           command: "publish --env development"
 
@@ -109,19 +83,4 @@ jobs:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           preCommands: npm install
           workingDirectory: "src/workers/dilmahtea-me-stripe-webhook"
-          command: "publish --env development"
-
-      - name: Publish Validator Worker
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          preCommands: npx pnpm install
-          workingDirectory: "src/workers/dilmahtea-me-validator"
-
-      - name: Publish Validator Worker (Development)
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          preCommands: npx pnpm install
-          workingDirectory: "src/workers/dilmahtea-me-validator"
           command: "publish --env development"

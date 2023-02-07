@@ -1,4 +1,6 @@
 import Stripe from 'stripe'
+import sendEmail from './utils/sendEmail'
+import createBaserowRecord from './utils/createBaserowRecord'
 
 const stripe = new Stripe(STRIPE_DEVELOPMENT_SECRET_KEY, {
   // Cloudflare Workers use the Fetch API for their API requests.
@@ -15,15 +17,6 @@ const headers = new Headers({
 })
 
 const reply = (message, status) => new Response(message, { status, headers })
-
-const createRequest = (url, body) =>
-  new Request(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body,
-  })
 
 const checkWebHookRequest = async request => {
   const contentType = request.headers.get('content-type') || ''
@@ -94,12 +87,7 @@ async function handlePOST(request) {
 
   // send thank you email if payment is successful
   if (payment_status === 'paid' && paymentIntentData) {
-    const emailRequest = createRequest(
-      'https://dev.crowdfunding-mail.dilmah.scripts.dilmahtea.me',
-      paymentIntentData,
-    )
-
-    promises.push(EMAIL.fetch(emailRequest))
+    promises.push(sendEmail(parsedPaymentIntentData))
 
     const { hostname: domain } = new URL(origin_url)
 
@@ -134,18 +122,13 @@ async function handlePOST(request) {
     }
   }
 
-  const baserowRequestBody = JSON.stringify({
-    ...parsedPaymentIntentData,
-    payment_status,
-    payment_intent_id: paymentIntentId,
-  })
-
-  const baserowRequest = createRequest(
-    'https://dev.crowdfunding-form.scripts.dilmahtea.me',
-    baserowRequestBody,
+  promises.push(
+    createBaserowRecord({
+      ...parsedPaymentIntentData,
+      payment_status,
+      payment_intent_id: paymentIntentId,
+    }),
   )
-
-  promises.push(BASEROW.fetch(baserowRequest))
 
   await Promise.all(promises)
 

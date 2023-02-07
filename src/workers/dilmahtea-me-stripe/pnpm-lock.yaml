@@ -1,31 +1,35 @@
 lockfileVersion: 5.4
 
+patchedDependencies:
+  '@chantouchsek/validatorjs@1.2.0':
+    hash: 4gb2zmb6mqghiijfcjtouanqp4
+    path: patches/@chantouchsek__validatorjs@1.2.0.patch
+
 specifiers:
   '@chantouchsek/validatorjs': ^1.2.0
   '@esbuild-plugins/node-modules-polyfill': ^0.1.4
   esbuild: ^0.15.11
   prettier: ^1.18.2
   stripe: ^9.9.0
-  validatorjs: ^3.22.1
 
 dependencies:
-  '@chantouchsek/validatorjs': 1.2.0
+  '@chantouchsek/validatorjs': 1.2.0_4gb2zmb6mqghiijfcjtouanqp4
   '@esbuild-plugins/node-modules-polyfill': 0.1.4_esbuild@0.15.15
   esbuild: 0.15.15
   stripe: 9.16.0
-  validatorjs: 3.22.1
 
 devDependencies:
   prettier: 1.19.1
 
 packages:
 
-  /@chantouchsek/validatorjs/1.2.0:
+  /@chantouchsek/validatorjs/1.2.0_4gb2zmb6mqghiijfcjtouanqp4:
     resolution: {integrity: sha512-MUJtsGHJ2drltJgb9Kl5JzTxyhCaos/OgAS55KKFGDqT9BhO3nEa2W81RfGWJxLXdbSwSBb8YLHNGVSM7tQuZw==}
     engines: {node: ^12.20.0 || >=14.13.0}
     dependencies:
       lodash: 4.17.21
     dev: false
+    patched: true
 
   /@esbuild-plugins/node-modules-polyfill/0.1.4_esbuild@0.15.15:
     resolution: {integrity: sha512-uZbcXi0zbmKC/050p3gJnne5Qdzw8vkXIv+c2BW0Lsc1ji1SkrxbKPUy5Efr0blbTu1SL8w4eyfpnSdPg3G0Qg==}
@@ -375,8 +379,4 @@ packages:
     dependencies:
       '@types/node': 18.11.9
       qs: 6.11.0
-    dev: false
-
-  /validatorjs/3.22.1:
-    resolution: {integrity: sha512-451KiCt/3E8qV/8fOUdO0YkA8zUdQBNVxubg9jvgEB+JAg9IlRKrClzwq2ir2ndj7TWmPYQ7bXFb4BxcyX2iWw==}
     dev: false
