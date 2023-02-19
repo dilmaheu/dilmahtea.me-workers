@@ -36,17 +36,17 @@ jobs:
           workingDirectory: "src/workers/dilmahtea-me-baserow-stats"
           command: "publish --env development"
 
-      - name: Publish Crowdfunding Mail Store Worker
+      - name: Publish CMS Webhook Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-crowdfunding-mail-store"
+          workingDirectory: "src/workers/dilmahtea-me-strapi-webhook"
 
-      - name: Publish Crowdfunding Mail Store Worker (Development)
+      - name: Publish CMS Webhook Worker (Development)
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-crowdfunding-mail-store"
+          workingDirectory: "src/workers/dilmahtea-me-strapi-webhook"
           command: "publish --env development"
 
       - name: Publish Stats Worker

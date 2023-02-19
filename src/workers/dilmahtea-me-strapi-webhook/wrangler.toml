@@ -1,0 +1,20 @@
+name = "dilmahtea-me-strapi-webhook"
+account_id = "f0f636c746c8673c3905e9104b385251"
+compatibility_date = "2022-07-22"
+main = "./src/prod.js"
+workers_dev = true
+routes = [
+    { pattern = "cms-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+]
+kv_namespaces = [{ binding = "MAILS", id = "51f5be62eaf64aa8a9c69bccb81d396e" }]
+
+[env.development]
+name = "dilmahtea-me-strapi-webhook-dev"
+main = "./src/dev.js"
+routes = [
+    { pattern = "dev.cms-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+]
+kv_namespaces = [
+    { binding = "MAILS", id = "51f5be62eaf64aa8a9c69bccb81d396e" },
+    { binding = "PRODUCTS", id = "c6b96e10de2249c4b0620a5b349da690" }
+]
