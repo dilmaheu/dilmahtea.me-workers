@@ -118,7 +118,7 @@ export async function updateProductsStore(model, reply) {
           attributes: { Name: VariantName },
         } = Variant;
 
-        const productKey = [locale, VariantName, Size].join(" | ");
+        const productsKey = [locale, VariantName, Size].join(" | ");
 
         const filteredProducts = products.filter(({ attributes }) => {
           const productLocale = attributes.locale,
@@ -132,7 +132,7 @@ export async function updateProductsStore(model, reply) {
           );
         });
 
-        productsMap.set(productKey, JSON.stringify(filteredProducts));
+        productsMap.set(productsKey, filteredProducts);
       });
     });
   });
@@ -140,9 +140,14 @@ export async function updateProductsStore(model, reply) {
   const productsMapEntries = [...productsMap.entries()];
 
   await Promise.all(
-    productsMapEntries.map(([productKey, productValue]) =>
-      PRODUCTS.put(productKey, productValue)
-    )
+    productsMapEntries.map(([productsKey, filteredProducts]) => {
+      filteredProducts.forEach((product) => {
+        delete product.attributes.Variant;
+        delete product.attributes.Size;
+      });
+
+      return PRODUCTS.put(productsKey, JSON.stringify(filteredProducts));
+    })
   );
 
   return reply(JSON.stringify({ message: `'PRODUCTS' KV Updated` }), 200);
