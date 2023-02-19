@@ -128,7 +128,7 @@ export async function updateProductsStore(model, reply) {
           return (
             productLocale === locale &&
             productVariantName === VariantName &&
-            productSize === SizeName
+            productSize === Size
           );
         });
 
