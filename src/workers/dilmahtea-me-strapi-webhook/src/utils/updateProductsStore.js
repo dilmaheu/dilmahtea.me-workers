@@ -118,7 +118,9 @@ export async function updateProductsStore(model, reply) {
           attributes: { Name: VariantName },
         } = Variant;
 
-        const productsKey = [locale, VariantName, Size].join(" | ");
+        const productsKey = [locale.substring(0, 2), VariantName, Size].join(
+          " | "
+        );
 
         const filteredProducts = products.filter(({ attributes }) => {
           const productLocale = attributes.locale,
