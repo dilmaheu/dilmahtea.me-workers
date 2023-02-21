@@ -1,0 +1,21 @@
+name = "dilmahtea-me-filter-products"
+account_id = "f0f636c746c8673c3905e9104b385251"
+compatibility_date = "2022-07-20"
+main = "./src/prod.js"
+workers_dev = false
+routes = [
+    { pattern = "dilmahtea.me/api/products/*", zone_name = "dilmahtea.me" }
+]
+kv_namespaces = [
+    { binding = "PRODUCTS", id = "c6b96e10de2249c4b0620a5b349da690" }
+]
+
+[env.development]
+name = "dilmahtea-me-filter-products-dev"
+main = "./src/dev.js"
+routes = [
+    { pattern = "dev.products.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+]
+kv_namespaces = [
+    { binding = "PRODUCTS", id = "c6b96e10de2249c4b0620a5b349da690" }
+]
