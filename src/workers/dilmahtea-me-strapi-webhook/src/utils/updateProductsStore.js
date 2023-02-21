@@ -141,12 +141,11 @@ export async function updateProductsStore(model, reply) {
 
   const productsMapEntries = [...productsMap.entries()];
 
+  const existingProductsKeys = await PRODUCTS.list();
+
   await Promise.all(
-    productsMapEntries.map(([productsKey, filteredProducts]) => {
-      filteredProducts.forEach((product) => {
-        delete product.attributes.Variant;
-        delete product.attributes.Size;
-      });
+    existingProductsKeys.keys.map(({ name }) => PRODUCTS.delete(name))
+  );
 
       return PRODUCTS.put(productsKey, JSON.stringify(filteredProducts));
     })
