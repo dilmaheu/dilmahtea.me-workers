@@ -112,7 +112,37 @@ export async function updateProductsStore(model, reply) {
   const productsMap = new Map();
 
   i18NLocales.forEach((locale) => {
+    const productsKey = locale.substring(0, 2),
+      filteredProducts = products.filter(
+        ({ attributes }) => attributes.locale === locale
+      );
+
+    productsMap.set(productsKey, filteredProducts);
+
+    localizedProductSizes[locale].forEach(({ attributes: { Size } }) => {
+      const productsKey = [locale.substring(0, 2), Size].join(" | "),
+        filteredProducts = products.filter(({ attributes }) => {
+          const productLocale = attributes.locale,
+            productSize = attributes.Size.data?.attributes?.Size;
+
+          return productLocale === locale && productSize === Size;
+        });
+
+      productsMap.set(productsKey, filteredProducts);
+    });
+
     localizedProductVariants[locale].forEach((Variant) => {
+      const VariantName = Variant.attributes.Name,
+        productsKey = [locale.substring(0, 2), VariantName].join(" | "),
+        filteredProducts = products.filter(({ attributes }) => {
+          const productLocale = attributes.locale,
+            productVariantName = attributes.Variant.data?.attributes?.Name;
+
+          return productLocale === locale && productVariantName === VariantName;
+        });
+
+      productsMap.set(productsKey, filteredProducts);
+
       localizedProductSizes[locale].forEach(({ attributes: { Size } }) => {
         const {
           attributes: { Name: VariantName },
@@ -139,6 +169,11 @@ export async function updateProductsStore(model, reply) {
     });
   });
 
+  products.forEach((product) => {
+    delete product.attributes.Variant;
+    delete product.attributes.Size;
+  });
+
   const productsMapEntries = [...productsMap.entries()];
 
   const existingProductsKeys = await PRODUCTS.list();
@@ -147,8 +182,10 @@ export async function updateProductsStore(model, reply) {
     existingProductsKeys.keys.map(({ name }) => PRODUCTS.delete(name))
   );
 
-      return PRODUCTS.put(productsKey, JSON.stringify(filteredProducts));
-    })
+  await Promise.all(
+    productsMapEntries.map(([productsKey, filteredProducts]) =>
+      PRODUCTS.put(productsKey, JSON.stringify(filteredProducts))
+    )
   );
 
   return reply(JSON.stringify({ message: `'PRODUCTS' KV Updated` }), 200);
