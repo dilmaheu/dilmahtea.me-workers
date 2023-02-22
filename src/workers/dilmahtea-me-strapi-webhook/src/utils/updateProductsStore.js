@@ -1,3 +1,5 @@
+import { marked } from "marked";
+
 const query = `
   {
     products(locale: "all") {
@@ -170,6 +172,11 @@ export async function updateProductsStore(model, reply) {
   });
 
   products.forEach((product) => {
+    product.attributes.Intro_text_HTML = marked.parse(
+      product.attributes.Intro_text
+    );
+
+    delete product.attributes.Intro_text;
     delete product.attributes.Variant;
     delete product.attributes.Size;
   });

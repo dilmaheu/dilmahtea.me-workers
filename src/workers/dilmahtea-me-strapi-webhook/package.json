@@ -11,5 +11,8 @@
   "license": "MIT",
   "devDependencies": {
     "prettier": "^1.18.2"
+  },
+  "dependencies": {
+    "marked": "^4.2.12"
   }
 }
