@@ -18,14 +18,14 @@ const query = `
               }
             }
           }
-          Variant {
+          variant {
             data {
               attributes {
                 Name
               }
             }
           }          
-          Size {
+          size {
             data {
               attributes {
                 Size
@@ -68,6 +68,8 @@ const query = `
 `;
 
 export async function updateProductsStore(model, reply) {
+  const start = Date.now();
+
   const response = await fetch(CMS_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers: {
@@ -114,18 +116,18 @@ export async function updateProductsStore(model, reply) {
   const productsMap = new Map();
 
   i18NLocales.forEach((locale) => {
-    const productsKey = locale.substring(0, 2),
+    const shortLocale = locale.substring(0, 2),
       filteredProducts = products.filter(
         ({ attributes }) => attributes.locale === locale
       );
 
-    productsMap.set(productsKey, filteredProducts);
+    productsMap.set(shortLocale, filteredProducts);
 
     localizedProductSizes[locale].forEach(({ attributes: { Size } }) => {
-      const productsKey = [locale.substring(0, 2), Size].join(" | "),
+      const productsKey = [shortLocale, Size].join(" | "),
         filteredProducts = products.filter(({ attributes }) => {
           const productLocale = attributes.locale,
-            productSize = attributes.Size.data?.attributes?.Size;
+            productSize = attributes.size.data?.attributes?.Size;
 
           return productLocale === locale && productSize === Size;
         });
@@ -133,12 +135,12 @@ export async function updateProductsStore(model, reply) {
       productsMap.set(productsKey, filteredProducts);
     });
 
-    localizedProductVariants[locale].forEach((Variant) => {
-      const VariantName = Variant.attributes.Name,
-        productsKey = [locale.substring(0, 2), VariantName].join(" | "),
+    localizedProductVariants[locale].forEach((variant) => {
+      const VariantName = variant.attributes.Name,
+        productsKey = [shortLocale, VariantName].join(" | "),
         filteredProducts = products.filter(({ attributes }) => {
           const productLocale = attributes.locale,
-            productVariantName = attributes.Variant.data?.attributes?.Name;
+            productVariantName = attributes.variant.data?.attributes?.Name;
 
           return productLocale === locale && productVariantName === VariantName;
         });
@@ -146,18 +148,12 @@ export async function updateProductsStore(model, reply) {
       productsMap.set(productsKey, filteredProducts);
 
       localizedProductSizes[locale].forEach(({ attributes: { Size } }) => {
-        const {
-          attributes: { Name: VariantName },
-        } = Variant;
-
-        const productsKey = [locale.substring(0, 2), VariantName, Size].join(
-          " | "
-        );
+        const productsKey = [shortLocale, VariantName, Size].join(" | ");
 
         const filteredProducts = products.filter(({ attributes }) => {
           const productLocale = attributes.locale,
-            productVariantName = attributes.Variant.data?.attributes?.Name,
-            productSize = attributes.Size.data?.attributes?.Size;
+            productVariantName = attributes.variant.data?.attributes?.Name,
+            productSize = attributes.size.data?.attributes?.Size;
 
           return (
             productLocale === locale &&
@@ -177,8 +173,8 @@ export async function updateProductsStore(model, reply) {
     );
 
     delete product.attributes.Intro_text;
-    delete product.attributes.Variant;
-    delete product.attributes.Size;
+    delete product.attributes.variant;
+    delete product.attributes.size;
   });
 
   const productsMapEntries = [...productsMap.entries()];
@@ -194,6 +190,10 @@ export async function updateProductsStore(model, reply) {
       PRODUCTS.put(productsKey, JSON.stringify(filteredProducts))
     )
   );
+
+  const end = Date.now();
+
+  console.log(`'PRODUCTS' KV Updated in ${end - start}ms`);
 
   return reply(JSON.stringify({ message: `'PRODUCTS' KV Updated` }), 200);
 }
