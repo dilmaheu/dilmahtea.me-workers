@@ -1,40 +1,31 @@
 import { marked } from "marked";
 
 const query = `
+  fragment productsFragment on Product {
+    locale
+    Title
+    Intro_text
+    Stock_amount
+    In_stock_date
+    Intro_blob {
+      data {
+        attributes {
+          url
+          alternativeText
+        }
+      }
+    }
+    Meta {
+      URL_slug
+    }
+  }
+
   {
     products(locale: "all") {
       data {
+        id
         attributes {
-          locale
-          Title
-          Intro_text
-          Stock_amount
-          In_stock_date
-          Intro_blob {
-            data {
-              attributes {
-                url
-                alternativeText
-              }
-            }
-          }
-          variant {
-            data {
-              attributes {
-                Name
-              }
-            }
-          }          
-          size {
-            data {
-              attributes {
-                Size
-              }
-            }
-          }
-          Meta {
-            URL_slug
-          }
+          ...productsFragment
         }
       }
     }
@@ -44,6 +35,14 @@ const query = `
         attributes {
           locale
           Size
+          products(filters: { publishedAt: { ne: null } }) {
+            data {
+              id
+              attributes {
+                ...productsFragment
+              }
+            }
+          }
         }
       }
     }
@@ -53,6 +52,14 @@ const query = `
         attributes {
           locale
           Name
+          products(filters: { publishedAt: { ne: null } }) {
+            data {
+              id
+              attributes {
+                ...productsFragment
+              }
+            }
+          }
         }
       }
     }
@@ -68,8 +75,6 @@ const query = `
 `;
 
 export async function updateProductsStore(model, reply) {
-  const start = Date.now();
-
   const response = await fetch(CMS_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers: {
@@ -123,58 +128,40 @@ export async function updateProductsStore(model, reply) {
 
     productsMap.set(shortLocale, filteredProducts);
 
-    localizedProductSizes[locale].forEach(({ attributes: { Size } }) => {
-      const productsKey = [shortLocale, Size].join(" | "),
-        filteredProducts = products.filter(({ attributes }) => {
-          const productLocale = attributes.locale,
-            productSize = attributes.size.data?.attributes?.Size;
+    localizedProductSizes[locale].forEach(
+      ({ attributes: { Size, products } }) => {
+        const productsKey = [shortLocale, Size].join(" | ");
 
-          return productLocale === locale && productSize === Size;
-        });
-
-      productsMap.set(productsKey, filteredProducts);
-    });
-
-    localizedProductVariants[locale].forEach((variant) => {
-      const VariantName = variant.attributes.Name,
-        productsKey = [shortLocale, VariantName].join(" | "),
-        filteredProducts = products.filter(({ attributes }) => {
-          const productLocale = attributes.locale,
-            productVariantName = attributes.variant.data?.attributes?.Name;
-
-          return productLocale === locale && productVariantName === VariantName;
-        });
-
-      productsMap.set(productsKey, filteredProducts);
-
-      localizedProductSizes[locale].forEach(({ attributes: { Size } }) => {
-        const productsKey = [shortLocale, VariantName, Size].join(" | ");
-
-        const filteredProducts = products.filter(({ attributes }) => {
-          const productLocale = attributes.locale,
-            productVariantName = attributes.variant.data?.attributes?.Name,
-            productSize = attributes.size.data?.attributes?.Size;
-
-          return (
-            productLocale === locale &&
-            productVariantName === VariantName &&
-            productSize === Size
-          );
-        });
-
-        productsMap.set(productsKey, filteredProducts);
-      });
-    });
-  });
-
-  products.forEach((product) => {
-    product.attributes.Intro_text_HTML = marked.parse(
-      product.attributes.Intro_text
+        productsMap.set(productsKey, products.data);
+      }
     );
 
-    delete product.attributes.Intro_text;
-    delete product.attributes.variant;
-    delete product.attributes.size;
+    localizedProductVariants[locale].forEach((Variant) => {
+      const VariantName = Variant.attributes.Name,
+        productsKey = [shortLocale, VariantName].join(" | "),
+        productsPerVariant = Variant.attributes.products.data;
+
+      productsMap.set(productsKey, productsPerVariant);
+
+      const productIDs = productsPerVariant.map(({ id }) => id);
+
+      localizedProductSizes[locale].forEach(
+        ({
+          attributes: {
+            Size,
+            products: { data: productsPerSize },
+          },
+        }) => {
+          const productsKey = [shortLocale, VariantName, Size].join(" | ");
+
+          const filteredProducts = productsPerSize.filter(({ id }) =>
+            productIDs.includes(id)
+          );
+
+          productsMap.set(productsKey, filteredProducts);
+        }
+      );
+    });
   });
 
   const productsMapEntries = [...productsMap.entries()];
@@ -185,15 +172,27 @@ export async function updateProductsStore(model, reply) {
     existingProductsKeys.keys.map(({ name }) => PRODUCTS.delete(name))
   );
 
+  const IntroTextHTMLCache = new Map();
+
+  productsMapEntries.forEach(([productsKey, filteredProducts]) => {
+    filteredProducts.forEach((product) => {
+      if (product.attributes.Intro_text) {
+        product.attributes.Intro_text_HTML =
+          IntroTextHTMLCache.get(product.attributes.Intro_text) ??
+          marked(product.attributes.Intro_text);
+      }
+
+      delete product.attributes.Intro_text;
+    });
+
+    return PRODUCTS.put(productsKey, JSON.stringify(filteredProducts));
+  });
+
   await Promise.all(
     productsMapEntries.map(([productsKey, filteredProducts]) =>
       PRODUCTS.put(productsKey, JSON.stringify(filteredProducts))
     )
   );
-
-  const end = Date.now();
-
-  console.log(`'PRODUCTS' KV Updated in ${end - start}ms`);
 
   return reply(JSON.stringify({ message: `'PRODUCTS' KV Updated` }), 200);
 }
