@@ -190,8 +190,6 @@ export async function updateProductsStore(model, reply) {
       (a, b) =>
         new Date(b.attributes.createdAt) - new Date(a.attributes.createdAt)
     );
-
-    return PRODUCTS.put(productsKey, JSON.stringify(filteredProducts));
   });
 
   await Promise.all(
