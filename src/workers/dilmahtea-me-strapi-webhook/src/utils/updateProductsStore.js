@@ -16,59 +16,46 @@ const query = `
         }
       }
     }
+    variant {
+      data {
+        attributes {
+          Name
+        }
+      }
+    }
+    size {
+      data {
+        attributes {
+          Size
+        }
+      }
+    }
     Meta {
       URL_slug
     }
   }
 
   {
-    products(locale: "all") {
-      data {
-        id
-        attributes {
-          ...productsFragment
-        }
-      }
-    }
-
-    productSizes(locale: "all") {
+    catalog {
       data {
         attributes {
-          locale
-          Size
-          products(filters: { publishedAt: { ne: null } }) {
-            data {
-              id
-              attributes {
-                ...productsFragment
+          Products {
+            Title
+            products {
+              data {
+                attributes {
+                  ...productsFragment
+                  localizations(filters: { variant : { Name: { ne: null } } }) {
+                    data {
+                      attributes {
+                        ...productsFragment
+                      }
+                    }
+                  }
+                }
               }
             }
           }
-        }
-      }
-    }
-
-    productVariants(locale: "all") {
-      data {
-        attributes {
-          locale
-          Name
-          products(filters: { publishedAt: { ne: null } }) {
-            data {
-              id
-              attributes {
-                ...productsFragment
-              }
-            }
-          }
-        }
-      }
-    }
-
-    i18NLocales {
-      data {
-        attributes {
-          code
         }
       }
     }
@@ -87,85 +74,55 @@ export async function updateProductsStore(model, reply) {
     }),
   }).then((response) => response.json());
 
-  const {
-    data: {
-      products: { data: products },
-      productSizes: { data: productSizes },
-      productVariants: { data: productVariants },
-    },
-  } = response;
+  const catalog = response.data.catalog.data.attributes;
 
-  const i18NLocales = response.data.i18NLocales.data.map(
-    ({ attributes: { code } }) => code
-  );
-
-  const localizedProductVariants = Object.fromEntries(
-    i18NLocales.map((locale) => [
-      locale,
-      productVariants.filter(
-        ({ attributes: { locale: productVariantLocale } }) =>
-          productVariantLocale === locale
-      ),
-    ])
-  );
-
-  const localizedProductSizes = Object.fromEntries(
-    i18NLocales.map((locale) => [
-      locale,
-      productSizes.filter(
-        ({ attributes: { locale: productSizeLocale } }) =>
-          productSizeLocale === locale
-      ),
-    ])
-  );
-
-  const productsMap = new Map();
-
-  i18NLocales.forEach((locale) => {
-    const shortLocale = locale.substring(0, 2),
-      filteredProducts = products.filter(
-        ({ attributes }) => attributes.locale === locale
-      );
-
-    productsMap.set(shortLocale, filteredProducts);
-
-    localizedProductSizes[locale].forEach(
-      ({ attributes: { Size, products } }) => {
-        const productsKey = [shortLocale, Size].join(" | ");
-
-        productsMap.set(productsKey, products.data);
+  const ProxyHandler = {
+    get: (target, key) => {
+      if (!(key in target)) {
+        target[key] = [];
       }
-    );
 
-    localizedProductVariants[locale].forEach((Variant) => {
-      const VariantName = Variant.attributes.Name,
-        productsKey = [shortLocale, VariantName].join(" | "),
-        productsPerVariant = Variant.attributes.products.data;
+      return target[key];
+    },
+  };
 
-      productsMap.set(productsKey, productsPerVariant);
+  const products = new Proxy({}, ProxyHandler),
+    IntroTextHTMLCache = new Map();
 
-      const productIDs = productsPerVariant.map(({ id }) => id);
+  catalog.Products.forEach(({ Title, products: variants }) => {
+    const variantsPerProduct = new Proxy({}, ProxyHandler);
 
-      localizedProductSizes[locale].forEach(
-        ({
-          attributes: {
-            Size,
-            products: { data: productsPerSize },
-          },
-        }) => {
-          const productsKey = [shortLocale, VariantName, Size].join(" | ");
+    variants.data.forEach(({ attributes: { localizations, ...product } }) => {
+      [
+        product,
+        ...localizations.data.map(({ attributes }) => attributes),
+      ].forEach((product) => {
+        const locale = product.locale.substring(0, 2),
+          size = product.size.data.attributes.Size,
+          variant = product.variant.data.attributes.Name;
 
-          const filteredProducts = productsPerSize.filter(({ id }) =>
-            productIDs.includes(id)
-          );
+        variantsPerProduct[locale].push([variant + " | " + size, product]);
+        variantsPerProduct[locale + " | " + size].push([variant, product]);
+        variantsPerProduct[locale + " | " + variant].push([size, product]);
 
-          productsMap.set(productsKey, filteredProducts);
-        }
-      );
+        products[locale + " | " + variant + " | " + size].push(product);
+
+        // parse Intro_text markdown
+        product.Intro_text_HTML =
+          IntroTextHTMLCache.get(product.Intro_text) ??
+          marked(product.Intro_text);
+
+        // delete unnecessary attributes
+        delete product.size;
+        delete product.variant;
+        delete product.Intro_text;
+      });
+    });
+
+    Object.keys(variantsPerProduct).forEach((key) => {
+      products[key].push([Title, variantsPerProduct[key]]);
     });
   });
-
-  const productsMapEntries = [...productsMap.entries()];
 
   const existingProductsKeys = await PRODUCTS.list();
 
@@ -173,27 +130,8 @@ export async function updateProductsStore(model, reply) {
     existingProductsKeys.keys.map(({ name }) => PRODUCTS.delete(name))
   );
 
-  const IntroTextHTMLCache = new Map();
-
-  productsMapEntries.forEach(([productsKey, filteredProducts]) => {
-    filteredProducts.forEach((product) => {
-      if (product.attributes.Intro_text) {
-        product.attributes.Intro_text_HTML =
-          IntroTextHTMLCache.get(product.attributes.Intro_text) ??
-          marked(product.attributes.Intro_text);
-      }
-
-      delete product.attributes.Intro_text;
-    });
-
-    filteredProducts.sort(
-      (a, b) =>
-        new Date(b.attributes.createdAt) - new Date(a.attributes.createdAt)
-    );
-  });
-
   await Promise.all(
-    productsMapEntries.map(([productsKey, filteredProducts]) =>
+    Object.entries(products).map(([productsKey, filteredProducts]) =>
       PRODUCTS.put(productsKey, JSON.stringify(filteredProducts))
     )
   );

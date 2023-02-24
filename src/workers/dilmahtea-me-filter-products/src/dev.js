@@ -15,17 +15,51 @@ const reply = (message, status) => {
   return new Response(message, { status, headers });
 };
 
-async function handleGET(request) {
-  const productsKey =
-    new URL(request.url).searchParams.get("productsKey") || null;
+async function handlePOST(request) {
+  const {
+    locale,
+    tea_variant,
+    tea_size,
+    preferredProductsFilters,
+  } = await request.json();
 
-  const products = await PRODUCTS.get(productsKey);
+  const productsKey = [locale, tea_variant, tea_size]
+    .filter(Boolean)
+    .join(" | ");
 
-  if (!products) {
+  const productsData = await PRODUCTS.get(productsKey);
+
+  if (!productsData) {
     return reply(JSON.stringify({ error: "Bad request" }), 400);
   }
 
-  return reply(products, 200);
+  const products = JSON.parse(productsData).map((data) => {
+    if (!Array.isArray(data)) return data;
+
+    const [baseProductTitle, variants] = data;
+
+    if (!(baseProductTitle in preferredProductsFilters)) return variants[0][1];
+
+    const {
+      tea_variant: preferredTeaVariant,
+      tea_size: preferredTeaSize,
+    } = preferredProductsFilters[baseProductTitle];
+
+    const variantKey =
+      !tea_variant && !tea_size
+        ? [preferredTeaVariant, preferredTeaSize].join(" | ")
+        : !tea_variant
+        ? preferredTeaVariant
+        : preferredTeaSize;
+
+    const [, variant] = variants.find(([key]) => key === variantKey);
+
+    return variant;
+  });
+
+  products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  return reply(JSON.stringify(products), 200);
 }
 
 function handleOPTIONS(request) {
@@ -55,8 +89,8 @@ addEventListener("fetch", (event) => {
 
   if (urlPathname === "/") {
     switch (request.method) {
-      case "GET":
-        return event.respondWith(handleGET(request));
+      case "POST":
+        return event.respondWith(handlePOST(request));
       case "OPTIONS":
         return event.respondWith(handleOPTIONS(request));
     }

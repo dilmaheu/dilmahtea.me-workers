@@ -4,7 +4,7 @@ compatibility_date = "2022-07-20"
 main = "./src/prod.js"
 workers_dev = false
 routes = [
-    { pattern = "dilmahtea.me/api/products/*", zone_name = "dilmahtea.me" }
+    { pattern = "dilmahtea.me/api/products", zone_name = "dilmahtea.me" }
 ]
 kv_namespaces = [
     { binding = "PRODUCTS", id = "c6b96e10de2249c4b0620a5b349da690" }
