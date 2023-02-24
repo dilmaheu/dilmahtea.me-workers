@@ -40,7 +40,9 @@ async function handlePOST(request) {
       return await updateMailsStore(model, reply);
     }
 
-    if (["product", "product-size", "product-variant"].includes(model)) {
+    if (
+      ["catalog", "product", "product-size", "product-variant"].includes(model)
+    ) {
       return await updateProductsStore(model, reply);
     }
 
