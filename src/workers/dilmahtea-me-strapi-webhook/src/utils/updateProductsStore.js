@@ -3,6 +3,7 @@ import { marked } from "marked";
 const query = `
   fragment productsFragment on Product {
     locale
+    createdAt
     Title
     Intro_text
     Stock_amount
@@ -184,6 +185,11 @@ export async function updateProductsStore(model, reply) {
 
       delete product.attributes.Intro_text;
     });
+
+    filteredProducts.sort(
+      (a, b) =>
+        new Date(b.attributes.createdAt) - new Date(a.attributes.createdAt)
+    );
 
     return PRODUCTS.put(productsKey, JSON.stringify(filteredProducts));
   });
