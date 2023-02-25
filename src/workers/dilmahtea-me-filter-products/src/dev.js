@@ -20,7 +20,7 @@ async function handlePOST(request) {
     locale,
     tea_variant,
     tea_size,
-    preferredProductsFilters,
+    preferredProductsVariants,
   } = await request.json();
 
   const productsKey = [locale, tea_variant, tea_size]
@@ -38,12 +38,12 @@ async function handlePOST(request) {
 
     const [baseProductTitle, variants] = data;
 
-    if (!(baseProductTitle in preferredProductsFilters)) return variants[0][1];
+    if (!(baseProductTitle in preferredProductsVariants)) return variants[0][1];
 
     const {
       tea_variant: preferredTeaVariant,
       tea_size: preferredTeaSize,
-    } = preferredProductsFilters[baseProductTitle];
+    } = preferredProductsVariants[baseProductTitle];
 
     const variantKey =
       !tea_variant && !tea_size
