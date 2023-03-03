@@ -119,30 +119,18 @@ export default getHTMLEmail = ({
                   <h2 style="font-weight: 600; line-height: 140%">
                     ${Overview}
                   </h2>
-                  <p 
-                    style="
-                      padding-top: 40px;
-                      gap: 10px;
-                      display: flex;
-                      align-items: center;
-                      justify-items: space-between;
-                    "
-                  >
-                    <span>\${perk}</span>
-                    <span>&euro;\${price}</span=>
+                  <p style="padding-top: 40px;">
+                    <span style="float: left">\${perk}</span>
+                    <span style="margin-left:10px; float: right">
+                      &euro;\${price}
+                    </span>
                   </p>
-                  <div
-                    style="
-                      padding-top: 15px;
-                      gap: 10px;
-                      display: flex;
-                      align-items: center;
-                      justify-items: space-between;
-                    "
-                  >
-                    <span style="float: left">${VAT}</span>
-                    <span style="float: right">&euro;\${tax}</span>
-                  </div>
+                  <p style="padding-top: 15px;">
+                    <span style="float: left">\${VAT}</span>
+                    <span style="margin-left:10px; float: right">
+                      &euro;\${tax}
+                    </span>
+                  </p>
                   <div
                     style="
                     display: block;
