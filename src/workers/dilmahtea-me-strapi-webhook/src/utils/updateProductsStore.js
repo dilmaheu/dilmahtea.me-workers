@@ -19,14 +19,14 @@ const query = `
     variant {
       data {
         attributes {
-          Name
+          Title
         }
       }
     }
     size {
       data {
         attributes {
-          Size
+          Title
         }
       }
     }
@@ -45,7 +45,12 @@ const query = `
               data {
                 attributes {
                   ...productsFragment
-                  localizations(filters: { variant : { Name: { ne: null } } }) {
+                  localizations(
+                    filters: {
+                      variant: { Title: { ne: null } }
+                      size: { Title: { ne: null } }
+                    }
+                  ) {
                     data {
                       attributes {
                         ...productsFragment
@@ -98,8 +103,8 @@ export async function updateProductsStore(model, reply) {
         ...localizations.data.map(({ attributes }) => attributes),
       ].forEach((product) => {
         const locale = product.locale.substring(0, 2),
-          size = product.size.data.attributes.Size,
-          variant = product.variant.data.attributes.Name;
+          size = product.size.data.attributes.Title,
+          variant = product.variant.data.attributes.Title;
 
         variantsPerProduct[locale].push([variant + " | " + size, product]);
         variantsPerProduct[locale + " | " + size].push([variant, product]);
