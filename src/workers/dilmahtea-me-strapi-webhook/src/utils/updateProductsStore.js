@@ -1,63 +1,28 @@
 import { marked } from "marked";
 
 const query = `
-  fragment productsFragment on Product {
-    locale
-    createdAt
-    Title
-    Intro_text
-    Stock_amount
-    In_stock_date
-    Intro_blob {
-      data {
-        attributes {
-          url
-          alternativeText
-        }
-      }
-    }
-    variant {
-      data {
-        attributes {
-          Title
-        }
-      }
-    }
-    size {
-      data {
-        attributes {
-          Title
-        }
-      }
-    }
-    Meta {
-      URL_slug
-    }
-  }
-
   {
-    catalog {
+    products {
       data {
         attributes {
-          Products {
-            Title
-            products {
-              data {
-                attributes {
-                  ...productsFragment
-                  localizations(
-                    filters: {
-                      variant: { Title: { ne: null } }
-                      size: { Title: { ne: null } }
-                    }
-                  ) {
-                    data {
-                      attributes {
-                        ...productsFragment
-                      }
-                    }
-                  }
-                }
+          locale
+          Title
+          SKU
+          Price
+          Weight_tea
+          Weight_tea_unit
+          Intro_blob {
+            data {
+              attributes {
+                formats
+              }
+            }
+          }
+          localizations(filters: { publishedAt: { ne: null } }) {
+            data {
+              attributes {
+                locale
+                Title
               }
             }
           }
@@ -79,67 +44,32 @@ export async function updateProductsStore(model, reply) {
     }),
   }).then((response) => response.json());
 
-  const catalog = response.data.catalog.data.attributes;
+  const products = Object.fromEntries(
+    response.data.products.data.map(({ attributes }) => {
+      const { SKU: sku, Price } = attributes;
 
-  const ProxyHandler = {
-    get: (target, key) => {
-      if (!(key in target)) {
-        target[key] = [];
-      }
+      const tax = Math.round(Price * 9) / 100,
+        price = Price + tax,
+        size = attributes.Weight_tea + attributes.Weight_tea_unit,
+        image = attributes.Intro_blob.data.attributes.formats.thumbnail.url;
 
-      return target[key];
-    },
-  };
+      const names = JSON.stringify(
+        Object.fromEntries(
+          [
+            { attributes },
+            ...attributes.localizations.data,
+          ].map(({ attributes: { locale, Title } }) => [
+            locale.substring(0, 2),
+            Title,
+          ])
+        )
+      );
 
-  const products = new Proxy({}, ProxyHandler),
-    IntroTextHTMLCache = new Map();
-
-  catalog.Products.forEach(({ Title, products: variants }) => {
-    const variantsPerProduct = new Proxy({}, ProxyHandler);
-
-    variants.data.forEach(({ attributes: { localizations, ...product } }) => {
-      [
-        product,
-        ...localizations.data.map(({ attributes }) => attributes),
-      ].forEach((product) => {
-        const locale = product.locale.substring(0, 2),
-          size = product.size.data.attributes.Title,
-          variant = product.variant.data.attributes.Title;
-
-        variantsPerProduct[locale].push([variant + " | " + size, product]);
-        variantsPerProduct[locale + " | " + size].push([variant, product]);
-        variantsPerProduct[locale + " | " + variant].push([size, product]);
-
-        products[locale + " | " + variant + " | " + size].push(product);
-
-        // parse Intro_text markdown
-        product.Intro_text_HTML =
-          IntroTextHTMLCache.get(product.Intro_text) ??
-          marked(product.Intro_text);
-
-        // delete unnecessary attributes
-        delete product.size;
-        delete product.variant;
-        delete product.Intro_text;
-      });
-    });
-
-    Object.keys(variantsPerProduct).forEach((key) => {
-      products[key].push([Title, variantsPerProduct[key]]);
-    });
-  });
-
-  const existingProductsKeys = await PRODUCTS.list();
-
-  await Promise.all(
-    existingProductsKeys.keys.map(({ name }) => PRODUCTS.delete(name))
+      return [sku, { sku, tax, price, size, image, names }];
+    })
   );
 
-  await Promise.all(
-    Object.entries(products).map(([productsKey, filteredProducts]) =>
-      PRODUCTS.put(productsKey, JSON.stringify(filteredProducts))
-    )
-  );
+  await PRODUCTS.put("index", JSON.stringify(products));
 
   return reply(JSON.stringify({ message: `'PRODUCTS' KV Updated` }), 200);
 }
