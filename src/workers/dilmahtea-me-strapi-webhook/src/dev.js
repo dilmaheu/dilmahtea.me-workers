@@ -4,7 +4,6 @@
  */
 
 import { updateMailsStore } from "./utils/updateMailsStore.js";
-import { updateProductsStore } from "./utils/updateProductsStore.js";
 
 const headers = new Headers({
   "Content-Type": "application/json",
@@ -21,29 +20,15 @@ const reply = (message, status) => {
 async function handlePOST(request) {
   const { event, model } = await request.json();
 
-  if (
-    [
-      "entry.update",
-      "entry.delete",
-      "entry.publish",
-      "entry.unpublish",
-    ].includes(event)
-  ) {
+  if (["entry.update", "entry.publish"].includes(event)) {
     if (
-      ["entry.update", "entry.publish"].includes(event) &&
       [
-        "ecommerce-payment-confirmation-mail",
-        "crowdfunding-email",
         "recurring-element",
+        "crowdfunding-email",
+        "ecommerce-payment-confirmation-mail",
       ].includes(model)
     ) {
       return await updateMailsStore(model, reply);
-    }
-
-    if (
-      ["catalog", "product", "product-size", "product-variant"].includes(model)
-    ) {
-      return await updateProductsStore(model, reply);
     }
 
     return reply(JSON.stringify({ message: "No op" }), 200);
