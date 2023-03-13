@@ -163,8 +163,6 @@ export async function updateMailsStore(model, reply) {
         `
         );
 
-    console.log({ preheaderText });
-
     const htmlEmail = getHTMLEmail({
       Overview,
       Total,
