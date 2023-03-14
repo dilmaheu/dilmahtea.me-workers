@@ -1,101 +1,89 @@
 import getHTMLEmail from "./getHTMLEmail.js";
 
-export async function updateMailsStore(model, reply) {
-  const query = `
-    {
-      ${
-        model === "ecommerce-payment-confirmation-mail"
-          ? `
-              ecommercePaymentConfirmationMail {
-                data {
-                  attributes {
-                    locale
-                    From_name
-                    From_email
-                    Subject
-                    Preview_text
-                    Preheader_text
-                    Body
-                    Overview
-                    Total
-                    Invoice
-                    VAT
-                    localizations {
-                      data {
-                        attributes {
-                          locale
-                          From_name
-                          From_email
-                          Subject
-                          Preview_text
-                          Preheader_text
-                          Body
-                          Overview
-                          Total
-                          Invoice
-                          VAT
-                        }
-                      }
-                    }
-                  }
-                }
+const query = `
+  {
+    ecommercePaymentConfirmationMail {
+      data {
+        attributes {
+          locale
+          From_name
+          From_email
+          Subject
+          Preview_text
+          Preheader_text
+          Body
+          Overview
+          Total
+          Invoice
+          VAT
+          localizations {
+            data {
+              attributes {
+                locale
+                From_name
+                From_email
+                Subject
+                Preview_text
+                Preheader_text
+                Body
+                Overview
+                Total
+                Invoice
+                VAT
               }
-            `
-          : ""
-      }
-
-      ${
-        model === "crowdfunding-email"
-          ? `
-              crowdfundingEmail {
-                data {
-                  attributes {
-                    locale
-                    From_name
-                    From_email
-                    Subject
-                    Preview_text
-                    Preheader_text
-                    Body
-                    Overview
-                    Total
-                    Invoice
-                    VAT
-                    localizations {
-                      data {
-                        attributes {
-                          locale
-                          From_name
-                          From_email
-                          Subject
-                          Preview_text
-                          Preheader_text
-                          Body
-                          Overview
-                          Total
-                          Invoice
-                          VAT
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            `
-          : ""
-      }
-
-      recurringElement {
-        data {
-          attributes {
-            Footer_text
-            Company_address
+            }
           }
         }
       }
     }
-  `;
 
+    crowdfundingEmail {
+      data {
+        attributes {
+          locale
+          From_name
+          From_email
+          Subject
+          Preview_text
+          Preheader_text
+          Body
+          Overview
+          Total
+          Invoice
+          VAT
+          localizations {
+            data {
+              attributes {
+                locale
+                From_name
+                From_email
+                Subject
+                Preview_text
+                Preheader_text
+                Body
+                Overview
+                Total
+                Invoice
+                VAT
+              }
+            }
+          }
+        }
+      }
+    }
+
+    recurringElement {
+      data {
+        attributes {
+          Footer_text
+          Company_address
+        }
+      }
+    }
+  }
+`;
+
+export async function updateMailsStore(reply) {
   const response = await fetch(CMS_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers: {
@@ -122,81 +110,80 @@ export async function updateMailsStore(model, reply) {
     new Date().getFullYear()
   );
 
-  const mails = [
-    crowdfundingEmail?.data,
-    ecommercePaymentConfirmationMail?.data,
-  ]
-    .concat(crowdfundingEmail?.data.attributes.localizations.data)
-    .concat(
-      ecommercePaymentConfirmationMail?.data.attributes.localizations.data
-    )
-    .filter(Boolean)
-    .map(({ attributes }) => attributes);
+  const mails = {
+    "Crowdfunding Email": [
+      crowdfundingEmail.data,
+      ...crowdfundingEmail.data.attributes.localizations.data,
+    ].map(({ attributes }) => attributes),
+    "Ecommerce Payment Confirmation Mail": [
+      ecommercePaymentConfirmationMail.data,
+      ...ecommercePaymentConfirmationMail.data.attributes.localizations.data,
+    ].map(({ attributes }) => attributes),
+  };
 
-  const htmlMailsEntries = mails.map((mail) => {
-    const {
-      locale,
-      From_name,
-      From_email,
-      Subject,
-      Preview_text,
-      Preheader_text,
-      Body,
-      Overview,
-      Total,
-      Invoice,
-      VAT,
-    } = mail;
+  await Promise.all(
+    Object.keys(mails).map(async (mailKey) => {
+      const htmlMailsEntries = mails[mailKey].map((mail) => {
+        const {
+          locale,
+          From_name,
+          From_email,
+          Subject,
+          Preview_text,
+          Preheader_text,
+          Body,
+          Overview,
+          Total,
+          Invoice,
+          VAT,
+        } = mail;
 
-    const previewText = Preview_text + "&nbsp;".repeat(100),
-      preheaderText = Preheader_text.replaceAll("\n", "<br />"),
-      bodyText = Body.replaceAll("\n", "<br />")
-        .replaceAll("<first_name>", "${first_name}")
-        .replaceAll(
-          "<from_email>",
-          `
-          <a
-            href="mailto:${From_email}"
-            style="font-style: italic;display: inline;border-bottom: 1px solid #4e878a;text-decoration: none;color: #4e878a;"
-            >${From_email}</a
-          >
-        `
-        );
+        const previewText = Preview_text + "&nbsp;".repeat(100),
+          preheaderText = Preheader_text.replaceAll("\n", "<br />"),
+          bodyText = Body.replaceAll("\n", "<br />")
+            .replaceAll("<first_name>", "${first_name}")
+            .replaceAll(
+              "<from_email>",
+              `
+              <a
+                href="mailto:${From_email}"
+                style="font-style: italic;display: inline;border-bottom: 1px solid #4e878a;text-decoration: none;color: #4e878a;"
+                >${From_email}</a
+              >
+            `
+            );
 
-    const htmlEmail = getHTMLEmail({
-      Overview,
-      Total,
-      Invoice,
-      VAT,
-      Company_address,
-      previewText,
-      preheaderText,
-      bodyText,
-      footerText,
-    });
+        const htmlEmail = getHTMLEmail({
+          Overview,
+          Total,
+          Invoice,
+          VAT,
+          Company_address,
+          previewText,
+          preheaderText,
+          bodyText,
+          footerText,
+        });
 
-    const mailData = {
-      Subject,
-      From_name,
-      From_email,
-      htmlEmail,
-    };
+        const mailData = {
+          Subject,
+          From_name,
+          From_email,
+          htmlEmail,
+        };
 
-    return [locale.substring(0, 2), mailData];
-  });
+        return [locale.substring(0, 2), mailData];
+      });
 
-  const htmlMails = Object.fromEntries(htmlMailsEntries),
-    mailKey = model
-      .split("-")
-      .map((string) => string[0].toUpperCase() + string.slice(1))
-      .join(" ");
-
-  await MAILS.put(mailKey, JSON.stringify(htmlMails));
+      await MAILS.put(
+        mailKey,
+        JSON.stringify(Object.fromEntries(htmlMailsEntries))
+      );
+    })
+  );
 
   return reply(
-    JSON.stringify({
-      message: `${mailKey} Saved to 'Mails' KV Namespace`,
-    }),
+    JSON.stringify({ message: `Updated 'Mails' KV Namespace` }),
     200
   );
 }

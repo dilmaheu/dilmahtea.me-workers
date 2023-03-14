@@ -28,7 +28,7 @@ async function handlePOST(request) {
         "ecommerce-payment-confirmation-mail",
       ].includes(model)
     ) {
-      return await updateMailsStore(model, reply);
+      return await updateMailsStore(reply);
     }
 
     return reply(JSON.stringify({ message: "No op" }), 200);
