@@ -75,8 +75,18 @@ const query = `
     recurringElement {
       data {
         attributes {
+          locale
           Footer_text
           Company_address
+          localizations {
+            data {
+              attributes {
+                locale
+                Footer_text
+                Company_address
+              }
+            }
+          }
         }
       }
     }
@@ -103,12 +113,10 @@ export async function updateMailsStore(reply) {
     },
   } = await response.json();
 
-  const { Footer_text, Company_address } = recurringElement.data.attributes;
-
-  const footerText = Footer_text.replaceAll(
-    "<current_year>",
-    new Date().getFullYear()
-  );
+  const recurringElementData = [
+    recurringElement.data,
+    ...recurringElement.data.attributes.localizations.data,
+  ];
 
   const mails = {
     "Crowdfunding Email": [
@@ -152,6 +160,15 @@ export async function updateMailsStore(reply) {
               >
             `
             );
+
+        const { Footer_text, Company_address } = recurringElementData.find(
+          ({ attributes }) => attributes.locale === locale
+        ).attributes;
+
+        const footerText = Footer_text.replaceAll(
+          "<current_year>",
+          new Date().getFullYear()
+        );
 
         const htmlEmail = getHTMLEmail({
           Overview,
