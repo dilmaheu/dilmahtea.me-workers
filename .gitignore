@@ -1,6 +1,4 @@
-/target
-/dist
-bin/
-pkg/
+dist/
 node_modules/
-.cargo-ok
+.env
+.env.local
