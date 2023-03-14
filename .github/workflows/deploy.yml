@@ -23,6 +23,30 @@ jobs:
         with:
           node-version: "16"
 
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Publish Baserow Stats Worker
         uses: cloudflare/wrangler-action@2.0.0
         with:
@@ -52,7 +76,6 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          preCommands: npm install
           workingDirectory: "src/workers/dilmahtea-me-strapi-webhook"
           command: "publish --env development"
 
@@ -66,14 +89,12 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          preCommands: npx pnpm install
           workingDirectory: "src/workers/dilmahtea-me-stripe"
 
       - name: Publish Stripe Worker (Development)
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          preCommands: npx pnpm install
           workingDirectory: "src/workers/dilmahtea-me-stripe"
           command: "publish --env development"
 
@@ -81,13 +102,11 @@ jobs:
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          preCommands: npm install
           workingDirectory: "src/workers/dilmahtea-me-stripe-webhook"
 
       - name: Publish Stripe Webhook Worker (Development)
         uses: cloudflare/wrangler-action@2.0.0
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          preCommands: npm install
           workingDirectory: "src/workers/dilmahtea-me-stripe-webhook"
           command: "publish --env development"
