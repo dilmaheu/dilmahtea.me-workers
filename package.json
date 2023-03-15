@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/dilmaheu/dilmahtea.me-workers/issues"
   },
-  "homepage": "https://github.com/dilmaheu/dilmahtea.me-workers#readme"
+  "homepage": "https://github.com/dilmaheu/dilmahtea.me-workers#readme",
+  "dependencies": {
+    "wrangler": "^2.12.3"
+  }
 }
