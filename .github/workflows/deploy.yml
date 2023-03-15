@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout GitHub repo
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -49,4 +51,4 @@ jobs:
       - name: Deploy to Cloudflare Workers
         shell: bash
         run: |
-          for worker in "baserow-stats" "stats" "strapi-webhook" "stripe" "stripe-webhook"; do cd src/workers/dilmahtea-me-$worker && pnpm wrangler publish & done; wait
+          for worker in "baserow-stats" "stats" "strapi-webhook" "stripe" "stripe-webhook"; do worker_src=src/workers/dilmahtea-me-$worker && [ "$(git diff HEAD^ HEAD -- $worker_src)" != "" ] && cd $worker_src && pnpm wrangler publish & done; wait
