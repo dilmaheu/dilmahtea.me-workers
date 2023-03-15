@@ -1,0 +1,19 @@
+name = "dilmahtea-me-dimass"
+main = "./src/dev.ts"
+compatibility_date = "2023-03-14"
+routes = [
+    { pattern = "dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
+]
+
+[env.development]
+name = "dilmahtea-me-dimass-dev"
+main = "./src/dev.ts"
+routes = [
+    { pattern = "dev.dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
+]
+
+
+[vars]
+# DIMASS_APIKEY
+# DIMASS_SIGNATURE
+# STRAPI_APIKEY

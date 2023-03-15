@@ -1,4 +1,6 @@
 dist/
 node_modules/
+# Secrets
 .env
 .env.local
+.dev.vars
