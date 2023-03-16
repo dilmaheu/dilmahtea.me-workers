@@ -51,4 +51,4 @@ jobs:
       - name: Deploy to Cloudflare Workers
         shell: bash
         run: |
-          for worker in "baserow-stats" "stats" "strapi-webhook" "stripe" "stripe-webhook"; do worker_src=src/workers/dilmahtea-me-$worker && [ "$(git diff ${{ github.event.before }} HEAD -- $worker_src)" != "" ] && cd $worker_src && pnpm wrangler publish & done; wait
+          for worker in "baserow-stats" "stats" "strapi-webhook" "stripe" "stripe-webhook"; do worker_src=src/workers/dilmahtea-me-$worker && git diff ${{ github.event.before }} HEAD -- $worker_src |& (grep -q . && cd $worker_src && pnpm wrangler publish) & done; wait
