@@ -1,7 +1,7 @@
 name = "dilmahtea-me-baserow-stats"
 account_id = "f0f636c746c8673c3905e9104b385251"
 compatibility_date = "2022-07-20"
-main = "./src/prod.js"
+main = "./src/index.js"
 workers_dev = false
 routes = [
     { pattern = "crowdfunding-stats.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
@@ -12,7 +12,6 @@ kv_namespaces = [
 
 [env.development]
 name = "dilmahtea-me-baserow-stats-dev"
-main = "./src/dev.js"
 routes = [
     { pattern = "dev.crowdfunding-stats.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]

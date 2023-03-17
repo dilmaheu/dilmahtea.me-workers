@@ -1,7 +1,7 @@
 name = "dilmahtea-me-stripe-webhook"
 account_id = "f0f636c746c8673c3905e9104b385251"
 compatibility_date = "2022-06-26"
-main = "./src/prod.js"
+main = "./src/index.js"
 workers_dev = false
 routes = [
     { pattern = "pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
@@ -14,7 +14,6 @@ kv_namespaces = [
 
 [env.development]
 name = "dilmahtea-me-stripe-webhook-dev"
-main = "./src/dev.js"
 routes = [
     { pattern = "dev.pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
