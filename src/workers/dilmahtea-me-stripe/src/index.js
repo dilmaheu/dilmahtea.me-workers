@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import { getValidatedData } from "./utils/getValidatedData";
 
-const stripe = new Stripe(STRIPE_PRODUCTION_SECRET_KEY_CODE, {
+const stripe = new Stripe(STRIPE_SECRET_KEY, {
   // Cloudflare Workers use the Fetch API for their API requests.
   httpClient: Stripe.createFetchHttpClient(),
   apiVersion: "2020-08-27",

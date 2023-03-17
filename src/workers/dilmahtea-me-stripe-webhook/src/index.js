@@ -4,7 +4,7 @@ import createBaserowRecord from "./utils/createBaserowRecord";
 
 const webCrypto = Stripe.createSubtleCryptoProvider();
 
-const stripe = new Stripe(STRIPE_PRODUCTION_SECRET_KEY, {
+const stripe = new Stripe(STRIPE_SECRET_KEY, {
   // Cloudflare Workers use the Fetch API for their API requests.
   httpClient: Stripe.createFetchHttpClient(),
   apiVersion: "2020-08-27",
@@ -46,7 +46,7 @@ async function handlePOST(request) {
   const event = await stripe.webhooks.constructEventAsync(
     body,
     sig,
-    STRIPE_PRODUCTION_SIGNING_SECRET_KEY,
+    STRIPE_SIGNING_SECRET_KEY,
     undefined,
     webCrypto
   );
