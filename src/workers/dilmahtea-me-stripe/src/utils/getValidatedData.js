@@ -75,13 +75,13 @@ const query = `
   }
 `;
 
-export async function getValidatedData(data) {
+export async function getValidatedData(data, env) {
   // process data for validation
-  const CMSData = await fetch(CMS_GRAPHQL_ENDPOINT, {
+  const CMSData = await fetch(env.CMS_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${CMS_ACCESS_TOKEN}`,
+      Authorization: `Bearer ${env.CMS_ACCESS_TOKEN}`,
     },
     body: JSON.stringify({ query }),
   }).then((response) => response.json());

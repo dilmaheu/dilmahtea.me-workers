@@ -1,29 +1,12 @@
 import Stripe from "stripe";
 import { getValidatedData } from "./utils/getValidatedData";
+import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
-const stripe = new Stripe(STRIPE_SECRET_KEY, {
-  // Cloudflare Workers use the Fetch API for their API requests.
-  httpClient: Stripe.createFetchHttpClient(),
-  apiVersion: "2020-08-27",
-});
-
-const headers = new Headers({
-  "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "*",
-  "Access-Control-Allow-Methods": "OPTIONS, POST",
-  "Access-Control-Max-Age": "-1",
-});
-
-const reply = (message, status) => {
-  return new Response(message, { status, headers });
-};
-
-const handlePOST = async (request) => {
+const handlePOST = async (request, env, ctx) => {
   const body = await request.formData(),
     data = Object.fromEntries(body);
 
-  const validatedData = await getValidatedData(data);
+  const validatedData = await getValidatedData(data, env);
 
   if (validatedData.errors) {
     return reply(JSON.stringify(validatedData), 400);
@@ -72,6 +55,12 @@ const handlePOST = async (request) => {
     cancel_url = origin_url + "?" + queryString;
 
   try {
+    const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+      // Cloudflare Workers use the Fetch API for their API requests.
+      httpClient: Stripe.createFetchHttpClient(),
+      apiVersion: "2020-08-27",
+    });
+
     // Create new Checkout Session for the order.
     // Redirects the customer to s Stripe checkout page.
     // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
@@ -101,11 +90,11 @@ const handlePOST = async (request) => {
 
     switch (payment_type) {
       case "crowdfunding":
-        await CROWDFUNDINGS.put(paymentIntentID, paymentData);
+        await env.CROWDFUNDINGS.put(paymentIntentID, paymentData);
         break;
 
       case "ecommerce":
-        await ECOMMERCE_PAYMENTS.put(paymentIntentID, paymentData);
+        await env.ECOMMERCE_PAYMENTS.put(paymentIntentID, paymentData);
         break;
     }
 
@@ -115,41 +104,7 @@ const handlePOST = async (request) => {
   }
 };
 
-const handleOPTIONS = (request) => {
-  if (
-    request.headers.get("Origin") !== null &&
-    request.headers.get("Access-Control-Request-Method") !== null &&
-    request.headers.get("Access-Control-Request-Headers") !== null
-  ) {
-    // Handle CORS pre-flight request.
-    return new Response(null, {
-      headers,
-    });
-  } else {
-    // Handle standard OPTIONS request.
-    return new Response(null, {
-      headers: {
-        Allow: "POST, OPTIONS",
-      },
-    });
-  }
-};
-
-addEventListener("fetch", (event) => {
-  const { request } = event;
-
-  let { pathname: urlPathname } = new URL(request.url);
-
-  if (urlPathname === "/") {
-    switch (request.method) {
-      case "POST":
-        return event.respondWith(handlePOST(request));
-      case "OPTIONS":
-        return event.respondWith(handleOPTIONS(request));
-    }
-  }
-
-  return event.respondWith(
-    reply(JSON.stringify({ error: `Method or Path Not Allowed` }), 405)
-  );
+export default createModuleWorker({
+  pathname: "/",
+  methods: { POST: handlePOST },
 });
