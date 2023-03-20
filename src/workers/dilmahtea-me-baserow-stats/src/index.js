@@ -1,8 +1,10 @@
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 async function handleGET(request, env) {
-  const supportersCount = await env.BASEROW_STATS.get("Number of Supporters"),
-    totalAmountRaised = await env.BASEROW_STATS.get("Total Amount Raised");
+  const [supportersCount, totalAmountRaised] = await Promise.all([
+    env.BASEROW_STATS.get("Number of Supporters"),
+    env.BASEROW_STATS.get("Total Amount Raised"),
+  ]);
 
   return reply(JSON.stringify({ supportersCount, totalAmountRaised }), 200);
 }
@@ -27,19 +29,18 @@ async function handlePOST(request, env) {
       (row) => row["Payment Status"] === "paid"
     );
 
-    const supportersCount = paidPayments.length;
+    const supportersCount = paidPayments.length,
+      totalAmountRaised = paidPayments.reduce(
+        (total, payment) => total + parseInt(payment["Amount Paid"]),
+        0
+      );
 
-    const initialAmount = 0;
+    await Promise.all([
+      env.BASEROW_STATS.put("Number of Supporters", supportersCount),
+      env.BASEROW_STATS.put("Total Amount Raised", totalAmountRaised),
+    ]);
 
-    const totalAmountRaised = paidPayments.reduce(
-      (total, payment) => total + parseInt(payment["Amount Paid"]),
-      initialAmount
-    );
-
-    await env.BASEROW_STATS.put("Number of Supporters", supportersCount);
-    await env.BASEROW_STATS.put("Total Amount Raised", totalAmountRaised);
-
-    // Trigger a rebuild of the dilmahtea.me website
+    // trigger a rebuild of the website to update the stats
     await fetch(env.CLOUDFLARE_PAGES_DEPLOY_HOOK, { method: "POST" });
 
     return reply(
