@@ -12,14 +12,7 @@ async function handlePOST(request, env) {
 
   if (
     table_id === 67746 &&
-    [
-      "row.created",
-      "row.updated",
-      "row.deleted",
-      "rows.created",
-      "rows.updated",
-      "rows.deleted",
-    ].includes(event_type)
+    ["rows.created", "rows.updated", "rows.deleted"].includes(event_type)
   ) {
     const { results: payments } = await fetch(
       `${env.BASEROW_API_URL}?user_field_names=true&size=0&include=Amount+Paid,Payment+Status`,
