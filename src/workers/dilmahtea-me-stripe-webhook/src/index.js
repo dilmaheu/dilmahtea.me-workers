@@ -1,42 +1,23 @@
 import Stripe from "stripe";
 import sendEmail from "./utils/sendEmail";
 import createBaserowRecord from "./utils/createBaserowRecord";
+import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 const webCrypto = Stripe.createSubtleCryptoProvider();
 
-const stripe = new Stripe(STRIPE_SECRET_KEY, {
-  // Cloudflare Workers use the Fetch API for their API requests.
-  httpClient: Stripe.createFetchHttpClient(),
-  apiVersion: "2020-08-27",
-});
-
-const headers = new Headers({
-  "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "*",
-  "Access-Control-Allow-Methods": "OPTIONS, GET, POST",
-  "Access-Control-Max-Age": "-1",
-});
-
-const reply = (message, status) => new Response(message, { status, headers });
-
-const checkWebHookRequest = async (request) => {
-  const contentType = request.headers.get("content-type") || "";
-
-  if (!contentType.includes("application/json")) return false;
-
-  return true;
-};
-
-async function handlePOST(request) {
-  const isJson = checkWebHookRequest(request);
-
-  if (!isJson) {
+async function handlePOST(request, env) {
+  if (!request.headers.get("content-type")?.includes("application/json")) {
     return reply(
       JSON.stringify({ error: "Bad request ensure json format" }),
       400
     );
   }
+
+  const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+    // Cloudflare Workers use the Fetch API for their API requests.
+    httpClient: Stripe.createFetchHttpClient(),
+    apiVersion: "2020-08-27",
+  });
 
   const sig = request.headers.get("stripe-signature");
 
@@ -46,7 +27,7 @@ async function handlePOST(request) {
   const event = await stripe.webhooks.constructEventAsync(
     body,
     sig,
-    STRIPE_SIGNING_SECRET_KEY,
+    env.STRIPE_SIGNING_SECRET_KEY,
     undefined,
     webCrypto
   );
@@ -60,7 +41,7 @@ async function handlePOST(request) {
 
   const paymentIntent = event.data.object,
     { id: paymentIntentId } = paymentIntent,
-    NAMESPACES = [ECOMMERCE_PAYMENTS, CROWDFUNDINGS];
+    NAMESPACES = [env.ECOMMERCE_PAYMENTS, env.CROWDFUNDINGS];
 
   let paymentIntentData;
 
@@ -91,7 +72,7 @@ async function handlePOST(request) {
 
   // send thank you email if payment is successful
   if (payment_status === "paid" && paymentIntentData) {
-    promises.push(sendEmail(parsedPaymentIntentData));
+    promises.push(sendEmail(parsedPaymentIntentData, env));
 
     const { hostname: domain } = new URL(origin_url);
 
@@ -127,11 +108,14 @@ async function handlePOST(request) {
   }
 
   promises.push(
-    createBaserowRecord({
-      ...parsedPaymentIntentData,
-      payment_status,
-      payment_intent_id: paymentIntentId,
-    })
+    createBaserowRecord(
+      {
+        ...parsedPaymentIntentData,
+        payment_status,
+        payment_intent_id: paymentIntentId,
+      },
+      env
+    )
   );
 
   await Promise.all(promises);
@@ -139,40 +123,7 @@ async function handlePOST(request) {
   return reply(JSON.stringify({ received: true }), 200);
 }
 
-const handleOPTIONS = (request) => {
-  if (
-    request.headers.get("Origin") !== null &&
-    request.headers.get("Access-Control-Request-Method") !== null &&
-    request.headers.get("Access-Control-Request-Headers") !== null
-  ) {
-    // Handle CORS pre-flight request.
-    return reply(null, 200);
-  } else {
-    // Handle standard OPTIONS request.
-    return new Response(null, {
-      headers: {
-        Allow: "POST, OPTIONS",
-      },
-    });
-  }
-};
-
-addEventListener("fetch", (event) => {
-  const { request } = event;
-
-  let { pathname: urlPathname } = new URL(request.url);
-
-  if (urlPathname === "/") {
-    if (request.method === "OPTIONS") {
-      return event.respondWith(handleOPTIONS(request));
-    }
-
-    if (request.method === "POST" && request.headers.get("stripe-signature")) {
-      return event.respondWith(handlePOST(request));
-    }
-  }
-
-  return event.respondWith(
-    reply(JSON.stringify({ error: `Method or Path Not Allowed` }), 405)
-  );
+export default createModuleWorker({
+  pathname: "/",
+  methods: { POST: handlePOST },
 });
