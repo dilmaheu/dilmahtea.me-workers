@@ -1,4 +1,4 @@
-export default getHTMLEmail = ({
+const getHTMLEmail = ({
   Overview,
   Total,
   Invoice,
@@ -195,3 +195,5 @@ export default getHTMLEmail = ({
       </body>
     </html>
   `;
+
+export default getHTMLEmail;
