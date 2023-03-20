@@ -193,7 +193,7 @@ export async function updateMailsStore(env) {
         return [locale.substring(0, 2), mailData];
       });
 
-      await MAILS.put(
+      await env.MAILS.put(
         mailKey,
         JSON.stringify(Object.fromEntries(htmlMailsEntries))
       );
