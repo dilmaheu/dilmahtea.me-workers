@@ -121,7 +121,7 @@ const getHTMLEmail = ({
                   </h2>
                   <p style="display: flex; align-items: center; padding-top: 40px;">
                     <span>\${perk}</span>
-                    <span style="margin-left:10px;>€\${price}</span>
+                    <span style="margin-left:10px;">€\${price}</span>
                   </p>
                   <p style="display: flex; align-items: center; padding-top: 15px;">
                     <span>${VAT}</span>
