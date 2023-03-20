@@ -25,15 +25,12 @@ async function handlePOST(request, env) {
       }
     ).then((res) => res.json());
 
-    const paidPayments = payments.filter(
-      (row) => row["Payment Status"] === "paid"
-    );
+    const paidPayments = payments
+      .filter((row) => row["Payment Status"] === "paid")
+      .map((row) => parseInt(row["Amount Paid"]));
 
     const supportersCount = paidPayments.length,
-      totalAmountRaised = paidPayments.reduce(
-        (total, payment) => total + parseInt(payment["Amount Paid"]),
-        0
-      );
+      totalAmountRaised = paidPayments.reduce((a, b) => a + b, 0);
 
     await Promise.all([
       env.BASEROW_STATS.put("Number of Supporters", supportersCount),
