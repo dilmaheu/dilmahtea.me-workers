@@ -136,7 +136,7 @@ const getHTMLEmail = ({
                   ></div>
                   <p style="padding-top: 15px; font-size: 28px; font-weight: 600">
                     <span style="float: left">${Total}</span>
-                    <span style="float: right">&euro;\${price}</span>
+                    <span style="float: right">€\${price}</span>
                   </p>
                 </div>
   
