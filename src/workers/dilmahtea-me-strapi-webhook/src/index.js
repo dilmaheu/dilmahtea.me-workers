@@ -1,7 +1,7 @@
 import { updateMailsStore } from "./utils/updateMailsStore";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
-async function handlePOST(request) {
+async function handlePOST(request, env) {
   const { event, model } = await request.json();
 
   if (["entry.update", "entry.publish"].includes(event)) {
