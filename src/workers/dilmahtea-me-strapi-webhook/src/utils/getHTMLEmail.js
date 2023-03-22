@@ -119,14 +119,25 @@ const getHTMLEmail = ({
                   <h2 style="font-weight: 600; line-height: 140%">
                     ${Overview}
                   </h2>
-                  <p style="display: flex; align-items: center; padding-top: 40px;">
-                    <span>\${perk}</span>
-                    <span style="margin-left:10px;">€\${price}</span>
-                  </p>
-                  <p style="display: flex; align-items: center; padding-top: 15px;">
-                    <span>${VAT}</span>
-                    <span style="margin-left:10px;">€\${tax}</span>
-                  </p>
+
+                  <table width="100%" style="padding-top: 40px;">
+                    <tbody>
+                      <tr>
+                        <td style="vertical-align: middle">\${perk}</td>
+                        <td align="right" style="vertical-align: middle; padding-left: 10px">
+                          €\${price}
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td style="vertical-align: middle; padding-top: 15px">${VAT}</td>
+                        <td align="right" style="vertical-align: middle; padding-top: 15px; padding-left: 10px">
+                          €\${tax}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
                   <div
                     style="
                     display: block;
