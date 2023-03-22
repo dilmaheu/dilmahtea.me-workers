@@ -101,9 +101,7 @@ export async function updateMailsStore(env) {
       "Content-Type": "application/json",
       Authorization: `Bearer ${env.CMS_ACCESS_TOKEN}`,
     },
-    body: JSON.stringify({
-      query,
-    }),
+    body: JSON.stringify({ query }),
   });
 
   const {
@@ -154,12 +152,12 @@ export async function updateMailsStore(env) {
             .replaceAll(
               "<from_email>",
               `
-              <a
-                href="mailto:${From_email}"
-                style="font-style: italic;display: inline;border-bottom: 1px solid #4e878a;text-decoration: none;color: #4e878a;"
-                >${From_email}</a
-              >
-            `
+                <a
+                  href="mailto:${From_email}"
+                  style="font-style: italic;display: inline;border-bottom: 1px solid #4e878a;text-decoration: none;color: #4e878a;"
+                  >${From_email}</a
+                >
+              `
             );
 
         const { Footer_text, Company_address } = recurringElementData.find(
@@ -183,12 +181,7 @@ export async function updateMailsStore(env) {
           footerText,
         });
 
-        const mailData = {
-          Subject,
-          From_name,
-          From_email,
-          htmlEmail,
-        };
+        const mailData = { Subject, From_name, From_email, htmlEmail };
 
         return [locale.substring(0, 2), mailData];
       });
