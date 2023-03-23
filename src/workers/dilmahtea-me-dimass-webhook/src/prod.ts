@@ -1,4 +1,4 @@
-import { Env } from "./types";
+import { Env, WebhookResponseData } from "./types";
 
 export default {
   async fetch(
@@ -11,12 +11,21 @@ export default {
     // const url = "https://cms.dilmahtea.me/api/products/1";
 
     if (request.method === "POST") {
-      const data = await request.json();
+      const data = await request.json<WebhookResponseData>();
       console.table(data);
 
       await env.DIMASS_WEBHOOK_RESPONSES.put(
         `${new Date().getTime()}`,
-        JSON.stringify({ data, headers: request.headers }, null, 2)
+        JSON.stringify(
+          {
+            data,
+            signature: request.headers.get("X-SP-Signature"),
+            event: request.headers.get("X-SP-Event"),
+            timestamp: request.headers.get("X-SP-Timestamp"),
+          },
+          null,
+          2
+        )
       );
 
       return new Response(JSON.stringify(data, null, 2), {

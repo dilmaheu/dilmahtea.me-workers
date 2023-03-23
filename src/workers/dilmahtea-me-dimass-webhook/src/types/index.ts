@@ -19,6 +19,57 @@ export interface Env {
 }
 
 /**
+ * DIMASS WEBHOOK RESPONSE TYPES
+ * - for the Product
+ */
+export interface WebhookResponseData {
+  id: number
+  delivery_address: DeliveryAddress
+  email: string
+  external_id: string
+  order_date: string
+  order_number: string
+  order_lines: OrderLine[]
+  partner: Partner
+  state: number
+}
+
+export interface DeliveryAddress {
+  id: number
+  firstname: string
+  lastname: string
+  company: string
+  street: string
+  house_number: any
+  zipcode: string
+  city: string
+  country: string
+  phone: any
+}
+
+export interface OrderLine {
+  id: number
+  article: Article
+  quantity: number
+  external_id: any
+}
+
+export interface Article {
+  id: number
+  code: string
+  name: string
+  ean: any
+  external_id: any
+  primary_barcode: string
+}
+
+export interface Partner {
+  code: string
+  name: string
+}
+
+
+/**
  * This is an automatically generated type based on a GET response to `STRAPI/api/products/1`.
  */
 export interface Main {
