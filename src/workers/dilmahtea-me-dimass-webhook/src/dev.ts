@@ -18,7 +18,7 @@
 //   body: "",
 // });
 
-import { Env, Main } from "./types";
+import { Env } from "./types";
 
 export default {
   async fetch(
@@ -38,9 +38,16 @@ export default {
     //   });
     // }
 
-
     if (request.method === "POST") {
-      return new Response(JSON.stringify(await request.json(), null, 2), {
+      const data = await request.json();
+      console.table(data);
+
+      await env.DIMASS_WEBHOOK_RESPONSES.put(
+        `${new Date().getTime()}`,
+        JSON.stringify({ data, headers: request.headers }, null, 2)
+      );
+
+      return new Response(JSON.stringify(data, null, 2), {
         headers: {
           "content-type": "application/json;charset=UTF-8",
         },

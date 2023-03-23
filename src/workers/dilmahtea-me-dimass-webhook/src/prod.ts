@@ -1,23 +1,4 @@
-import { Main } from "./types";
-
-export interface Env {
-  // KV
-  CROWDFUNDING_EMAIL: any;
-  "__landing-workers_sites_assets_preview": any;
-  ECOMMERCE_PAYMENTS: any;
-  MAILS: any;
-  BASEROW_STATS: any;
-  ECOMMERCE_PAYMENTS_DEV: any;
-  CROWDFUNDINGS_DEV: any;
-  PRODUCTS: any;
-  CROWDFUNDINGS: any;
-  "landing-THEE": any;
-  "landing-THEE_preview": any;
-  // `.env` / `.dev.vars`
-  DIMASS_APIKEY: string;
-  DIMASS_SIGNATURE: string;
-  STRAPI_APIKEY: string;
-}
+import { Env } from "./types";
 
 export default {
   async fetch(
@@ -30,7 +11,15 @@ export default {
     // const url = "https://cms.dilmahtea.me/api/products/1";
 
     if (request.method === "POST") {
-      return new Response(JSON.stringify(await request.json(), null, 2), {
+      const data = await request.json();
+      console.table(data);
+
+      await env.DIMASS_WEBHOOK_RESPONSES.put(
+        `${new Date().getTime()}`,
+        JSON.stringify({ data, headers: request.headers }, null, 2)
+      );
+
+      return new Response(JSON.stringify(data, null, 2), {
         headers: {
           "content-type": "application/json;charset=UTF-8",
         },

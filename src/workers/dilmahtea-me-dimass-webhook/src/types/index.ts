@@ -1,3 +1,23 @@
+export interface Env {
+  // KV
+  CROWDFUNDING_EMAIL: any;
+  "__landing-workers_sites_assets_preview": any;
+  ECOMMERCE_PAYMENTS: any;
+  MAILS: any;
+  BASEROW_STATS: any;
+  ECOMMERCE_PAYMENTS_DEV: any;
+  CROWDFUNDINGS_DEV: any;
+  PRODUCTS: any;
+  CROWDFUNDINGS: any;
+  "landing-THEE": any;
+  "landing-THEE_preview": any;
+  // `.env` / `.dev.vars`
+  DIMASS_APIKEY: string;
+  DIMASS_SIGNATURE: string;
+  STRAPI_APIKEY: string;
+  DIMASS_WEBHOOK_RESPONSES: any;
+}
+
 /**
  * This is an automatically generated type based on a GET response to `STRAPI/api/products/1`.
  */
