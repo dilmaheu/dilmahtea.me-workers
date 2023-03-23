@@ -22,7 +22,7 @@ import { Env, Main } from "./types";
 
 export default {
   async fetch(
-    controller: ScheduledController,
+    request: Request,
     env: Env,
     ctx: ExecutionContext
   ): Promise<Response> {
@@ -30,6 +30,14 @@ export default {
     // 1, 4, 7, 8, 128 are valid `product id`'s
     const url = "https://cms.dilmahtea.me/api/products/1";
 
+    if (request.method === 'POST') {
+      // handle post request
+    }
+
+    if (request.headers) {
+      console.log(request.headers)
+    }
+    
     const headers = new Headers({
       Accept: "*/*",
       Authorization: `Bearer ${env.STRAPI_APIKEY}`,
