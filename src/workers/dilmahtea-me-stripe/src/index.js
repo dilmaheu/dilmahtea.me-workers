@@ -4,9 +4,8 @@ import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 const handlePOST = async (request, env, ctx) => {
   const body = await request.formData(),
-    data = Object.fromEntries(body);
-
-  const validatedData = await getValidatedData(data, env);
+    data = Object.fromEntries(body),
+    validatedData = await getValidatedData(data, env);
 
   if (validatedData.errors) {
     return reply(JSON.stringify(validatedData), 400);
@@ -40,68 +39,61 @@ const handlePOST = async (request, env, ctx) => {
 
   const paymentData = JSON.stringify({ ...validatedData, request_headers });
 
-  const searchParams = new URLSearchParams();
-
-  searchParams.set("first_name", first_name);
-  searchParams.set("last_name", last_name);
-  searchParams.set("email", email);
-  searchParams.set("favorite_tea", favorite_tea);
-  searchParams.set("country", country);
-  searchParams.set("city", city);
-  searchParams.set("street", street);
-  searchParams.set("postal_code", postal_code);
+  const searchParams = new URLSearchParams({
+    first_name,
+    last_name,
+    email,
+    favorite_tea,
+    country,
+    city,
+    street,
+    postal_code,
+  });
 
   const queryString = searchParams.toString(),
     cancel_url = origin_url + "?" + queryString;
 
-  try {
-    const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-      // Cloudflare Workers use the Fetch API for their API requests.
-      httpClient: Stripe.createFetchHttpClient(),
-      apiVersion: "2020-08-27",
-    });
+  const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+    // Cloudflare Workers use the Fetch API for their API requests.
+    httpClient: Stripe.createFetchHttpClient(),
+    apiVersion: "2020-08-27",
+  });
 
-    // Create new Checkout Session for the order.
-    // Redirects the customer to s Stripe checkout page.
-    // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card", "ideal"],
-      mode: "payment",
-      customer_email: email,
-      locale: locale,
-      line_items: [
-        {
-          quantity: 1,
-          price_data: {
-            currency: "eur",
-            unit_amount: Math.round(price * 100),
-            product_data: {
-              name: product_name,
-              description: product_desc,
-            },
+  // Create new Checkout Session for the order.
+  // Redirects the customer to s Stripe checkout page.
+  // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
+  const session = await stripe.checkout.sessions.create({
+    locale: locale,
+    mode: "payment",
+    customer_email: email,
+    payment_method_types: ["card", "ideal"],
+    cancel_url,
+    success_url,
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: "eur",
+          unit_amount: Math.round(price * 100),
+          product_data: {
+            name: product_name,
+            description: product_desc,
           },
         },
-      ],
-      success_url,
-      cancel_url,
-    });
+      },
+    ],
+  });
 
-    const paymentIntentID = session.payment_intent;
+  const paymentIntentID = session.payment_intent;
 
-    switch (payment_type) {
-      case "crowdfunding":
-        await env.CROWDFUNDINGS.put(paymentIntentID, paymentData);
-        break;
+  const PAYMENT_INTENTS =
+    payment_type === "crowdfunding"
+      ? env.CROWDFUNDINGS
+      : env.ECOMMERCE_PAYMENTS;
 
-      case "ecommerce":
-        await env.ECOMMERCE_PAYMENTS.put(paymentIntentID, paymentData);
-        break;
-    }
+  await PAYMENT_INTENTS.put(paymentIntentID, paymentData);
 
-    return Response.redirect(session.url, 303);
-  } catch (err) {
-    return reply(JSON.stringify(err), 500);
-  }
+  return Response.redirect(session.url, 303);
 };
 
 export default createModuleWorker({
