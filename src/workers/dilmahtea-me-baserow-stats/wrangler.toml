@@ -1,6 +1,6 @@
 name = "dilmahtea-me-baserow-stats"
 account_id = "f0f636c746c8673c3905e9104b385251"
-compatibility_date = "2022-07-20"
+compatibility_date = "2023-03-27"
 main = "./src/index.js"
 workers_dev = false
 routes = [
