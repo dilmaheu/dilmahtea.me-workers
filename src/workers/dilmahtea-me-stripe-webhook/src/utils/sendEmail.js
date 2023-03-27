@@ -1,4 +1,4 @@
-export default async function sendEmail(data, env) {
+export default async function sendEmail(paymentData, env) {
   const {
     first_name,
     last_name,
@@ -21,7 +21,7 @@ export default async function sendEmail(data, env) {
     locale,
     origin_url,
     success_url,
-  } = data;
+  } = paymentData;
 
   const mailKey =
     payment_type === "crowdfunding"
@@ -30,9 +30,8 @@ export default async function sendEmail(data, env) {
 
   const mailData = JSON.parse(await env.MAILS.get(mailKey));
 
-  const mail = mailData[locale];
-
-  const { Subject, From_name, From_email, htmlEmail } = mail;
+  const mail = mailData[locale],
+    { Subject, From_name, From_email, htmlEmail } = mail;
 
   const finalHTMLEmail = htmlEmail
     .replaceAll("${first_name}", first_name)
@@ -74,12 +73,7 @@ export default async function sendEmail(data, env) {
         name: From_name,
       },
       subject: Subject,
-      content: [
-        {
-          type: "text/html",
-          value: finalHTMLEmail,
-        },
-      ],
+      content: [{ type: "text/html", value: finalHTMLEmail }],
     }),
   }).then((res) => res.json());
 

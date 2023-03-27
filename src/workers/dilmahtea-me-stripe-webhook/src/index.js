@@ -6,12 +6,8 @@ import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 const webCrypto = Stripe.createSubtleCryptoProvider();
 
 async function handlePOST(request, env) {
-  if (!request.headers.get("content-type")?.includes("application/json")) {
-    return reply(
-      JSON.stringify({ error: "Bad request ensure json format" }),
-      400
-    );
-  }
+  const body = await request.text(),
+    signature = request.headers.get("stripe-signature");
 
   const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
     // Cloudflare Workers use the Fetch API for their API requests.
@@ -19,14 +15,10 @@ async function handlePOST(request, env) {
     apiVersion: "2020-08-27",
   });
 
-  const sig = request.headers.get("stripe-signature");
-
-  const body = await request.text();
-
   // Use Stripe to ensure that this is an authentic webhook request event from Stripe
   const event = await stripe.webhooks.constructEventAsync(
     body,
-    sig,
+    signature,
     env.STRIPE_SIGNING_SECRET_KEY,
     undefined,
     webCrypto
@@ -51,8 +43,9 @@ async function handlePOST(request, env) {
     if (paymentIntentData) break;
   }
 
-  const parsedPaymentIntentData = JSON.parse(paymentIntentData),
-    { payment_type, origin_url } = parsedPaymentIntentData;
+  paymentIntentData = JSON.parse(paymentIntentData);
+
+  const { payment_type, origin_url } = paymentIntentData;
 
   let payment_status;
 
@@ -71,13 +64,13 @@ async function handlePOST(request, env) {
   const promises = [];
 
   // send thank you email if payment is successful
-  if (payment_status === "paid" && paymentIntentData) {
-    promises.push(sendEmail(parsedPaymentIntentData, env));
+  if (paymentIntentData && payment_status === "paid") {
+    promises.push(sendEmail(paymentIntentData, env));
 
     const { hostname: domain } = new URL(origin_url);
 
     if (domain === "dilmahtea.me" && payment_type === "ecommerce") {
-      const { cart, request_headers } = parsedPaymentIntentData,
+      const { cart, request_headers } = paymentIntentData,
         purchasedProducts = Object.values(JSON.parse(cart)),
         purchaseEventRequestHeaders = new Headers(request_headers);
 
@@ -110,7 +103,7 @@ async function handlePOST(request, env) {
   promises.push(
     createBaserowRecord(
       {
-        ...parsedPaymentIntentData,
+        ...paymentIntentData,
         payment_status,
         payment_intent_id: paymentIntentId,
       },

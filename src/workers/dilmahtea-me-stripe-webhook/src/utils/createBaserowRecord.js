@@ -1,4 +1,4 @@
-export default async function createBaserowRecord(data, env) {
+export default async function createBaserowRecord(paymentIntentData, env) {
   const {
     first_name,
     last_name,
@@ -23,7 +23,7 @@ export default async function createBaserowRecord(data, env) {
     success_url,
     payment_status,
     payment_intent_id,
-  } = data;
+  } = paymentIntentData;
 
   const databaseTableID =
     payment_type === "crowdfunding"
