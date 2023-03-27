@@ -12,7 +12,7 @@ async function handlePOST(request, env) {
   const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
     // Cloudflare Workers use the Fetch API for their API requests.
     httpClient: Stripe.createFetchHttpClient(),
-    apiVersion: "2020-08-27",
+    apiVersion: "2022-11-15",
   });
 
   // Use Stripe to ensure that this is an authentic webhook request event from Stripe

@@ -56,7 +56,7 @@ const handlePOST = async (request, env, ctx) => {
   const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
     // Cloudflare Workers use the Fetch API for their API requests.
     httpClient: Stripe.createFetchHttpClient(),
-    apiVersion: "2020-08-27",
+    apiVersion: "2022-11-15",
   });
 
   // Create new Checkout Session for the order.
