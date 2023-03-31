@@ -5,7 +5,7 @@ routes = [
     { pattern = "dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
 kv_namespaces = [
-    { binding = "DIMASS_WEBHOOK_RESPONSES", id = "ae8c205257e54cd6b2cac4a2888d2f45", preview_id = "1e65285288ff4e8ab95176f0635d15c9" },
+    { binding = "TEST_STRAPI_UPDATES", id = "3a904bf6d19b4d8ba0e3ed44bb2cdca7" },
 ]
 
 [env.development]
@@ -15,7 +15,6 @@ workers_dev = true
 routes = [
     { pattern = "dev.dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
-
 
 
 [vars]

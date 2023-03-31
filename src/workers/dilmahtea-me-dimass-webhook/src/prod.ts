@@ -97,6 +97,9 @@ export default {
         Stock_amount: productResponse.data.attributes.Stock_amount,
       }));
 
+      // to test this feature working properly! SHOULD BE REMOVED!
+      await env.TEST_STRAPI_UPDATES.put(new Date().toISOString(), filteredData);
+
       return new Response(JSON.stringify(filteredData, null, 2), {
         headers: {
           "content-type": "application/json;charset=UTF-8",
@@ -114,8 +117,8 @@ export default {
     }));
 
     const skus = productsToUpdate.map((product) => product.SKU);
-    console.log(skus);
-    console.log(productsToUpdate);
+    // console.log(skus);
+    // console.log(productsToUpdate);
     // const smth = [
     //   {
     //     id: "119",
@@ -304,7 +307,7 @@ export default {
     // const skusSet = new Set(skus);
     // console.log(skusSet.size);
     // console.log(`how is this? [${skus}]`);
-    const graphqlUrl = "https://cms.dilmahtea.me/graphql";
+    // const graphqlUrl = "https://cms.dilmahtea.me/graphql";
     // const restUrl = `https://cms.dilmahtea.me/api/products?filters[SKU][$in]${skus}`;
     // const restUrl = `https://cms.dilmahtea.me/api/products?publicationState=preview`;
     // const restUrl = `https://cms.dilmahtea.me/api/products?publicationState=preview&`;
@@ -377,7 +380,7 @@ export default {
       SKU: product.attributes.SKU,
     }));
 
-    console.log(productIds);
+    // console.log(productIds);
 
     const responses = await Promise.all(
       productIds.map(async ({ id, SKU }) => {
