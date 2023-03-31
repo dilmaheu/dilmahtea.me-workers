@@ -4,10 +4,10 @@ import sha1 from "sha1";
 import { GetDimassStockResponse } from "../types/dimass-webhook-get-stock-response";
 
 export default async function(env: Env, orderDate: string) {
-  const dimassBaseUrl = "https://www.supportplaza.nl";
-  const dimassUrl = `${dimassBaseUrl}/papi/stock/1.0`;
+  const baseUrl = "https://www.supportplaza.nl";
+  const url = `${baseUrl}/papi/stock/1.0`;
 
-  const dimassBody = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="https://www.supportplaza.nl/papi/stock">
+  const body = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="https://www.supportplaza.nl/papi/stock">
   <soapenv:Header/>
   <soapenv:Body>
      <stoc:getStock>
@@ -20,34 +20,43 @@ export default async function(env: Env, orderDate: string) {
   </soapenv:Body>
 </soapenv:Envelope>`;
 
-  const dimassNonce = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+  const nonce = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     .split("")
     .sort(function() {
       return 0.5 - Math.random();
     })
     .join("");
 
-  const dimassTmestamp = Math.round(new Date().getTime() / 1000);
+  const timestamp = Math.round(new Date().getTime() / 1000);
 
-  const dimassSignature = sha1(
-    `${dimassNonce + dimassTmestamp + env.DIMASS_SECRET}`
-  );
+  const signature = sha1(`${nonce + timestamp + env.DIMASS_SECRET}`);
 
-  const dimassHeaders = new Headers({
+  const headers = new Headers({
     apikey: env.DIMASS_APIKEY,
-    signature: dimassSignature.toString(),
-    nonce: dimassNonce,
-    timestamp: `${dimassTmestamp}`,
+    signature: signature.toString(),
+    nonce: nonce,
+    timestamp: `${timestamp}`,
   });
 
-  const dimassResponse = await fetch(dimassUrl, {
-    headers: dimassHeaders,
+  const dimassResponse = await fetch(url, {
     method: "POST",
-    body: dimassBody,
+    headers,
+    body,
   });
 
-  const dimassResponseBody = await dimassResponse.text();
-  const json: GetDimassStockResponse = xml2json(dimassResponseBody);
+  if (!dimassResponse.ok) {
+    throw new Error(dimassResponse.statusText);
+  }
+
+  const responseBody = await dimassResponse.text();
+
+  if (typeof responseBody !== "string") {
+    throw new Error(
+      "Something went wrong parsing the response from dimass to text!"
+    );
+  }
+
+  const json: GetDimassStockResponse = xml2json(responseBody);
 
   /**
    * NOTE: the 'code' values get mapped to 'SKU' values here.

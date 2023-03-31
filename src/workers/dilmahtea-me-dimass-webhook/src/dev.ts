@@ -22,6 +22,10 @@ export default {
 
       const dimassRes = await getStockDimass(env, webhookData.order_date);
 
+      /**
+       * Dimass saves DILMAH SKU's with a 'DIMA' prefix; the `originalSku` field contains this data.
+       * the 'SKU' is the same value that matches the SKU's in strapi without the 'DIMA' prefix.
+       */
       const productsToUpdate: ProductsToUpdateType[] = dimassRes.map((p) => ({
         id: "",
         SKU: p.SKU,
@@ -29,10 +33,10 @@ export default {
         originalSku: p.code,
       }));
 
-      // array of SKU's to query Strapi
+      /** array of SKU's to query Strapi */
       const skus = productsToUpdate.map((product) => product.SKU);
 
-      // query params for Strapi REST API endpoint
+      /** query params for Strapi REST API endpoint */
       const query = QueryString.stringify({
         filters: {
           SKU: {
@@ -43,7 +47,7 @@ export default {
       });
       const restUrl = `https://cms.dilmahtea.me/api/products?${query}`;
 
-      // get ID's to update the stock off
+      /** get the `id`'s from the products that need to be updated from Strapi */
       const idsFromStrapiResponse = await fetch(restUrl, {
         method: "GET",
         headers: {
@@ -52,6 +56,11 @@ export default {
             "Bearer e52e38edadb1d868ea22dfd2f43bb4c19e5a5d9af8114baf8e7581f8ca48f03c39d7a96fc4a204d31d964e3f2b0bb501bd8f825339e3630c9937862f1b7e13f5f04a184a438b03c184403d3927b2670b77883fef656a835ed0320cf2984b99c89ff6046643e08fead2a798bd9468e32e3f0d92c98e5f1f9f4a212faaa55c1662",
         },
       });
+
+      if (!idsFromStrapiResponse.ok) {
+        throw new Error(idsFromStrapiResponse.statusText);
+      }
+
       const idsFromStrapiData: StrapiResponseProducts = await idsFromStrapiResponse.json();
 
       // co-locating the SKU's and id's so that we can update the quantity for the correct SKU + id
@@ -65,28 +74,38 @@ export default {
       // Update the products with a PUT request and return the response object
       const responses = await Promise.all(
         productIds.map(async ({ id, SKU }) => {
-          return await fetch(`https://cms.dilmahtea.me/api/products/${id}`, {
-            headers: {
-              "content-type": "application/json",
-              Authorization:
-                "Bearer e52e38edadb1d868ea22dfd2f43bb4c19e5a5d9af8114baf8e7581f8ca48f03c39d7a96fc4a204d31d964e3f2b0bb501bd8f825339e3630c9937862f1b7e13f5f04a184a438b03c184403d3927b2670b77883fef656a835ed0320cf2984b99c89ff6046643e08fead2a798bd9468e32e3f0d92c98e5f1f9f4a212faaa55c1662",
-            },
-            method: "PUT",
-            body: JSON.stringify({
-              data: {
-                Stock_amount: productsToUpdate.find(
-                  (product) => product.SKU === SKU
-                )?.quantity,
+          const response: Response = await fetch(
+            `https://cms.dilmahtea.me/api/products/${id}`,
+            {
+              headers: {
+                "content-type": "application/json",
+                Authorization:
+                  "Bearer e52e38edadb1d868ea22dfd2f43bb4c19e5a5d9af8114baf8e7581f8ca48f03c39d7a96fc4a204d31d964e3f2b0bb501bd8f825339e3630c9937862f1b7e13f5f04a184a438b03c184403d3927b2670b77883fef656a835ed0320cf2984b99c89ff6046643e08fead2a798bd9468e32e3f0d92c98e5f1f9f4a212faaa55c1662",
               },
-            }),
-          });
+              method: "PUT",
+              body: JSON.stringify({
+                data: {
+                  Stock_amount: productsToUpdate.find(
+                    (product) => product.SKU === SKU
+                  )?.quantity,
+                },
+              }),
+            }
+          );
+
+          if (!response.ok) {
+            throw new Error(response.statusText);
+          }
+
+          return response;
         })
       );
 
       // parse the data from the responses and return this; maybe not necessary
       const data: StrapiResponseProduct[] = await Promise.all(
         responses.map(async (response) => {
-          return await response.json();
+          const productData: StrapiResponseProduct = await response.json();
+          return productData;
         })
       );
 
