@@ -2,7 +2,7 @@
  * This is an automatically generated type based on a GET response to `STRAPI/api/products/1`.
  */
 export interface StrapiResponse {
-  data: Data;
+  data: Data[];
   meta: Meta;
 }
 

@@ -15,7 +15,9 @@
   },
   "dependencies": {
     "@hendt/xml2json": "^1.0.3",
+    "@types/qs": "^6.9.7",
     "marked": "^4.2.12",
+    "qs": "^6.11.1",
     "sha1": "^1.1.1"
   }
 }

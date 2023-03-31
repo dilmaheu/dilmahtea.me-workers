@@ -7,3 +7,5 @@ node_modules/
 
 # testing
 exampleresponse.json
+products.json
+src/workers/dilmahtea-me-dimass-webhook/testing.json

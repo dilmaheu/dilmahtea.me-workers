@@ -55,10 +55,12 @@ export default async function(env: Env, orderDate: string) {
   const items = [
     ...json["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getStockResponse"].return
       .item,
-  ].map((item) => ({
-    ...item,
-    SKU: item.code.split(" ").pop(),
-  }));
+  ]
+    .map((item) => ({
+      ...item,
+      SKU: item.code.split(" ").pop() as string,
+    }))
+    .filter((item) => item.SKU.length === 13);
 
   return items;
 }
