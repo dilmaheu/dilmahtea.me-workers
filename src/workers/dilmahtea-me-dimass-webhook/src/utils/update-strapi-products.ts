@@ -1,7 +1,7 @@
 import { ProductsToUpdateType } from "../prod";
 import { Env } from "../types";
 import { StrapiResponseProduct, StrapiResponseProducts } from "../types/strapi";
-
+import pool from "@ricokahler/pool";
 interface ProductInfo {
   id: number;
   SKU: string;
@@ -17,8 +17,13 @@ export default async function(
     "content-type": "application/json",
     "User-Agent": "cloudflare-worker",
   };
-  const responses = await Promise.all(
-    productIds.map(async ({ id, SKU }) => {
+  /**
+   * Uses [pool](https://github.com/ricokahler/pool) to easily limit the amount of concurrent tasks
+   */
+  const data = await pool({
+    collection: productIds,
+    maxConcurrency: 2,
+    task: async ({ id, SKU }) => {
       const response: Response = await fetch(
         `https://cms.dilmahtea.me/api/products/${id}`,
         {
@@ -38,17 +43,11 @@ export default async function(
         throw new Error(response.statusText);
       }
 
-      return response;
-    })
-  );
-
-  // parse the data from the responses and return this; maybe not necessary
-  const data: StrapiResponseProduct[] = await Promise.all(
-    responses.map(async (response) => {
       const productData: StrapiResponseProduct = await response.json();
+
       return productData;
-    })
-  );
+    },
+  });
 
   return data;
 }

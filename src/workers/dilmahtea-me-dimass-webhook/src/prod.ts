@@ -40,9 +40,11 @@ export default {
 
       const idsFromStrapiData = await getStrapiProductIds(env, skus);
 
-      // co-locating the SKU's and id's so that we can update the quantity for the correct SKU + id
-      // - the `id` necessary to update strapi
-      // - the `SKU` is necessary to know what the updated quantity is
+      /**
+       * co-locating the SKU's and id's so that we can update the quantity for the correct SKU + id
+       * - the `id` necessary to update strapi
+       * - the `SKU` is necessary to know what the updated quantity is
+       */
       const productIds: {
         id: number;
         SKU: string;
@@ -57,56 +59,18 @@ export default {
         productsToUpdate
       );
 
-      // // Update the products with a PUT request and return the response object
-      // const responses = await Promise.all(
-      //   productIds.map(async ({ id, SKU }) => {
-      //     const response: Response = await fetch(
-      //       `https://cms.dilmahtea.me/api/products/${id}`,
-      //       {
-      //         headers: {
-      //           "content-type": "application/json",
-      //           Authorization:
-      //             "Bearer e52e38edadb1d868ea22dfd2f43bb4c19e5a5d9af8114baf8e7581f8ca48f03c39d7a96fc4a204d31d964e3f2b0bb501bd8f825339e3630c9937862f1b7e13f5f04a184a438b03c184403d3927b2670b77883fef656a835ed0320cf2984b99c89ff6046643e08fead2a798bd9468e32e3f0d92c98e5f1f9f4a212faaa55c1662",
-      //         },
-      //         method: "PUT",
-      //         body: JSON.stringify({
-      //           data: {
-      //             Stock_amount: productsToUpdate.find(
-      //               (product) => product.SKU === SKU
-      //             )?.quantity,
-      //           },
-      //         }),
-      //       }
-      //     );
-
-      //     if (!response.ok) {
-      //       throw new Error(response.statusText);
-      //     }
-
-      //     return response;
-      //   })
-      // );
-
-      // // parse the data from the responses and return this; maybe not necessary
-      // const data: StrapiResponseProduct[] = await Promise.all(
-      //   responses.map(async (response) => {
-      //     const productData: StrapiResponseProduct = await response.json();
-      //     return productData;
-      //   })
-      // );
-
-      // filter it so you have a summarized overview per product
+      // /** filter it so you have a summarized overview per product */
       const filteredData = data.map((productResponse) => ({
         id: productResponse.data.id,
         SKU: productResponse.data.attributes.SKU,
         Stock_amount: productResponse.data.attributes.Stock_amount,
       }));
 
-      // to test this feature working properly! SHOULD BE REMOVED!
-      await env.TEST_STRAPI_UPDATES.put(
-        new Date(orderDate).toISOString(),
-        filteredData
-      );
+      /** to test this feature working properly! SHOULD BE REMOVED! */
+      // await env.TEST_STRAPI_UPDATES.put(
+      //   new Date(orderDate).toISOString(),
+      //   JSON.stringify(filteredData, null, 2)
+      // );
 
       return new Response(JSON.stringify(filteredData, null, 2), {
         headers: {
@@ -114,9 +78,6 @@ export default {
         },
       });
     }
-
-    // simulate the moment the order came in
-    // const webhookData = await request.json<WebhookResponseData>();
 
     /** The timestamp from the incoming webhook request */
     const orderDate = new Date().toISOString();
@@ -138,9 +99,11 @@ export default {
 
     const idsFromStrapiData = await getStrapiProductIds(env, skus);
 
-    // co-locating the SKU's and id's so that we can update the quantity for the correct SKU + id
-    // - the `id` necessary to update strapi
-    // - the `SKU` is necessary to know what the updated quantity is
+    /**
+     *  co-locating the SKU's and id's so that we can update the quantity for the correct SKU + id
+     *  - the `id` necessary to update strapi
+     *  - the `SKU` is necessary to know what the updated quantity is
+     */
     const productIds: {
       id: number;
       SKU: string;
@@ -151,56 +114,12 @@ export default {
 
     const data = await updateStrapiProducts(env, productIds, productsToUpdate);
 
-    // // Update the products with a PUT request and return the response object
-    // const responses = await Promise.all(
-    //   productIds.map(async ({ id, SKU }) => {
-    //     const response: Response = await fetch(
-    //       `https://cms.dilmahtea.me/api/products/${id}`,
-    //       {
-    //         headers: {
-    //           "content-type": "application/json",
-    //           Authorization:
-    //             "Bearer e52e38edadb1d868ea22dfd2f43bb4c19e5a5d9af8114baf8e7581f8ca48f03c39d7a96fc4a204d31d964e3f2b0bb501bd8f825339e3630c9937862f1b7e13f5f04a184a438b03c184403d3927b2670b77883fef656a835ed0320cf2984b99c89ff6046643e08fead2a798bd9468e32e3f0d92c98e5f1f9f4a212faaa55c1662",
-    //         },
-    //         method: "PUT",
-    //         body: JSON.stringify({
-    //           data: {
-    //             Stock_amount: productsToUpdate.find(
-    //               (product) => product.SKU === SKU
-    //             )?.quantity,
-    //           },
-    //         }),
-    //       }
-    //     );
-
-    //     if (!response.ok) {
-    //       throw new Error(response.statusText);
-    //     }
-
-    //     return response;
-    //   })
-    // );
-
-    // // parse the data from the responses and return this; maybe not necessary
-    // const data: StrapiResponseProduct[] = await Promise.all(
-    //   responses.map(async (response) => {
-    //     const productData: StrapiResponseProduct = await response.json();
-    //     return productData;
-    //   })
-    // );
-
-    // filter it so you have a summarized overview per product
+    /** filter it so you have a summarized overview per product */
     const filteredData = data.map((productResponse) => ({
       id: productResponse.data.id,
       SKU: productResponse.data.attributes.SKU,
       Stock_amount: productResponse.data.attributes.Stock_amount,
     }));
-
-    // to test this feature working properly! SHOULD BE REMOVED!
-    // await env.TEST_STRAPI_UPDATES.put(
-    //   new Date(orderDate).toISOString(),
-    //   filteredData
-    // );
 
     return new Response(JSON.stringify(filteredData, null, 2), {
       headers: {
