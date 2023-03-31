@@ -1,5 +1,6 @@
 import QueryString from "qs";
 import { Env, StrapiResponse, WebhookResponseData } from "./types";
+import { StrapiResponseProduct, StrapiResponseProducts } from "./types/strapi";
 import getProductBySku from "./utils/get-product-by-sku";
 import getStockDimass from "./utils/get-stock-dimass";
 
@@ -17,11 +18,86 @@ export default {
     ctx: ExecutionContext
   ): Promise<Response> {
     if (request.method === "POST") {
-      const data = await request.json<WebhookResponseData>();
+      const webhookData = await request.json<WebhookResponseData>();
 
-      const dimassRes = await getStockDimass(env, data.order_date);
+      const dimassRes = await getStockDimass(env, webhookData.order_date);
 
-      return new Response(JSON.stringify(dimassRes, null, 2), {
+      const productsToUpdate: ProductsToUpdateType[] = dimassRes.map((p) => ({
+        id: "",
+        SKU: p.SKU,
+        quantity: typeof p.availableStock === "string" ? p.availableStock : "0",
+        originalSku: p.code,
+      }));
+
+      // array of SKU's to query Strapi
+      const skus = productsToUpdate.map((product) => product.SKU);
+
+      // query params for Strapi REST API endpoint
+      const query = QueryString.stringify({
+        filters: {
+          SKU: {
+            $in: skus,
+          },
+        },
+        publicationState: "preview",
+      });
+      const restUrl = `https://cms.dilmahtea.me/api/products?${query}`;
+
+      // get ID's to update the stock off
+      const idsFromStrapiResponse = await fetch(restUrl, {
+        method: "GET",
+        headers: {
+          "content-type": "application/json",
+          Authorization:
+            "Bearer e52e38edadb1d868ea22dfd2f43bb4c19e5a5d9af8114baf8e7581f8ca48f03c39d7a96fc4a204d31d964e3f2b0bb501bd8f825339e3630c9937862f1b7e13f5f04a184a438b03c184403d3927b2670b77883fef656a835ed0320cf2984b99c89ff6046643e08fead2a798bd9468e32e3f0d92c98e5f1f9f4a212faaa55c1662",
+        },
+      });
+      const idsFromStrapiData: StrapiResponseProducts = await idsFromStrapiResponse.json();
+
+      // co-locating the SKU's and id's so that we can update the quantity for the correct SKU + id
+      // - the `id` necessary to update strapi
+      // - the `SKU` is necessary to know what the updated quantity is
+      const productIds = idsFromStrapiData.data.map((product) => ({
+        id: product.id,
+        SKU: product.attributes.SKU,
+      }));
+
+      // Update the products with a PUT request and return the response object
+      const responses = await Promise.all(
+        productIds.map(async ({ id, SKU }) => {
+          return await fetch(`https://cms.dilmahtea.me/api/products/${id}`, {
+            headers: {
+              "content-type": "application/json",
+              Authorization:
+                "Bearer e52e38edadb1d868ea22dfd2f43bb4c19e5a5d9af8114baf8e7581f8ca48f03c39d7a96fc4a204d31d964e3f2b0bb501bd8f825339e3630c9937862f1b7e13f5f04a184a438b03c184403d3927b2670b77883fef656a835ed0320cf2984b99c89ff6046643e08fead2a798bd9468e32e3f0d92c98e5f1f9f4a212faaa55c1662",
+            },
+            method: "PUT",
+            body: JSON.stringify({
+              data: {
+                Stock_amount: productsToUpdate.find(
+                  (product) => product.SKU === SKU
+                )?.quantity,
+              },
+            }),
+          });
+        })
+      );
+
+      // parse the data from the responses and return this; maybe not necessary
+      const data: StrapiResponseProduct[] = await Promise.all(
+        responses.map(async (response) => {
+          return await response.json();
+        })
+      );
+
+      // filter it so you have a summarized overview per product
+      const filteredData = data.map((productResponse) => ({
+        id: productResponse.data.id,
+        SKU: productResponse.data.attributes.SKU,
+        Stock_amount: productResponse.data.attributes.Stock_amount,
+      }));
+
+      return new Response(JSON.stringify(filteredData, null, 2), {
         headers: {
           "content-type": "application/json;charset=UTF-8",
         },
@@ -294,7 +370,7 @@ export default {
       },
     });
 
-    const strapiRestResponse: StrapiResponse = await idsFromStrapi.json();
+    const strapiRestResponse: StrapiResponseProducts = await idsFromStrapi.json();
 
     const productIds = strapiRestResponse.data.map((product) => ({
       id: product.id,
