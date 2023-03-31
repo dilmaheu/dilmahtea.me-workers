@@ -5,7 +5,7 @@ routes = [
     { pattern = "dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
 kv_namespaces = [
-    { binding = "TEST_STRAPI_UPDATES", id = "3a904bf6d19b4d8ba0e3ed44bb2cdca7" },
+    { binding = "TEST_STRAPI_UPDATES", id = "3a904bf6d19b4d8ba0e3ed44bb2cdca7", preview_id = "81b48c740dda4db0ae4bbd1e215fbb01" },
 ]
 
 [env.development]
@@ -18,6 +18,8 @@ routes = [
 
 
 [vars]
-# DIMASS_APIKEY
-# DIMASS_SIGNATURE
-# STRAPI_APIKEY
+# The necessary secrets are:
+# - DIMASS_APIKEY
+# - DIMASS_SIGNATURE
+# - STRAPI_APIKEY
+# Run `echo <VALUE> | wrangler secret put <NAME>` for each of these

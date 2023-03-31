@@ -3,22 +3,28 @@ import xml2json from "@hendt/xml2json/lib";
 import sha1 from "sha1";
 import { GetDimassStockResponse } from "../types/dimass-webhook-get-stock-response";
 
-export default async function(env: Env, orderDate: string) {
+export default async function(env: Env, orderDateString: string) {
   const baseUrl = "https://www.supportplaza.nl";
   const url = `${baseUrl}/papi/stock/1.0`;
 
+  const orderDate = new Date(orderDateString);
+  const dateToCheck = new Date(orderDate);
+
+  /**Fetch data from one day before the order arrived */
+  dateToCheck.setDate(dateToCheck.getDate() - 1);
+
   const body = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="https://www.supportplaza.nl/papi/stock">
-  <soapenv:Header/>
-  <soapenv:Body>
-     <stoc:getStock>
-        <filter>
-          <since>${orderDate}</since>
-          <item>free</item>
-          <item>available</item>
-        </filter>
-     </stoc:getStock>
-  </soapenv:Body>
-</soapenv:Envelope>`;
+    <soapenv:Header/>
+    <soapenv:Body>
+       <stoc:getStock>
+          <filter>
+            <since>${dateToCheck.toISOString()}</since>
+            <item>free</item>
+            <item>available</item>
+          </filter>
+       </stoc:getStock>
+    </soapenv:Body>
+  </soapenv:Envelope>`;
 
   const nonce = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     .split("")
@@ -30,13 +36,12 @@ export default async function(env: Env, orderDate: string) {
   const timestamp = Math.round(new Date().getTime() / 1000);
 
   const signature = sha1(`${nonce + timestamp + env.DIMASS_SECRET}`);
-
-  const headers = new Headers({
+  const headers = {
     apikey: env.DIMASS_APIKEY,
     signature: signature.toString(),
     nonce: nonce,
     timestamp: `${timestamp}`,
-  });
+  };
 
   const dimassResponse = await fetch(url, {
     method: "POST",
@@ -45,6 +50,10 @@ export default async function(env: Env, orderDate: string) {
   });
 
   if (!dimassResponse.ok) {
+    console.log(
+      `Response was not ok! - ${JSON.stringify(dimassResponse, null, 2)}`
+    );
+
     throw new Error(dimassResponse.statusText);
   }
 

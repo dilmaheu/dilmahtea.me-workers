@@ -36,7 +36,6 @@ export default async function(env: Env) {
   const responsePut = await fetch(strapiUrl, requestOptionsPUT);
 
   if (!responsePut.ok) {
-    console.table(responsePut);
     throw new Error(`PUT request failed; ${responsePut}`);
   }
   const rawResultsPut = await responsePut.json();

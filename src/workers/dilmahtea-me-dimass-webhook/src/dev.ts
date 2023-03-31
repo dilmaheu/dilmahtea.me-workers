@@ -1,7 +1,6 @@
 import QueryString from "qs";
-import { Env, StrapiResponse, WebhookResponseData } from "./types";
+import { Env, WebhookResponseData } from "./types";
 import { StrapiResponseProduct, StrapiResponseProducts } from "./types/strapi";
-import getProductBySku from "./utils/get-product-by-sku";
 import getStockDimass from "./utils/get-stock-dimass";
 
 type ProductsToUpdateType = {
@@ -136,8 +135,6 @@ export default {
     }));
 
     const skus = productsToUpdate.map((product) => product.SKU);
-    // console.log(skus);
-    // console.log(productsToUpdate);
     // const smth = [
     //   {
     //     id: "119",
@@ -321,11 +318,6 @@ export default {
     //     },
     //   },
     // ];
-    // console.log(smth.length);
-    // console.log(skus.length);
-    // const skusSet = new Set(skus);
-    // console.log(skusSet.size);
-    // console.log(`how is this? [${skus}]`);
     // const graphqlUrl = "https://cms.dilmahtea.me/graphql";
     // const restUrl = `https://cms.dilmahtea.me/api/products?filters[SKU][$in]${skus}`;
     // const restUrl = `https://cms.dilmahtea.me/api/products?publicationState=preview`;
@@ -398,8 +390,6 @@ export default {
       id: product.id,
       SKU: product.attributes.SKU,
     }));
-
-    // console.log(productIds);
 
     const responses = await Promise.all(
       productIds.map(async ({ id, SKU }) => {
