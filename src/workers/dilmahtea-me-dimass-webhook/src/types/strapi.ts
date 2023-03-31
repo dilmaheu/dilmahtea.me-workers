@@ -1,11 +1,15 @@
 /**
  * This is an automatically generated type based on a GET response to `STRAPI/api/products/1`.
  */
-export interface StrapiResponse {
+export interface StrapiResponseProducts {
   data: Data[];
   meta: Meta;
 }
 
+export interface StrapiResponseProduct {
+  data: Data;
+  meta: Meta;
+}
 export interface Data {
   id: number;
   attributes: Attributes;
