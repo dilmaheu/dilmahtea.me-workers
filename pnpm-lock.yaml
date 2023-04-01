@@ -28,16 +28,18 @@ importers:
 
   src/workers/dilmahtea-me-stripe:
     specifiers:
-      '@chantouchsek/validatorjs': ^1.2.0
       '@esbuild-plugins/node-modules-polyfill': ^0.2.2
       esbuild: ^0.17.11
       prettier: ^2.8.4
       stripe: ^11.14.0
+      zod: ^3.21.4
+      zod-validation-error: ^1.1.0
     dependencies:
-      '@chantouchsek/validatorjs': 1.2.0
       '@esbuild-plugins/node-modules-polyfill': 0.2.2_esbuild@0.17.11
       esbuild: 0.17.11
       stripe: 11.14.0
+      zod: 3.21.4
+      zod-validation-error: 1.1.0_zod@3.21.4
     devDependencies:
       prettier: 2.8.4
 
@@ -61,13 +63,6 @@ importers:
       prettier: 2.8.4
 
 packages:
-
-  /@chantouchsek/validatorjs/1.2.0:
-    resolution: {integrity: sha512-MUJtsGHJ2drltJgb9Kl5JzTxyhCaos/OgAS55KKFGDqT9BhO3nEa2W81RfGWJxLXdbSwSBb8YLHNGVSM7tQuZw==}
-    engines: {node: ^12.20.0 || >=14.13.0}
-    dependencies:
-      lodash: 4.17.21
-    dev: false
 
   /@cloudflare/kv-asset-handler/0.2.0:
     resolution: {integrity: sha512-MVbXLbTcAotOPUj0pAMhVtJ+3/kFkwJqc5qNOleOZTv6QkZZABDMS21dSrSlVswEHwrpWC03e4fWytjqKvuE2A==}
@@ -1159,10 +1154,6 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /lodash/4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-    dev: false
-
   /lru-cache/6.0.0:
     resolution: {integrity: sha512-Jo6dJ04CmSjuznwJSS3pUeWmd/H0ffTlkXXgwZi+eq1UCmqQwCh+eLsYOYCwY991i2Fah4h1BEMCx4qThGbsiA==}
     engines: {node: '>=10'}
@@ -1639,4 +1630,17 @@ packages:
       cookie: 0.4.2
       mustache: 4.2.0
       stack-trace: 0.0.10
+    dev: false
+
+  /zod-validation-error/1.1.0_zod@3.21.4:
+    resolution: {integrity: sha512-CI0zGWQjyDN0sLcmFiD+wnvkkJaLo6hNB4JBUDltkl6+CeHfnnQKU4Ff6ktMc+VmO/j2+vtLlx4S5xaw8YQN6A==}
+    engines: {node: ^14.17 || >=16.0.0}
+    peerDependencies:
+      zod: ^3.18.0
+    dependencies:
+      zod: 3.21.4
+    dev: false
+
+  /zod/3.21.4:
+    resolution: {integrity: sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==}
     dev: false

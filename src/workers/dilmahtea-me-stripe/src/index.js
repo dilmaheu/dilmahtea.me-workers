@@ -2,7 +2,7 @@ import Stripe from "stripe";
 import { getValidatedData } from "./utils/getValidatedData";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
-const handlePOST = async (request, env, ctx) => {
+const handlePOST = async (request, env) => {
   const body = await request.formData(),
     data = Object.fromEntries(body),
     validatedData = await getValidatedData(data, env);
