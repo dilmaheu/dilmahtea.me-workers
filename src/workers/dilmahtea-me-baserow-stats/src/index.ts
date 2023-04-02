@@ -1,16 +1,41 @@
-import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
+import createModuleWorker, {
+  reply,
+  HTTPMethodHandler,
+} from "../../../utils/createModuleWorker";
 
-async function handleGET(request, env) {
+declare interface ENV {
+  BASEROW_TOKEN: string;
+  BASEROW_API_URL: string;
+  CLOUDFLARE_PAGES_DEPLOY_HOOK: string;
+  BASEROW_STATS: KVNamespace;
+}
+
+type POSTRequestBody = {
+  [key: string]: any;
+  table_id: number;
+  event_type: string;
+};
+
+type BaserowResponseBody = {
+  [key: string]: any;
+  results: {
+    [key: string]: any;
+    "Payment Status": string;
+    "Amount Paid": string;
+  }[];
+};
+
+const handleGET: HTTPMethodHandler<ENV> = async (request, env) => {
   const [supportersCount, totalAmountRaised] = await Promise.all([
     env.BASEROW_STATS.get("Number of Supporters"),
     env.BASEROW_STATS.get("Total Amount Raised"),
   ]);
 
   return reply(JSON.stringify({ supportersCount, totalAmountRaised }), 200);
-}
+};
 
-async function handlePOST(request, env) {
-  const { table_id, event_type } = await request.json();
+const handlePOST: HTTPMethodHandler<ENV> = async (request, env) => {
+  const { table_id, event_type } = await request.json<POSTRequestBody>();
 
   if (
     table_id === 67746 &&
@@ -23,7 +48,7 @@ async function handlePOST(request, env) {
           Authorization: `Token ${env.BASEROW_TOKEN}`,
         },
       }
-    ).then((res) => res.json());
+    ).then((res) => res.json<BaserowResponseBody>());
 
     const paidPayments = payments
       .filter((row) => row["Payment Status"] === "paid")
@@ -33,8 +58,8 @@ async function handlePOST(request, env) {
       totalAmountRaised = paidPayments.reduce((a, b) => a + b, 0);
 
     await Promise.all([
-      env.BASEROW_STATS.put("Number of Supporters", supportersCount),
-      env.BASEROW_STATS.put("Total Amount Raised", totalAmountRaised),
+      env.BASEROW_STATS.put("Number of Supporters", String(supportersCount)),
+      env.BASEROW_STATS.put("Total Amount Raised", String(totalAmountRaised)),
     ]);
 
     // trigger a rebuild of the website to update the stats
@@ -47,9 +72,9 @@ async function handlePOST(request, env) {
   }
 
   return reply(JSON.stringify({ error: "Bad Request" }), 400);
-}
+};
 
-export default createModuleWorker({
+export default createModuleWorker<ENV>({
   pathname: "/",
   methods: { GET: handleGET, POST: handlePOST },
 });
