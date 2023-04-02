@@ -21,8 +21,8 @@ export default async function createBaserowRecord(paymentIntentData, env) {
     locale,
     origin_url,
     success_url,
+    paymentID,
     payment_status,
-    payment_intent_id,
   } = paymentIntentData;
 
   const databaseTableID =
@@ -41,7 +41,7 @@ export default async function createBaserowRecord(paymentIntentData, env) {
     City: city,
     Street: street,
     "Postal Code": postal_code,
-    "Payment Intent ID": payment_intent_id,
+    "Payment ID": paymentID,
     "Order Description": product_desc,
     "Cup of Kindness": kindness_cause,
     "Shipping Method": shipping_method,

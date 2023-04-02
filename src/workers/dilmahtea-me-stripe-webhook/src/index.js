@@ -31,21 +31,15 @@ async function handlePOST(request, env) {
     );
   }
 
-  const paymentIntent = event.data.object,
-    { id: paymentIntentId } = paymentIntent,
-    NAMESPACES = [env.ECOMMERCE_PAYMENTS, env.CROWDFUNDINGS];
+  const { paymentID, payment_type } = event.data.object.metadata;
 
-  let paymentIntentData;
+  const PAYMENT_INTENTS =
+    payment_type === "crowdfunding"
+      ? env.CROWDFUNDINGS
+      : env.ECOMMERCE_PAYMENTS;
 
-  for (const NAMESPACE of NAMESPACES) {
-    paymentIntentData = await NAMESPACE.get(paymentIntentId);
-
-    if (paymentIntentData) break;
-  }
-
-  paymentIntentData = JSON.parse(paymentIntentData);
-
-  const { payment_type, origin_url } = paymentIntentData;
+  const paymentIntentData = JSON.parse(await PAYMENT_INTENTS.get(paymentID)),
+    { origin_url } = paymentIntentData;
 
   let payment_status;
 
@@ -104,8 +98,8 @@ async function handlePOST(request, env) {
     createBaserowRecord(
       {
         ...paymentIntentData,
+        paymentID,
         payment_status,
-        payment_intent_id: paymentIntentId,
       },
       env
     )

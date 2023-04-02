@@ -37,8 +37,6 @@ const handlePOST = async (request, env) => {
     success_url,
   } = validatedData;
 
-  const paymentData = JSON.stringify({ ...validatedData, request_headers });
-
   const searchParams = new URLSearchParams({
     first_name,
     last_name,
@@ -52,6 +50,9 @@ const handlePOST = async (request, env) => {
 
   const queryString = searchParams.toString(),
     cancel_url = origin_url + "?" + queryString;
+
+  const paymentID = crypto.randomUUID(),
+    paymentData = JSON.stringify({ ...validatedData, request_headers });
 
   const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
     // Cloudflare Workers use the Fetch API for their API requests.
@@ -69,6 +70,7 @@ const handlePOST = async (request, env) => {
     payment_method_types: ["card", "ideal"],
     cancel_url,
     success_url,
+    payment_intent_data: { metadata: { paymentID, payment_type } },
     line_items: [
       {
         quantity: 1,
@@ -84,14 +86,12 @@ const handlePOST = async (request, env) => {
     ],
   });
 
-  const paymentIntentID = session.payment_intent;
-
   const PAYMENT_INTENTS =
     payment_type === "crowdfunding"
       ? env.CROWDFUNDINGS
       : env.ECOMMERCE_PAYMENTS;
 
-  await PAYMENT_INTENTS.put(paymentIntentID, paymentData);
+  await PAYMENT_INTENTS.put(paymentID, paymentData);
 
   return Response.redirect(session.url, 303);
 };
