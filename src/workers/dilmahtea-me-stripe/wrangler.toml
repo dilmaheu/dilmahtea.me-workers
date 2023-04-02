@@ -1,6 +1,6 @@
 name = "dilmahtea-me-stripe"
 account_id = "f0f636c746c8673c3905e9104b385251"
-compatibility_date = "2023-03-27"
+compatibility_date = "2022-11-30"
 main = "./src/index.js"
 workers_dev = true
 routes = [
