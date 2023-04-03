@@ -4,8 +4,7 @@ import sha1 from "sha1";
 import { GetDimassStockResponse } from "../types";
 
 export default async function(env: Env, orderDateString: string) {
-  const baseUrl = "https://www.supportplaza.nl";
-  const url = `${baseUrl}/papi/stock/1.0`;
+  const url = env.DIMASS_URL;
 
   const orderDate = new Date(orderDateString);
 

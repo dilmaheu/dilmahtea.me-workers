@@ -25,7 +25,7 @@ export default async function(
     maxConcurrency: 2,
     task: async ({ id, SKU }) => {
       const response: Response = await fetch(
-        `https://cms.dilmahtea.me/api/products/${id}`,
+        `${env.STRAPI_URL}/products/${id}`,
         {
           headers,
           method: "PUT",

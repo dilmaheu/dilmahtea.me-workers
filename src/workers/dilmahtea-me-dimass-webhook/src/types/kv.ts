@@ -17,6 +17,8 @@ export interface Env {
   DIMASS_APIKEY: string;
   DIMASS_SECRET: string;
   DIMASS_WEBHOOK_RESPONSES: any;
+  DIMASS_URL: string;
   // STRAPI
   STRAPI_APIKEY: string;
+  STRAPI_URL: string;
 }
