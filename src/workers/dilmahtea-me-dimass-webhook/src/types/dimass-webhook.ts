@@ -14,7 +14,7 @@ export interface WebhookResponseData {
   state: number;
 }
 
-export interface DeliveryAddress {
+declare interface DeliveryAddress {
   id: number;
   firstname: string;
   lastname: string;
@@ -27,14 +27,14 @@ export interface DeliveryAddress {
   phone: any;
 }
 
-export interface OrderLine {
+declare interface OrderLine {
   id: number;
   article: Article;
   quantity: number;
   external_id: any;
 }
 
-export interface Article {
+declare interface Article {
   id: number;
   code: string;
   name: string;
@@ -43,58 +43,58 @@ export interface Article {
   primary_barcode: string;
 }
 
-export interface Partner {
+declare interface Partner {
   code: string;
   name: string;
 }
 
-/**
- * Dimass webhook event types
- */
-export type WebhookEvent =
-  | "order_created"
-  | "order_state_updated"
-  | "order_removed"
-  | "shipment_pick"
-  | "shipment_packed"
-  | "shipment_shipped"
-  | "shipment_delivered"
-  | "shipment_removed"
-  | "purchase_order_created"
-  | "purchase_order_state_updated"
-  | "goods_receipt_created"
-  | "goods_receipt_state_updated"
-  | "goods_return_created"
-  | "goods_return_receiving_goods"
-  | "goods_return_finalized"
-  | "goods_return_receipt_created"
-  | "goods_return_receipt_booked";
+// /**
+//  * Dimass webhook event types
+//  */
+// declare type WebhookEvent =
+//   | "order_created"
+//   | "order_state_updated"
+//   | "order_removed"
+//   | "shipment_pick"
+//   | "shipment_packed"
+//   | "shipment_shipped"
+//   | "shipment_delivered"
+//   | "shipment_removed"
+//   | "purchase_order_created"
+//   | "purchase_order_state_updated"
+//   | "goods_receipt_created"
+//   | "goods_receipt_state_updated"
+//   | "goods_return_created"
+//   | "goods_return_receiving_goods"
+//   | "goods_return_finalized"
+//   | "goods_return_receipt_created"
+//   | "goods_return_receipt_booked";
 
-export type OrderEvent =
-  | "order_created"
-  | "order_state_updated"
-  | "order_removed";
+// declare type OrderEvent =
+//   | "order_created"
+//   | "order_state_updated"
+//   | "order_removed";
 
-export type ShipmentEvent =
-  | "shipment_pick"
-  | "shipment_packed"
-  | "shipment_shipped"
-  | "shipment_delivered"
-  | "shipment_removed";
+// declare type ShipmentEvent =
+//   | "shipment_pick"
+//   | "shipment_packed"
+//   | "shipment_shipped"
+//   | "shipment_delivered"
+//   | "shipment_removed";
 
-export type PurchaseOrderEvent =
-  | "purchase_order_created"
-  | "purchase_order_state_updated";
+// declare type PurchaseOrderEvent =
+//   | "purchase_order_created"
+//   | "purchase_order_state_updated";
 
-export type GoodsReturnEvent =
-  | "goods_return_created"
-  | "goods_return_receiving_goods"
-  | "goods_return_finalized";
+// declare type GoodsReturnEvent =
+//   | "goods_return_created"
+//   | "goods_return_receiving_goods"
+//   | "goods_return_finalized";
 
-export type GoodsReceiptEvent =
-  | "goods_receipt_created"
-  | "goods_receipt_state_updated";
+// declare type GoodsReceiptEvent =
+//   | "goods_receipt_created"
+//   | "goods_receipt_state_updated";
 
-export type GoodsReturnReceiptEvent =
-  | "goods_return_receipt_created"
-  | "goods_return_receipt_booked";
+// declare type GoodsReturnReceiptEvent =
+//   | "goods_return_receipt_created"
+//   | "goods_return_receipt_booked";

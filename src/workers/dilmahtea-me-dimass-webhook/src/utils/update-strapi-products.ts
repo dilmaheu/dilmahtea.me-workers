@@ -1,6 +1,6 @@
 import { ProductsToUpdateType } from "../prod";
 import { Env } from "../types";
-import { StrapiResponseProduct, StrapiResponseProducts } from "../types/strapi";
+import { StrapiResponseProduct } from "../types/strapi";
 import pool from "@ricokahler/pool";
 interface ProductInfo {
   id: number;

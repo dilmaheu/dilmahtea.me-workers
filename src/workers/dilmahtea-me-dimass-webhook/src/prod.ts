@@ -1,4 +1,3 @@
-import QueryString from "qs";
 import { Env, WebhookResponseData } from "./types";
 import getStockDimass from "./utils/get-stock-dimass";
 import getStrapiProductIds from "./utils/get-strapi-product-ids";
@@ -112,66 +111,20 @@ export default {
       SKU: product.attributes.SKU,
     }));
 
-    const data = await updateStrapiProducts(env, productIds, productsToUpdate);
+    await updateStrapiProducts(env, productIds, productsToUpdate);
 
-    /** filter it so you have a summarized overview per product */
-    const filteredData = data.map((productResponse) => ({
-      id: productResponse.data.id,
-      SKU: productResponse.data.attributes.SKU,
-      Stock_amount: productResponse.data.attributes.Stock_amount,
-    }));
-
-    return new Response(JSON.stringify(filteredData, null, 2), {
-      headers: {
-        "content-type": "application/json;charset=UTF-8",
-      },
-    });
+    return new Response(
+      JSON.stringify(
+        { success: true, message: "Stock has been updated." },
+        null,
+        2
+      ),
+      {
+        status: 200,
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+        },
+      }
+    );
   },
 };
-
-// T-35 Change to GraphQL
-// NOTES:
-// const graphqlUrl = "https://cms.dilmahtea.me/graphql";
-// const idsFromStrapi = await fetch(graphqlUrl, {
-//   method: "POST",
-//   headers: {
-//     "content-type": "application/json",
-//     Authorization:
-//       "Bearer e52e38edadb1d868ea22dfd2f43bb4c19e5a5d9af8114baf8e7581f8ca48f03c39d7a96fc4a204d31d964e3f2b0bb501bd8f825339e3630c9937862f1b7e13f5f04a184a438b03c184403d3927b2670b77883fef656a835ed0320cf2984b99c89ff6046643e08fead2a798bd9468e32e3f0d92c98e5f1f9f4a212faaa55c1662",
-//   },
-//   body: JSON.stringify(
-//     {
-//       query: ` query ($skus: Array!) {
-//       products(publicationState: PREVIEW, filters: {
-//         SKU: {
-//           in: $skus
-//         }
-//         }) {
-//         data {
-//           id
-//           attributes {
-//             SKU
-//             Stock_amount
-//           }
-//         }
-//       }
-//     }
-//   }`,
-//       variables: {
-//         skus,
-//       },
-//     },
-//     null,
-//     2
-//   ),
-// });
-
-// const strapieGraphQlResponse = await idsFromStrapi.json();
-
-// const testStrapiFetch = await getProductBySku(dimassRes);
-
-// return new Response(JSON.stringify(strapiGraphResponse, null, 2), {
-//   headers: {
-//     "content-type": "application/json;charset=UTF-8",
-//   },
-// });

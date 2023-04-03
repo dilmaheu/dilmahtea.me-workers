@@ -10,12 +10,12 @@ export interface StrapiResponseProduct {
   data: Data;
   meta: Meta;
 }
-export interface Data {
+declare interface Data {
   id: number;
   attributes: Attributes;
 }
 
-export interface Attributes {
+declare interface Attributes {
   Title: string;
   Intro_text: string;
   Block_text: string;
@@ -43,41 +43,41 @@ export interface Attributes {
   Brewing_time_unit: BrewingTimeUnit | null;
 }
 
-export enum BrewingTime {
+declare enum BrewingTime {
   The23 = "2-3",
   The35 = "3-5",
 }
 
-export enum BrewingTimeUnit {
+declare enum BrewingTimeUnit {
   Minute = "minute",
 }
 
-export enum Currency {
+declare enum Currency {
   Eur = "EUR",
 }
 
-export enum WaterTemperature {
+declare enum WaterTemperature {
   The7080 = "70-80",
   The95100 = "95-100",
 }
 
-export enum WaterTemperatureUnit {
+declare enum WaterTemperatureUnit {
   Degree = "degree",
 }
 
-export enum WeightUnit {
+declare enum WeightUnit {
   Gm = "gm",
 }
 
-export enum Locale {
+declare enum Locale {
   En = "en",
 }
 
-export interface Meta {
+declare interface Meta {
   pagination: Pagination;
 }
 
-export interface Pagination {
+declare interface Pagination {
   page: number;
   pageSize: number;
   pageCount: number;

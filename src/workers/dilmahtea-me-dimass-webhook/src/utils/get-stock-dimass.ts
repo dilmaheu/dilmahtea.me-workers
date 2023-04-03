@@ -1,24 +1,20 @@
 import { Env } from "../types";
 import xml2json from "@hendt/xml2json/lib";
 import sha1 from "sha1";
-import { GetDimassStockResponse } from "../types/dimass-webhook-get-stock-response";
+import { GetDimassStockResponse } from "../types";
 
 export default async function(env: Env, orderDateString: string) {
   const baseUrl = "https://www.supportplaza.nl";
   const url = `${baseUrl}/papi/stock/1.0`;
 
   const orderDate = new Date(orderDateString);
-  const dateToCheck = new Date(orderDate);
-
-  /**Fetch data from one day before the order arrived */
-  dateToCheck.setDate(dateToCheck.getDate() - 1);
 
   const body = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="https://www.supportplaza.nl/papi/stock">
     <soapenv:Header/>
     <soapenv:Body>
        <stoc:getStock>
           <filter>
-            <since>${dateToCheck.toISOString()}</since>
+            <since>${orderDate.toISOString()}</since>
             <item>free</item>
             <item>available</item>
           </filter>
@@ -50,10 +46,6 @@ export default async function(env: Env, orderDateString: string) {
   });
 
   if (!dimassResponse.ok) {
-    console.log(
-      `Response was not ok! - ${JSON.stringify(dimassResponse, null, 2)}`
-    );
-
     throw new Error(dimassResponse.statusText);
   }
 

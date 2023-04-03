@@ -2,26 +2,26 @@ export interface GetDimassStockResponse {
   "SOAP-ENV:Envelope": SoapEnvEnvelope;
 }
 
-export interface SoapEnvEnvelope {
+declare interface SoapEnvEnvelope {
   "xmlns:SOAP-ENV": string;
   "xmlns:ns1": string;
   "xmlns:xsi": string;
   "SOAP-ENV:Body": SoapEnvBody;
 }
 
-export interface SoapEnvBody {
+declare interface SoapEnvBody {
   "ns1:getStockResponse": Ns1GetStockResponse;
 }
 
-export interface Ns1GetStockResponse {
+declare interface Ns1GetStockResponse {
   return: Return;
 }
 
-export interface Return {
+declare interface Return {
   item: Item[];
 }
 
-export interface Item {
+declare interface Item {
   code: string;
   availableStock: string | StockNil;
   freeStock: string | StockNil;
@@ -31,11 +31,11 @@ export interface Item {
   returnStock: string | StockNil;
 }
 
-export interface StockNil {
+declare interface StockNil {
   "xsi:nil": string;
 }
 
-export interface Root {
+declare interface Root {
   code: string;
   availableStock: string;
   freeStock: string;
