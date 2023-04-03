@@ -1,9 +1,8 @@
 name = "dilmahtea-me-stripe"
 account_id = "f0f636c746c8673c3905e9104b385251"
-compatibility_date = "2022-06-21"
-main = "./dist/worker.js"
+compatibility_date = "2022-11-30"
+main = "./src/index.js"
 workers_dev = true
-build = { command = "node build" }
 routes = [
     { pattern = "pay.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
@@ -14,7 +13,6 @@ kv_namespaces = [
 
 [env.development]
 name = "dilmahtea-me-stripe-dev"
-build = { command = "node build --dev" }
 routes = [
     { pattern = "dev.pay.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]

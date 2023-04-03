@@ -1,13 +1,13 @@
 name: Deploy Cloudflare Workers
 
+env:
+  CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+
 on:
   push:
     branches:
       - main
-
-env:
-  STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-  STRIPE_SIGNING_KEY: ${{ secrets.STRIPE_SIGNING_KEY }}
+      - dev
 
 jobs:
   deploy:
@@ -17,6 +17,8 @@ jobs:
     steps:
       - name: Checkout GitHub repo
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 20
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -40,73 +42,14 @@ jobs:
         name: Setup pnpm cache
         with:
           path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
         run: pnpm install
 
-      - name: Publish Baserow Stats Worker
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-baserow-stats"
-
-      - name: Publish Baserow Stats Worker (Development)
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-baserow-stats"
-          command: "publish --env development"
-
-      - name: Publish Stats Worker
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-stats"
-
-      - name: Publish CMS Webhook Worker
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-strapi-webhook"
-
-      - name: Publish CMS Webhook Worker (Development)
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-strapi-webhook"
-          command: "publish --env development"
-
-      - name: Publish Stats Worker
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-stats"
-
-      - name: Publish Stripe Worker
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-stripe"
-
-      - name: Publish Stripe Worker (Development)
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-stripe"
-          command: "publish --env development"
-
-      - name: Publish Stripe Webhook Worker
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-stripe-webhook"
-
-      - name: Publish Stripe Webhook Worker (Development)
-        uses: cloudflare/wrangler-action@2.0.0
-        with:
-          apiToken: ${{ secrets.CF_API_TOKEN }}
-          workingDirectory: "src/workers/dilmahtea-me-stripe-webhook"
-          command: "publish --env development"
+      - name: Deploy to Cloudflare Workers
+        shell: bash
+        run: |
+          for worker in "baserow-stats" "stats" "strapi-webhook" "stripe" "stripe-webhook"; do worker_src=src/workers/dilmahtea-me-$worker && git diff ${{ github.event.before }} HEAD -- $worker_src |& (grep -q . && cd $worker_src && pnpm wrangler publish --env=${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}) & done; wait

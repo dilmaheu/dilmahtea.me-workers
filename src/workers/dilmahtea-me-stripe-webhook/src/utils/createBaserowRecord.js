@@ -1,4 +1,4 @@
-export default async function createBaserowRecord(data) {
+export default async function createBaserowRecord(paymentIntentData, env) {
   const {
     first_name,
     last_name,
@@ -21,49 +21,49 @@ export default async function createBaserowRecord(data) {
     locale,
     origin_url,
     success_url,
+    paymentID,
     payment_status,
-    payment_intent_id,
-  } = data
+  } = paymentIntentData;
 
   const databaseTableID =
-    payment_type === 'crowdfunding'
+    payment_type === "crowdfunding"
       ? 67746
-      : payment_type === 'ecommerce'
+      : payment_type === "ecommerce"
       ? 108632
-      : null
+      : null;
 
   const createRecordRequestBody = {
-    'First Name': first_name,
-    'Last Name': last_name,
+    "First Name": first_name,
+    "Last Name": last_name,
     Email: email,
-    'Favorite Tea': favorite_tea,
+    "Favorite Tea": favorite_tea,
     Country: country,
     City: city,
     Street: street,
-    'Postal Code': postal_code,
-    'Payment Intent ID': payment_intent_id,
-    'Order Description': product_desc,
-    'Cup of Kindness': kindness_cause,
-    'Shipping Method': shipping_method,
-    'Shipping Cost': shipping_cost,
+    "Postal Code": postal_code,
+    "Payment ID": paymentID,
+    "Order Description": product_desc,
+    "Cup of Kindness": kindness_cause,
+    "Shipping Method": shipping_method,
+    "Shipping Cost": shipping_cost,
     Perk: perk,
-    'Amount Paid': price,
-    'Total Tax': tax,
+    "Amount Paid": price,
+    "Total Tax": tax,
     Locale: locale,
-    'Payment Status': payment_status,
-  }
+    "Payment Status": payment_status,
+  };
 
   const response = await fetch(
     `https://api.baserow.io/api/database/rows/table/${databaseTableID}/?user_field_names=true`,
     {
-      method: 'POST',
+      method: "POST",
       body: JSON.stringify(createRecordRequestBody),
       headers: {
-        Authorization: `Token ${BASEROW_TOKEN}`,
-        'Content-Type': 'application/json',
+        Authorization: `Token ${env.BASEROW_TOKEN}`,
+        "Content-Type": "application/json",
       },
-    },
-  ).then(res => res.json())
+    }
+  ).then((res) => res.json());
 
-  console.log(response)
+  console.log(response);
 }

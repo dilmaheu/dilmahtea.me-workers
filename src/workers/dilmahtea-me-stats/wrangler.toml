@@ -1,8 +1,13 @@
 name = "dilmahtea-me-stats"
 account_id = "f0f636c746c8673c3905e9104b385251"
-compatibility_date = "2022-06-01"
-main = "./worker.js"
+compatibility_date = "2022-11-30"
+main = "./src/index.js"
 workers_dev = false
 routes = [
     { pattern = "*dilmahtea.me/rpcq/*", zone_name = "dilmahtea.me" }
+]
+[env.development]
+name = "dilmahtea-me-stats-dev"
+routes = [
+    { pattern = "dev.stats.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
