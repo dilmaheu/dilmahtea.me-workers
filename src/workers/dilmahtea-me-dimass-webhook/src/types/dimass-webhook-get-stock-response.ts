@@ -18,7 +18,8 @@ declare interface Ns1GetStockResponse {
 }
 
 declare interface Return {
-  item: Item[];
+  // can also be just one Item.
+  item: Item[] | Item;
 }
 
 declare interface Item {

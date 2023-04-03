@@ -60,17 +60,43 @@ export default async function(env: Env, orderDateString: string) {
   const json: GetDimassStockResponse = xml2json(responseBody);
 
   /**
-   * NOTE: the 'code' values get mapped to 'SKU' values here.
+   * `item` can be an array of items or just one object 'item'. If the item then does not have an SKU value with 13 characters, ignore this item.
    */
-  const items = [
-    ...json["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getStockResponse"].return
-      .item,
-  ]
-    .map((item) => ({
-      ...item,
-      SKU: item.code.split(" ").pop() as string,
-    }))
-    .filter((item) => item.SKU.length === 13);
+  if (
+    Array.isArray(
+      json["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getStockResponse"].return
+        .item
+    )
+  ) {
+    const items = [
+      ...json["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getStockResponse"]
+        .return.item,
+    ]
+      .map((item) => ({
+        ...item,
+        SKU: item.code.split(" ").pop() as string,
+      }))
+      .filter((item) => item.SKU.length === 13);
 
-  return items;
+    return items;
+  }
+
+  const item =
+    json["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getStockResponse"].return
+      .item;
+
+  /** SKU value without Dimass's 'DIMA' prefix. */
+  const itemSku = item.code.split(" ").pop() as string;
+
+  /** If the SKU does not consist of 13 values, don't return the product. These items aren't relevant for strapi* (?)  */
+  if (itemSku.length !== 13) {
+    return;
+  }
+
+  return [
+    {
+      ...item,
+      SKU: itemSku,
+    },
+  ];
 }

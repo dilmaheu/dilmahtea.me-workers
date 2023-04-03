@@ -23,6 +23,24 @@ export default {
       const orderDate = webhookData.order_date;
       const dimassRes = await getStockDimass(env, orderDate);
 
+      if (!dimassRes) {
+        return new Response(
+          JSON.stringify(
+            {
+              success: false,
+              message: "The items to update aren't relevant for the CMS.",
+            },
+            null,
+            2
+          ),
+          {
+            status: 400,
+            headers: {
+              "content-type": "application/json;charset=UTF-8",
+            },
+          }
+        );
+      }
       /**
        * Dimass saves DILMAH SKU's with a 'DIMA' prefix; the `originalSku` field contains this data.
        * the 'SKU' is the same value that matches the SKU's in strapi without the 'DIMA' prefix.
@@ -70,9 +88,27 @@ export default {
     }
 
     /** The timestamp from the incoming webhook request */
-    const orderDate = new Date().toISOString();
+    const orderDate = new Date().toLocaleDateString();
     const dimassRes = await getStockDimass(env, orderDate);
 
+    if (!dimassRes) {
+      return new Response(
+        JSON.stringify(
+          {
+            success: false,
+            message: "The items to update aren't relevant for the CMS.",
+          },
+          null,
+          2
+        ),
+        {
+          status: 400,
+          headers: {
+            "content-type": "application/json;charset=UTF-8",
+          },
+        }
+      );
+    }
     /**
      * Dimass saves DILMAH SKU's with a 'DIMA' prefix; the `originalSku` field contains this data.
      * the 'SKU' is the same value that matches the SKU's in strapi without the 'DIMA' prefix.
