@@ -52,30 +52,21 @@ export default {
         SKU: product.attributes.SKU,
       }));
 
-      const data = await updateStrapiProducts(
-        env,
-        productIds,
-        productsToUpdate
+      await updateStrapiProducts(env, productIds, productsToUpdate);
+
+      return new Response(
+        JSON.stringify(
+          { success: true, message: "Stock has been updated." },
+          null,
+          2
+        ),
+        {
+          status: 200,
+          headers: {
+            "content-type": "application/json;charset=UTF-8",
+          },
+        }
       );
-
-      // /** filter it so you have a summarized overview per product */
-      const filteredData = data.map((productResponse) => ({
-        id: productResponse.data.id,
-        SKU: productResponse.data.attributes.SKU,
-        Stock_amount: productResponse.data.attributes.Stock_amount,
-      }));
-
-      /** to test this feature working properly! SHOULD BE REMOVED! */
-      // await env.TEST_STRAPI_UPDATES.put(
-      //   new Date(orderDate).toISOString(),
-      //   JSON.stringify(filteredData, null, 2)
-      // );
-
-      return new Response(JSON.stringify(filteredData, null, 2), {
-        headers: {
-          "content-type": "application/json;charset=UTF-8",
-        },
-      });
     }
 
     /** The timestamp from the incoming webhook request */
