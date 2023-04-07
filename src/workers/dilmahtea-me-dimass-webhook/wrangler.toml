@@ -18,6 +18,9 @@ routes = [
 
 
 [vars]
+STRAPI_URL = "https://cms.dilmahtea.me/api"
+DIMASS_URL = "https://www.supportplaza.nl/papi/stock/1.0"
+
 # The necessary secrets are:
 # - DIMASS_APIKEY
 # - DIMASS_SIGNATURE

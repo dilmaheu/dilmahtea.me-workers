@@ -3,23 +3,44 @@ import xml2json from "@hendt/xml2json/lib";
 import sha1 from "sha1";
 import { GetDimassStockResponse } from "../types";
 
-export default async function(env: Env, orderDateString: string) {
+export default async function(
+  env: Env,
+  since: boolean,
+  orderDateString?: string,
+) {
   const url = env.DIMASS_URL;
 
-  const orderDate = new Date(orderDateString);
-
-  const body = `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="https://www.supportplaza.nl/papi/stock">
+  const body =
+    since && orderDateString
+      ? `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="https://www.supportplaza.nl/papi/stock">
     <soapenv:Header/>
     <soapenv:Body>
        <stoc:getStock>
           <filter>
-            <since>${orderDate.toISOString()}</since>
+            <since>${new Date(orderDateString).toISOString()}</since>
             <item>free</item>
             <item>available</item>
           </filter>
        </stoc:getStock>
     </soapenv:Body>
-  </soapenv:Envelope>`;
+  </soapenv:Envelope>`
+      : `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="https://www.supportplaza.nl/papi/stock">
+  <soapenv:Header/>
+  <soapenv:Body>
+     <stoc:getStock>
+       <filter><!--You may enter the following 4 items in any order-->
+           <stockTypes>
+              <!--Zero or more repetitions:-->
+              <item>free</item>
+              <item>available</item>
+              <item>defect</item>
+              <item>return</item>
+              <item>blocked</item>
+           </stockTypes>
+        </filter>
+     </stoc:getStock>
+  </soapenv:Body>
+</soapenv:Envelope>`;
 
   const nonce = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     .split("")
@@ -47,7 +68,7 @@ export default async function(env: Env, orderDateString: string) {
   if (!dimassResponse.ok) {
     throw new Error(dimassResponse.statusText);
   }
-
+  // console.log(await dimassResponse.text());
   const responseBody = await dimassResponse.text();
 
   if (typeof responseBody !== "string") {
@@ -67,6 +88,17 @@ export default async function(env: Env, orderDateString: string) {
         .item
     )
   ) {
+    console.log(
+      json["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getStockResponse"]
+    );
+    console.log(
+      json["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getStockResponse"].return
+    );
+    console.log(
+      json["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getStockResponse"].return
+        ?.item
+    );
+
     const items = [
       ...json["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getStockResponse"]
         .return.item,
@@ -77,6 +109,7 @@ export default async function(env: Env, orderDateString: string) {
       }))
       .filter((item) => item.SKU.length === 13);
 
+    console.log(items);
     return items;
   }
 

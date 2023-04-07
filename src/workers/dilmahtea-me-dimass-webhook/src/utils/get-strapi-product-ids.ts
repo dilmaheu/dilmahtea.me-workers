@@ -9,7 +9,7 @@ export default async function(env: Env, skus: Sku[]) {
     Authorization: `Bearer ${env.STRAPI_APIKEY}`,
     "User-Agent": "cloudflare-worker",
   };
-  
+
   /** query params for Strapi REST API endpoint */
   const query = QueryString.stringify({
     filters: {
@@ -26,6 +26,8 @@ export default async function(env: Env, skus: Sku[]) {
     method: "GET",
     headers,
   });
+
+  console.log(JSON.stringify({ idsFromStrapiResponse }, null, 2));
 
   if (!idsFromStrapiResponse.ok) {
     throw new Error(idsFromStrapiResponse.statusText);

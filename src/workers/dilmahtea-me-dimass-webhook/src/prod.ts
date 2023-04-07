@@ -17,13 +17,88 @@ export default {
     ctx: ExecutionContext
   ): Promise<Response> {
     if (request.method === "POST") {
+      console.log(request.headers.get("X-SP-Event"));
+
+      const incomingSignature = request.headers.get("X-SP-Signature");
+
+      if (!incomingSignature) {
+        throw new Error("No secret signature was provided.");
+      }
+
       const webhookData = await request.json<WebhookResponseData>();
 
-      /** The timestamp from the incoming webhook request */
-      const orderDate = webhookData.order_date;
-      const dimassRes = await getStockDimass(env, orderDate);
+      const encoder = new TextEncoder();
+      const key = await crypto.subtle.importKey(
+        "raw",
+        // encode the secret
+        encoder.encode(env.DIMASS_WEBHOOK_SECRET),
+        { name: "HMAC", hash: "SHA-1" },
+        false,
+        ["sign"]
+      );
 
-      if (!dimassRes) {
+      const webhookPayload = JSON.stringify(webhookData);
+      const signatureBuffer = await crypto.subtle.sign(
+        "HMAC",
+        key,
+        // encode the request payload
+        encoder.encode(webhookPayload)
+      );
+
+      /**
+       * Constructing the expected signature from the request payload and the symmetric key
+       *
+       * **note**
+       *
+       * The typescript server thinks `btoa` is deprecated (because of node) but cloudflare still uses & recommends it.
+       */
+      const expectedSignature = btoa(
+        String.fromCharCode(...Array.from(new Uint8Array(signatureBuffer)))
+      );
+
+      /**Decoding the incoming signature taken from the header. */
+      const incomingSignatureBytes = new Uint8Array(
+        incomingSignature.length / 2
+      );
+      for (let i = 0; i < incomingSignatureBytes.length; i++) {
+        const startIndex = i * 2;
+        const endIndex = startIndex + 2;
+        const hexByte = incomingSignature.slice(startIndex, endIndex);
+
+        incomingSignatureBytes[i] = parseInt(hexByte, 16);
+      }
+
+      /**
+       *
+       * `btoa`: Decodes a string into bytes using Latin-1 (ISO-8859),
+       * and encodes those bytes into a string using Base64.
+       *
+       * This was necessary because...??
+       * Anyway if you don't do this it doesn't work;
+       * the hashes won't match even though they should.
+       */
+      const incomingSignatureBase64 = btoa(
+        String.fromCharCode(...incomingSignatureBytes)
+      );
+
+      /**
+       * Authenticating the request.
+       *
+       * Checks if the signature matches the secret provided to the dimass webhook.
+       *
+       * ### References
+       * 1. Dimass webhook - Headers: https://developer.supportplaza.nl/webhooks/introduction.html#headers
+       * 2. Dimass webhook - Signature generation: https://developer.supportplaza.nl/webhooks/signature.html
+       */
+      if (!(expectedSignature === incomingSignatureBase64)) {
+        throw new Error("Signature doesn't match.");
+      }
+
+      // /** The timestamp from the incoming webhook request */
+      // const orderDate = webhookData.order_date;
+      const dimassRes = await getStockDimass(env, false);
+
+      if (!Array.isArray(dimassRes)) {
         return new Response(
           JSON.stringify(
             {
@@ -55,8 +130,17 @@ export default {
       /** array of SKU's to query Strapi */
       const skus = productsToUpdate.map((product) => product.SKU);
 
+      console.log(skus);
+
       const idsFromStrapiData = await getStrapiProductIds(env, skus);
 
+      if (idsFromStrapiData.data.length === 0) {
+        throw new Error(
+          "The product(s) with the provided SKU('s) don't exist in strapi (yet)."
+        );
+      }
+
+      console.log("idsfromstrapidata: ", idsFromStrapiData);
       /**
        * co-locating the SKU's and id's so that we can update the quantity for the correct SKU + id
        * - the `id` necessary to update strapi
@@ -69,6 +153,8 @@ export default {
         id: product.id,
         SKU: product.attributes.SKU,
       }));
+
+      console.log("productids[0]: ", productIds[0]);
 
       await updateStrapiProducts(env, productIds, productsToUpdate);
 
@@ -87,11 +173,9 @@ export default {
       );
     }
 
-    /** The timestamp from the incoming webhook request */
-    const orderDate = new Date().toLocaleDateString();
-    const dimassRes = await getStockDimass(env, orderDate);
+    const dimassRes = await getStockDimass(env, false);
 
-    if (!dimassRes) {
+    if (!Array.isArray(dimassRes)) {
       return new Response(
         JSON.stringify(
           {
@@ -123,12 +207,21 @@ export default {
     /** array of SKU's to query Strapi */
     const skus = productsToUpdate.map((product) => product.SKU);
 
+    console.log(skus);
+
     const idsFromStrapiData = await getStrapiProductIds(env, skus);
 
+    if (idsFromStrapiData.data.length === 0) {
+      throw new Error(
+        "The product(s) with the provided SKU('s) don't exist in strapi (yet)."
+      );
+    }
+
+    console.log("idsfromstrapidata: ", idsFromStrapiData);
     /**
-     *  co-locating the SKU's and id's so that we can update the quantity for the correct SKU + id
-     *  - the `id` necessary to update strapi
-     *  - the `SKU` is necessary to know what the updated quantity is
+     * co-locating the SKU's and id's so that we can update the quantity for the correct SKU + id
+     * - the `id` necessary to update strapi
+     * - the `SKU` is necessary to know what the updated quantity is
      */
     const productIds: {
       id: number;
@@ -137,6 +230,8 @@ export default {
       id: product.id,
       SKU: product.attributes.SKU,
     }));
+
+    console.log("productids[0]: ", productIds[0]);
 
     await updateStrapiProducts(env, productIds, productsToUpdate);
 

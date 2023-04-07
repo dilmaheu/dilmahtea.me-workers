@@ -1,7 +1,6 @@
 import { ProductsToUpdateType } from "../prod";
 import { Env } from "../types";
 import { StrapiResponseProduct } from "../types/strapi";
-import pool from "@ricokahler/pool";
 interface ProductInfo {
   id: number;
   SKU: string;
@@ -17,13 +16,16 @@ export default async function(
     "content-type": "application/json",
     "User-Agent": "cloudflare-worker",
   };
-  /**
-   * Uses [pool](https://github.com/ricokahler/pool) to easily limit the amount of concurrent tasks
-   */
-  const data = await pool({
-    collection: productIds,
-    maxConcurrency: 2,
-    task: async ({ id, SKU }) => {
+
+  console.log(productIds);
+  console.log(productsQuantity);
+  
+  const data = await Promise.all(
+    productIds.map(async ({ id, SKU }) => {
+      const newQuantity = productsQuantity.find(
+        (product) => product.SKU === SKU
+      )?.quantity;
+
       const response: Response = await fetch(
         `${env.STRAPI_URL}/products/${id}`,
         {
@@ -31,23 +33,31 @@ export default async function(
           method: "PUT",
           body: JSON.stringify({
             data: {
-              Stock_amount: productsQuantity.find(
-                (product) => product.SKU === SKU
-              )?.quantity,
+              Stock_amount: newQuantity,
             },
           }),
         }
       );
 
+      console.log(
+        `UPDATED: id: ${id},  sku: ${SKU}, with quantity ${newQuantity}`
+      );
+
       if (!response.ok) {
-        throw new Error(response.statusText);
+        console.error(
+          `NOT UPDATED: id: ${id},  sku: ${SKU}, with quantity ${newQuantity}`
+        );
+
+        return { error: response.statusText };
       }
 
       const productData: StrapiResponseProduct = await response.json();
 
+      console.log(`no log?`);
       return productData;
-    },
-  });
+    })
+  );
 
+  console.log("data", data);
   return data;
 }

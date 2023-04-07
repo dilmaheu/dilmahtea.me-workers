@@ -16,8 +16,6 @@
   },
   "dependencies": {
     "@hendt/xml2json": "^1.0.3",
-    "@ricokahler/pool": "^1.2.0",
-    "marked": "^4.2.12",
     "qs": "^6.11.1",
     "sha1": "^1.1.1"
   }
