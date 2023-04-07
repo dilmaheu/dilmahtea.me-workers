@@ -6,7 +6,7 @@ import { GetDimassStockResponse } from "../types";
 export default async function(
   env: Env,
   since: boolean,
-  orderDateString?: string,
+  orderDateString?: string
 ) {
   const url = env.DIMASS_URL;
 
@@ -88,17 +88,6 @@ export default async function(
         .item
     )
   ) {
-    console.log(
-      json["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getStockResponse"]
-    );
-    console.log(
-      json["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getStockResponse"].return
-    );
-    console.log(
-      json["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getStockResponse"].return
-        ?.item
-    );
-
     const items = [
       ...json["SOAP-ENV:Envelope"]["SOAP-ENV:Body"]["ns1:getStockResponse"]
         .return.item,
@@ -109,7 +98,6 @@ export default async function(
       }))
       .filter((item) => item.SKU.length === 13);
 
-    console.log(items);
     return items;
   }
 
