@@ -68,7 +68,6 @@ export default async function(
   if (!dimassResponse.ok) {
     throw new Error(dimassResponse.statusText);
   }
-  // console.log(await dimassResponse.text());
   const responseBody = await dimassResponse.text();
 
   if (typeof responseBody !== "string") {

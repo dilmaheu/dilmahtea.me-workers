@@ -94,9 +94,7 @@ export default {
         throw new Error("Signature doesn't match.");
       }
 
-      // /** The timestamp from the incoming webhook request */
-      // const orderDate = webhookData.order_date;
-      const dimassRes = await getStockDimass(env, false);
+      const dimassRes = await getStockDimass(env, true, webhookData.order_date);
 
       if (!Array.isArray(dimassRes)) {
         return new Response(
