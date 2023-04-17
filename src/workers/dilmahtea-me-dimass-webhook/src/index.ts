@@ -1,4 +1,4 @@
-import { Env, WebhookResponseData } from "./types";
+import { ENV, WebhookResponseData } from "./types";
 import getStockDimass from "./utils/get-stock-dimass";
 import getStrapiProductIds from "./utils/get-strapi-product-ids";
 import updateStrapiProducts from "./utils/update-strapi-products";
@@ -13,12 +13,10 @@ export interface ProductsToUpdateType {
 export default {
   async fetch(
     request: Request,
-    env: Env,
+    env: ENV,
     ctx: ExecutionContext
   ): Promise<Response> {
     if (request.method === "POST") {
-      console.log(request.headers.get("X-SP-Event"));
-
       const incomingSignature = request.headers.get("X-SP-Signature");
 
       if (!incomingSignature) {
@@ -27,23 +25,23 @@ export default {
 
       const webhookData = await request.json<WebhookResponseData>();
 
-      const encoder = new TextEncoder();
-      const key = await crypto.subtle.importKey(
-        "raw",
-        // encode the secret
-        encoder.encode(env.DIMASS_WEBHOOK_SECRET),
-        { name: "HMAC", hash: "SHA-1" },
-        false,
-        ["sign"]
-      );
+      const encoder = new TextEncoder(),
+        key = await crypto.subtle.importKey(
+          "raw",
+          // encode the secret
+          encoder.encode(env.DIMASS_WEBHOOK_SECRET),
+          { name: "HMAC", hash: "SHA-1" },
+          false,
+          ["sign"]
+        );
 
-      const webhookPayload = JSON.stringify(webhookData);
-      const signatureBuffer = await crypto.subtle.sign(
-        "HMAC",
-        key,
-        // encode the request payload
-        encoder.encode(webhookPayload)
-      );
+      const webhookPayload = JSON.stringify(webhookData),
+        signatureBuffer = await crypto.subtle.sign(
+          "HMAC",
+          key,
+          // encode the request payload
+          encoder.encode(webhookPayload)
+        );
 
       /**
        * Constructing the expected signature from the request payload and the symmetric key
@@ -60,6 +58,7 @@ export default {
       const incomingSignatureBytes = new Uint8Array(
         incomingSignature.length / 2
       );
+
       for (let i = 0; i < incomingSignatureBytes.length; i++) {
         const startIndex = i * 2;
         const endIndex = startIndex + 2;
@@ -126,11 +125,8 @@ export default {
       }));
 
       /** array of SKU's to query Strapi */
-      const skus = productsToUpdate.map((product) => product.SKU);
-
-      console.log(skus);
-
-      const idsFromStrapiData = await getStrapiProductIds(env, skus);
+      const skus = productsToUpdate.map((product) => product.SKU),
+        idsFromStrapiData = await getStrapiProductIds(env, skus);
 
       if (idsFromStrapiData.data.length === 0) {
         throw new Error(
@@ -138,7 +134,6 @@ export default {
         );
       }
 
-      console.log("idsfromstrapidata: ", idsFromStrapiData);
       /**
        * co-locating the SKU's and id's so that we can update the quantity for the correct SKU + id
        * - the `id` necessary to update strapi
@@ -151,8 +146,6 @@ export default {
         id: product.id,
         SKU: product.attributes.SKU,
       }));
-
-      console.log("productids[0]: ", productIds[0]);
 
       await updateStrapiProducts(env, productIds, productsToUpdate);
 
@@ -205,8 +198,6 @@ export default {
     /** array of SKU's to query Strapi */
     const skus = productsToUpdate.map((product) => product.SKU);
 
-    console.log(skus);
-
     const idsFromStrapiData = await getStrapiProductIds(env, skus);
 
     if (idsFromStrapiData.data.length === 0) {
@@ -215,7 +206,6 @@ export default {
       );
     }
 
-    console.log("idsfromstrapidata: ", idsFromStrapiData);
     /**
      * co-locating the SKU's and id's so that we can update the quantity for the correct SKU + id
      * - the `id` necessary to update strapi
@@ -228,8 +218,6 @@ export default {
       id: product.id,
       SKU: product.attributes.SKU,
     }));
-
-    console.log("productids[0]: ", productIds[0]);
 
     await updateStrapiProducts(env, productIds, productsToUpdate);
 

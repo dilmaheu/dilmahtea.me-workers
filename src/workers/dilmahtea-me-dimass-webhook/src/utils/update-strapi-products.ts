@@ -1,13 +1,13 @@
+import { ENV } from "../types";
 import { ProductsToUpdateType } from "../index";
-import { Env } from "../types";
-import { StrapiResponseProduct } from "../types/strapi";
+
 interface ProductInfo {
   id: number;
   SKU: string;
 }
 
 export default async function(
-  env: Env,
+  env: ENV,
   productIds: ProductInfo[],
   productsQuantity: ProductsToUpdateType[]
 ) {
@@ -17,14 +17,11 @@ export default async function(
     "User-Agent": "cloudflare-worker",
   };
 
-  console.log(productIds);
-  console.log(productsQuantity);
-  
-  const data = await Promise.all(
+  await Promise.all(
     productIds.map(async ({ id, SKU }) => {
       const newQuantity = productsQuantity.find(
         (product) => product.SKU === SKU
-      )?.quantity;
+      ).quantity;
 
       const response: Response = await fetch(
         `${env.STRAPI_URL}/products/${id}`,
@@ -39,25 +36,16 @@ export default async function(
         }
       );
 
+      if (!response.ok) {
+        console.error({
+          error: response.statusText,
+          message: `NOT UPDATED: id: ${id},  sku: ${SKU}, with quantity ${newQuantity}`,
+        });
+      }
+
       console.log(
         `UPDATED: id: ${id},  sku: ${SKU}, with quantity ${newQuantity}`
       );
-
-      if (!response.ok) {
-        console.error(
-          `NOT UPDATED: id: ${id},  sku: ${SKU}, with quantity ${newQuantity}`
-        );
-
-        return { error: response.statusText };
-      }
-
-      const productData: StrapiResponseProduct = await response.json();
-
-      console.log(`no log?`);
-      return productData;
     })
   );
-
-  console.log("data", data);
-  return data;
 }

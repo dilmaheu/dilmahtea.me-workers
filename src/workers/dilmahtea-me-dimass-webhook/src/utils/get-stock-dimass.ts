@@ -1,10 +1,11 @@
-import { Env } from "../types";
-import xml2json from "@hendt/xml2json/lib";
 import sha1 from "sha1";
+import xml2json from "@hendt/xml2json/lib";
+
+import { ENV } from "../types";
 import { GetDimassStockResponse } from "../types";
 
 export default async function(
-  env: Env,
+  env: ENV,
   since: boolean,
   orderDateString?: string
 ) {
@@ -12,35 +13,46 @@ export default async function(
 
   const body =
     since && orderDateString
-      ? `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="https://www.supportplaza.nl/papi/stock">
-    <soapenv:Header/>
-    <soapenv:Body>
-       <stoc:getStock>
-          <filter>
-            <since>${new Date(orderDateString).toISOString()}</since>
-            <item>free</item>
-            <item>available</item>
-          </filter>
-       </stoc:getStock>
-    </soapenv:Body>
-  </soapenv:Envelope>`
-      : `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:stoc="https://www.supportplaza.nl/papi/stock">
-  <soapenv:Header/>
-  <soapenv:Body>
-     <stoc:getStock>
-       <filter><!--You may enter the following 4 items in any order-->
-           <stockTypes>
-              <!--Zero or more repetitions:-->
-              <item>free</item>
-              <item>available</item>
-              <item>defect</item>
-              <item>return</item>
-              <item>blocked</item>
-           </stockTypes>
-        </filter>
-     </stoc:getStock>
-  </soapenv:Body>
-</soapenv:Envelope>`;
+      ? `
+          <soapenv:Envelope
+            xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+            xmlns:stoc="https://www.supportplaza.nl/papi/stock"
+          >
+            <soapenv:Header />
+            <soapenv:Body>
+              <stoc:getStock>
+                <filter>
+                  <since>${new Date(orderDateString).toISOString()}</since>
+                  <item>free</item>
+                  <item>available</item>
+                </filter>
+              </stoc:getStock>
+            </soapenv:Body>
+          </soapenv:Envelope>
+        `
+      : `
+          <soapenv:Envelope
+            xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+            xmlns:stoc="https://www.supportplaza.nl/papi/stock"
+          >
+            <soapenv:Header />
+            <soapenv:Body>
+              <stoc:getStock>
+                <filter
+                  ><!--You may enter the following 4 items in any order-->
+                  <stockTypes>
+                    <!--Zero or more repetitions:-->
+                    <item>free</item>
+                    <item>available</item>
+                    <item>defect</item>
+                    <item>return</item>
+                    <item>blocked</item>
+                  </stockTypes>
+                </filter>
+              </stoc:getStock>
+            </soapenv:Body>
+          </soapenv:Envelope>
+        `;
 
   const nonce = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
     .split("")
@@ -49,9 +61,9 @@ export default async function(
     })
     .join("");
 
-  const timestamp = Math.round(new Date().getTime() / 1000);
+  const timestamp = Math.round(new Date().getTime() / 1000),
+    signature = sha1(`${nonce + timestamp + env.DIMASS_SECRET}`);
 
-  const signature = sha1(`${nonce + timestamp + env.DIMASS_SECRET}`);
   const headers = {
     apikey: env.DIMASS_APIKEY,
     signature: signature.toString(),
@@ -68,6 +80,7 @@ export default async function(
   if (!dimassResponse.ok) {
     throw new Error(dimassResponse.statusText);
   }
+
   const responseBody = await dimassResponse.text();
 
   if (typeof responseBody !== "string") {
@@ -108,9 +121,7 @@ export default async function(
   const itemSku = item.code.split(" ").pop() as string;
 
   /** If the SKU does not consist of 13 values, don't return the product. These items aren't relevant for strapi* (?)  */
-  if (itemSku.length !== 13) {
-    return;
-  }
+  if (itemSku.length !== 13) return;
 
   return [
     {

@@ -35,14 +35,3 @@ declare interface Item {
 declare interface StockNil {
   "xsi:nil": string;
 }
-
-declare interface Root {
-  code: string;
-  availableStock: string;
-  freeStock: string;
-  ean: string;
-  blockedStock: string;
-  defectStock: string;
-  returnStock: string;
-  SKU: string;
-}

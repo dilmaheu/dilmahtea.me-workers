@@ -1,9 +1,10 @@
 import QueryString from "qs";
-import { Env } from "../types";
+import { ENV } from "../types";
 import { StrapiResponseProducts } from "../types/strapi";
 
-type Sku = string;
-export default async function(env: Env, skus: Sku[]) {
+type SKU = string;
+
+export default async function(env: ENV, skus: SKU[]) {
   const headers = {
     "content-type": "application/json",
     Authorization: `Bearer ${env.STRAPI_APIKEY}`,
@@ -19,6 +20,7 @@ export default async function(env: Env, skus: Sku[]) {
     },
     publicationState: "preview",
   });
+
   const url = `${env.STRAPI_URL}/products?${query}`;
 
   /** get the `id`'s from the products that need to be updated from Strapi */
@@ -26,8 +28,6 @@ export default async function(env: Env, skus: Sku[]) {
     method: "GET",
     headers,
   });
-
-  console.log(JSON.stringify({ idsFromStrapiResponse }, null, 2));
 
   if (!idsFromStrapiResponse.ok) {
     throw new Error(idsFromStrapiResponse.statusText);
