@@ -1,5 +1,6 @@
-import { z } from "zod";
+import { string, z } from "zod";
 import { fromZodError } from "zod-validation-error";
+import { StringTuple, CMSData, ENV } from "../types";
 
 const query = `
   {
@@ -34,9 +35,7 @@ const query = `
           locale
           SKU
           Title
-          Price
-          Weight_tea
-          Weight_tea_unit
+          Price    
           localizations {
             data {
               attributes {
@@ -76,9 +75,9 @@ const query = `
   }
 `;
 
-export async function getValidatedData(paymentData, env) {
+export async function getValidatedData(paymentData, env: ENV) {
   // process data for validation
-  const CMSData = await fetch(env.CMS_GRAPHQL_ENDPOINT, {
+  const CMSData: CMSData = await fetch(env.CMS_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -109,8 +108,7 @@ export async function getValidatedData(paymentData, env) {
   const products = [];
 
   productsData.forEach(({ attributes }) => {
-    const { SKU, Price, Weight_tea, Weight_tea_unit, localizations } =
-      attributes;
+    const { SKU, Price, localizations } = attributes;
 
     const names = {};
 
@@ -120,15 +118,13 @@ export async function getValidatedData(paymentData, env) {
       }
     );
 
-    const size = Weight_tea + Weight_tea_unit,
-      tax = Math.round(Price * 9) / 100;
+    const tax = Math.round(Price * 9) / 100;
 
     products[SKU] = {
       sku: SKU,
       names,
       price: Price,
       tax,
-      size,
     };
   });
 
@@ -164,7 +160,7 @@ export async function getValidatedData(paymentData, env) {
     street: z.string(),
     postal_code: z.string().regex(/^[\w- ]+$/),
     product_name: z.literal(companyName),
-    locale: z.enum(locales),
+    locale: z.enum(locales as StringTuple),
     origin_url: z.string().url(),
     success_url: z.string().url(),
   });
@@ -173,7 +169,7 @@ export async function getValidatedData(paymentData, env) {
     payment_type: z.literal("crowdfunding"),
     country: z.literal("Netherlands"),
     favorite_tea: z.string(),
-    perk: z.enum(Object.keys(crowdfundingPerks)),
+    perk: z.enum(Object.keys(crowdfundingPerks) as StringTuple),
     product_desc: z
       .string()
       .refine((value) => value === `${paymentData.perk} Plan`),
@@ -184,16 +180,16 @@ export async function getValidatedData(paymentData, env) {
 
   const EcommercePaymentIntentSchema = BasePaymentIntentSchema.extend({
     payment_type: z.literal("ecommerce"),
-    country: z.enum(countries),
-    kindness_cause: z.enum(kindnessCauses),
-    shipping_method: z.enum(Object.keys(shippingMethods)),
+    country: z.enum(countries as StringTuple),
+    kindness_cause: z.enum(kindnessCauses as StringTuple),
+    shipping_method: z.enum(Object.keys(shippingMethods) as StringTuple),
     shipping_cost: z
       .number()
       .refine(
         (value) => value === shippingMethods[paymentData.shipping_method]
       ),
     cart: z.record(
-      z.enum(Object.keys(products)),
+      z.enum(Object.keys(products) as StringTuple),
       z
         .object({
           names: z.string(),
