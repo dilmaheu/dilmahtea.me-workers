@@ -52,4 +52,4 @@ jobs:
       - name: Deploy to Cloudflare Workers
         shell: bash
         run: |
-          for worker_src in src/workers/*; do git diff ${{ github.event.before }} HEAD -- $worker_src |& (grep -q . && cd $worker_src && pnpm wrangler publish --env=${{ github.ref == 'refs/heads/main' && 'production' || 'development' }}) & done; wait
+          for worker_src in src/workers/*; do git diff ${{ github.event.before }} HEAD -- $worker_src |& (grep -q . && cd $worker_src && pnpm wrangler publish${{ github.ref == 'refs/heads/dev' && ' --env=development' || '' }}) & done; wait

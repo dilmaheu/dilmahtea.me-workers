@@ -16,7 +16,7 @@ name = "dilmahtea-me-dimass-dev"
 routes = [
     { pattern = "dev.dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
-[vars]
+[env.development.vars]
 STRAPI_API_ENDPOINT = "https://cms.dilmahtea.me/api"
 STRAPI_GRAPHQL_ENDPOINT = "https://cms.dilmahtea.me/graphql"
 DIMASS_API_ENDPOINT = "https://www.supportplaza.nl/papi/stock/1.0"
