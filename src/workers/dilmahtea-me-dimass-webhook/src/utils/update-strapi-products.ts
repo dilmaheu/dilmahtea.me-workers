@@ -1,4 +1,4 @@
-import { ProductsToUpdateType } from "../prod";
+import { ProductsToUpdateType } from "../index";
 import { Env } from "../types";
 import { StrapiResponseProduct } from "../types/strapi";
 interface ProductInfo {

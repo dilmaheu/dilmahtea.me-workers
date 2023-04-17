@@ -3,7 +3,7 @@
   "name": "dilmahtea-me-dimass-webhook",
   "version": "1.0.0",
   "description": "The cloudflare worker handling the webhook requests from dimass.",
-  "main": "prod.ts",
+  "main": "index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write '**/*.{js,css,json,md}'"

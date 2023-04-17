@@ -1,21 +1,16 @@
 name = "dilmahtea-me-dimass"
-main = "./src/prod.ts"
-compatibility_date = "2023-03-14"
+compatibility_date = "2022-11-30"
+main = "./src/index.ts"
+workers_dev = true
 routes = [
     { pattern = "dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
-]
-kv_namespaces = [
-    { binding = "TEST_STRAPI_UPDATES", id = "3a904bf6d19b4d8ba0e3ed44bb2cdca7", preview_id = "81b48c740dda4db0ae4bbd1e215fbb01" },
 ]
 
 [env.development]
 name = "dilmahtea-me-dimass-dev"
-main = "./src/dev.ts"
-workers_dev = true
 routes = [
     { pattern = "dev.dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
-
 
 [vars]
 STRAPI_URL = "https://cms.dilmahtea.me/api"
