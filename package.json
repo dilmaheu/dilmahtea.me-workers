@@ -18,5 +18,8 @@
   "homepage": "https://github.com/dilmaheu/dilmahtea.me-workers#readme",
   "dependencies": {
     "wrangler": "^2.12.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230307.0"
   }
 }
