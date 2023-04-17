@@ -17,10 +17,11 @@ export interface ENV {
   // DIMASS
   DIMASS_APIKEY: string;
   DIMASS_SECRET: string;
-  DIMASS_URL: string;
+  DIMASS_API_ENDPOINT: string;
   DIMASS_WEBHOOK_SECRET: string;
 
   // STRAPI
   STRAPI_APIKEY: string;
-  STRAPI_URL: string;
+  STRAPI_API_ENDPOINT: string;
+  STRAPI_GRAPHQL_ENDPOINT: string;
 }

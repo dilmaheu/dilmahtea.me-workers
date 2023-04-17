@@ -9,7 +9,7 @@ export default async function(
   since: boolean,
   orderDateString?: string
 ) {
-  const url = env.DIMASS_URL;
+  const url = env.DIMASS_API_ENDPOINT;
 
   const body =
     since && orderDateString

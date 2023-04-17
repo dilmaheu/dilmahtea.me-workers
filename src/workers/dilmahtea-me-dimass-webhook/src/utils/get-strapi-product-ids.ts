@@ -21,7 +21,7 @@ export default async function(env: ENV, skus: SKU[]) {
     publicationState: "preview",
   });
 
-  const url = `${env.STRAPI_URL}/products?${query}`;
+  const url = `${env.STRAPI_API_ENDPOINT}/products?${query}`;
 
   /** get the `id`'s from the products that need to be updated from Strapi */
   const idsFromStrapiResponse = await fetch(url, {
