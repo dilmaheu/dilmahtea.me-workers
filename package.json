@@ -1,7 +1,7 @@
 {
   "name": "dilmahtea.me-workers",
   "version": "1.0.0",
-  "description": "",
+  "description": "Cloudflare Workers for dilmahtea.me",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,5 +18,8 @@
   "homepage": "https://github.com/dilmaheu/dilmahtea.me-workers#readme",
   "dependencies": {
     "wrangler": "^2.12.3"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230307.0"
   }
 }

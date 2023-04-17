@@ -1,4 +1,4 @@
-export default getHTMLEmail = ({
+const getHTMLEmail = ({
   Overview,
   Total,
   Invoice,
@@ -26,6 +26,7 @@ export default getHTMLEmail = ({
           rel="stylesheet"
         />
       </head>
+      
       <body style="padding: 0; margin: 0">
         <!-- Preview Text -->
         <div style="display: none;"><${previewText}></div>
@@ -33,15 +34,15 @@ export default getHTMLEmail = ({
         <!-- Background Section -->
         <div
           style="
-          position: relative;
-          display: block;
-          background-image: url(https://imagedelivery.net/BX3RwoS0OdbsyY2M52BQzw/7fa35dcb-abd3-41df-4711-3b9cac1b0500/opengraph);
-          background-repeat: no-repeat;
-          background-size: 100% 100%;
-          height: 160px;
-          object-fit: cover;
-          overflow: hidden;
-        "
+            position: relative;
+            display: block;
+            background-image: url(https://imagedelivery.net/BX3RwoS0OdbsyY2M52BQzw/7fa35dcb-abd3-41df-4711-3b9cac1b0500/opengraph);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            height: 160px;
+            object-fit: cover;
+            overflow: hidden;
+          "
         >
           <img
             src="https://imagedelivery.net/BX3RwoS0OdbsyY2M52BQzw/c49ecab8-5548-4d65-41e8-efa0e59fb000/opengraph"
@@ -56,26 +57,26 @@ export default getHTMLEmail = ({
         >
           <div
             style="
-            display: block;
-            text-align: center;
-            padding: 0 20px;
-            margin: 0 auto;
-          "
+              display: block;
+              text-align: center;
+              padding: 0 20px;
+              margin: 0 auto;
+            "
           >
             <!-- Preheader Text -->
             <div style="display: block; margin: 0 auto; max-width: 490px">
               <h1
                 style="
-                max-width: 490px;
-                padding: 45px 0;
-                margin: auto;
-                font-family: Alice;
-                font-size: 24px;
-                font-weight: 400;
-                line-height: 120%;
-                text-align: center;
-                color: #e3dfde;
-              "
+                  max-width: 490px;
+                  padding: 45px 0;
+                  margin: auto;
+                  font-family: Alice;
+                  font-size: 24px;
+                  font-weight: 400;
+                  line-height: 120%;
+                  text-align: center;
+                  color: #e3dfde;
+                "
               >
                 ${preheaderText}
               </h1>
@@ -85,77 +86,86 @@ export default getHTMLEmail = ({
             <div style="display: block; margin: 0 auto; max-width: 490px">
               <div
                 style="
-                font-family: Roboto;
-                font-size: 20px;
-                font-weight: 500;
-                line-height: 140%;
-                letter-spacing: -0.02em;
-                text-align: left;
-              "
+                  font-family: Roboto;
+                  font-size: 20px;
+                  font-weight: 500;
+                  line-height: 140%;
+                  letter-spacing: -0.02em;
+                  text-align: left;
+                "
               >
                 <div
                   style="
-                  background: #e3dfde;
-                  border-radius: 15px;
-                  max-width: 100%;
-                  padding: 28px 24px;
-                  margin-bottom: 40px;
-                  color: #000;
-                "
+                    background: #e3dfde;
+                    border-radius: 15px;
+                    max-width: 100%;
+                    padding: 28px 24px;
+                    margin-bottom: 40px;
+                    color: #000;
+                  "
                 >
                   ${bodyText}
                 </div>
   
                 <div
                   style="
-                  background: #e3dfde;
-                  border-radius: 15px;
-                  max-width: 100%;
-                  margin-bottom: 40px;
-                  padding: 28px 24px;
-                  color: #2b4b50;
-                "
+                    background: #e3dfde;
+                    border-radius: 15px;
+                    max-width: 100%;
+                    margin-bottom: 40px;
+                    padding: 28px 24px;
+                    color: #2b4b50;
+                  "
                 >
                   <h2 style="font-weight: 600; line-height: 140%">
                     ${Overview}
                   </h2>
-                  <p style="padding-top: 40px;">
-                    <span style="float: left">\${perk}</span>
-                    <span style="margin-left:10px; float: right">
-                      &euro;\${price}
-                    </span>
-                  </p>
-                  <p style="padding-top: 15px;">
-                    <span style="float: left">\${VAT}</span>
-                    <span style="margin-left:10px; float: right">
-                      &euro;\${tax}
-                    </span>
-                  </p>
+
+                  <table width="100%" style="padding-top: 40px;">
+                    <tbody>
+                      <tr>
+                        <td style="vertical-align: middle">\${perk}</td>
+                        <td align="right" style="vertical-align: middle; padding-left: 10px">
+                          €\${price}
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td style="vertical-align: middle; padding-top: 15px">${VAT}</td>
+                        <td align="right" style="vertical-align: middle; padding-top: 15px; padding-left: 10px">
+                          €\${tax}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+
                   <div
                     style="
-                    display: block;
-                    margin-top: 50px;
-                    border: 1px solid rgba(43, 75, 80, 0.3);
-                  "
+                      display: block;
+                      margin-top: 50px;
+                      border: 1px solid rgba(43, 75, 80, 0.3);
+                    "
                   ></div>
+
                   <p style="padding-top: 15px; font-size: 28px; font-weight: 600">
                     <span style="float: left">${Total}</span>
-                    <span style="float: right">&euro;\${price}</span>
+                    <span style="float: right">€\${price}</span>
                   </p>
                 </div>
   
                 <div
                   style="
-                  background: #e3dfde;
-                  border-radius: 15px;
-                  max-width: 100%;
-                  padding: 28px 24px;
-                  color: #2b4b50;
-                "
+                    background: #e3dfde;
+                    border-radius: 15px;
+                    max-width: 100%;
+                    padding: 28px 24px;
+                    color: #2b4b50;
+                  "
                 >
                   <h3 style="font-weight: 600; line-height: 120%">
                     ${Invoice}
                   </h3>
+
                   <address
                     style="
                     font-style: normal;
@@ -175,17 +185,17 @@ export default getHTMLEmail = ({
         <div style="display: block; background-color: #2b4b50">
           <div
             style="
-            display: block;
-            max-width: 490px;
-            padding: 40px 0;
-            margin: auto;
-            font-family: Roboto;
-            font-size: 16px;
-            font-weight: 500;
-            line-height: 162%;
-            text-align: center;
-            color: #e3dfde;
-          "
+              display: block;
+              max-width: 490px;
+              padding: 40px 0;
+              margin: auto;
+              font-family: Roboto;
+              font-size: 16px;
+              font-weight: 500;
+              line-height: 162%;
+              text-align: center;
+              color: #e3dfde;
+            "
             role="contentinfo"
           >
             <div style="margin-top: 15px">
@@ -199,3 +209,5 @@ export default getHTMLEmail = ({
       </body>
     </html>
   `;
+
+export default getHTMLEmail;

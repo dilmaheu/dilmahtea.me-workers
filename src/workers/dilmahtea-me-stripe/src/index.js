@@ -1,29 +1,11 @@
 import Stripe from "stripe";
 import { getValidatedData } from "./utils/getValidatedData";
+import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
-const stripe = new Stripe(STRIPE_SECRET_KEY, {
-  // Cloudflare Workers use the Fetch API for their API requests.
-  httpClient: Stripe.createFetchHttpClient(),
-  apiVersion: "2020-08-27",
-});
-
-const headers = new Headers({
-  "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "*",
-  "Access-Control-Allow-Methods": "OPTIONS, POST",
-  "Access-Control-Max-Age": "-1",
-});
-
-const reply = (message, status) => {
-  return new Response(message, { status, headers });
-};
-
-const handlePOST = async (request) => {
+const handlePOST = async (request, env) => {
   const body = await request.formData(),
-    data = Object.fromEntries(body);
-
-  const validatedData = await getValidatedData(data);
+    data = Object.fromEntries(body),
+    validatedData = await getValidatedData(data, env);
 
   if (validatedData.errors) {
     return reply(JSON.stringify(validatedData), 400);
@@ -55,101 +37,66 @@ const handlePOST = async (request) => {
     success_url,
   } = validatedData;
 
-  const paymentData = JSON.stringify({ ...validatedData, request_headers });
-
-  const searchParams = new URLSearchParams();
-
-  searchParams.set("first_name", first_name);
-  searchParams.set("last_name", last_name);
-  searchParams.set("email", email);
-  searchParams.set("favorite_tea", favorite_tea);
-  searchParams.set("country", country);
-  searchParams.set("city", city);
-  searchParams.set("street", street);
-  searchParams.set("postal_code", postal_code);
+  const searchParams = new URLSearchParams({
+    first_name,
+    last_name,
+    email,
+    favorite_tea,
+    country,
+    city,
+    street,
+    postal_code,
+  });
 
   const queryString = searchParams.toString(),
     cancel_url = origin_url + "?" + queryString;
 
-  try {
-    // Create new Checkout Session for the order.
-    // Redirects the customer to s Stripe checkout page.
-    // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card", "ideal"],
-      mode: "payment",
-      customer_email: email,
-      locale: locale,
-      line_items: [
-        {
-          quantity: 1,
-          price_data: {
-            currency: "eur",
-            unit_amount: Math.round(price * 100),
-            product_data: {
-              name: product_name,
-              description: product_desc,
-            },
+  const paymentID = crypto.randomUUID(),
+    paymentData = JSON.stringify({ ...validatedData, request_headers });
+
+  const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
+    // Cloudflare Workers use the Fetch API for their API requests.
+    httpClient: Stripe.createFetchHttpClient(),
+    apiVersion: "2022-11-15",
+  });
+
+  // Create new Checkout Session for the order.
+  // Redirects the customer to s Stripe checkout page.
+  // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
+  const session = await stripe.checkout.sessions.create({
+    locale: locale,
+    mode: "payment",
+    customer_email: email,
+    payment_method_types: ["card", "ideal"],
+    cancel_url,
+    success_url,
+    payment_intent_data: { metadata: { paymentID, payment_type } },
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: "eur",
+          unit_amount: Math.round(price * 100),
+          product_data: {
+            name: product_name,
+            description: product_desc,
           },
         },
-      ],
-      success_url,
-      cancel_url,
-    });
-
-    const paymentIntentID = session.payment_intent;
-
-    switch (payment_type) {
-      case "crowdfunding":
-        await CROWDFUNDINGS.put(paymentIntentID, paymentData);
-        break;
-
-      case "ecommerce":
-        await ECOMMERCE_PAYMENTS.put(paymentIntentID, paymentData);
-        break;
-    }
-
-    return Response.redirect(session.url, 303);
-  } catch (err) {
-    return reply(JSON.stringify(err), 500);
-  }
-};
-
-const handleOPTIONS = (request) => {
-  if (
-    request.headers.get("Origin") !== null &&
-    request.headers.get("Access-Control-Request-Method") !== null &&
-    request.headers.get("Access-Control-Request-Headers") !== null
-  ) {
-    // Handle CORS pre-flight request.
-    return new Response(null, {
-      headers,
-    });
-  } else {
-    // Handle standard OPTIONS request.
-    return new Response(null, {
-      headers: {
-        Allow: "POST, OPTIONS",
       },
-    });
-  }
+    ],
+  });
+
+  const PAYMENT_INTENTS =
+    payment_type === "crowdfunding"
+      ? env.CROWDFUNDINGS
+      : env.ECOMMERCE_PAYMENTS;
+
+  await PAYMENT_INTENTS.put(paymentID, paymentData);
+
+  return Response.redirect(session.url, 303);
 };
 
-addEventListener("fetch", (event) => {
-  const { request } = event;
-
-  let { pathname: urlPathname } = new URL(request.url);
-
-  if (urlPathname === "/") {
-    switch (request.method) {
-      case "POST":
-        return event.respondWith(handlePOST(request));
-      case "OPTIONS":
-        return event.respondWith(handleOPTIONS(request));
-    }
-  }
-
-  return event.respondWith(
-    reply(JSON.stringify({ error: `Method or Path Not Allowed` }), 405)
-  );
+export default createModuleWorker({
+  pathname: "/",
+  methods: { POST: handlePOST },
 });

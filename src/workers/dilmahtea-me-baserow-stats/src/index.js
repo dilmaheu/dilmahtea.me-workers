@@ -1,74 +1,44 @@
-/**
- * Respond with hello worker text
- * @param {Request} request
- */
+import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
-const headers = new Headers({
-  "Content-Type": "application/json",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "*",
-  "Access-Control-Allow-Methods": "OPTIONS, POST",
-  "Access-Control-Max-Age": "-1",
-});
+async function handleGET(request, env) {
+  const [supportersCount, totalAmountRaised] = await Promise.all([
+    env.BASEROW_STATS.get("Number of Supporters"),
+    env.BASEROW_STATS.get("Total Amount Raised"),
+  ]);
 
-const reply = (message, status) => {
-  return new Response(message, { status, headers });
-};
-
-async function handleGET(request) {
-  const supportersCount = await BASEROW_STATS.get("Number of Supporters"),
-    totalAmountRaised = await BASEROW_STATS.get("Total Amount Raised");
-
-  return reply(
-    JSON.stringify({
-      supportersCount,
-      totalAmountRaised,
-    }),
-    200
-  );
+  return reply(JSON.stringify({ supportersCount, totalAmountRaised }), 200);
 }
 
-async function handlePOST(request) {
+async function handlePOST(request, env) {
   const { table_id, event_type } = await request.json();
 
   if (
     table_id === 67746 &&
-    [
-      "row.created",
-      "row.updated",
-      "row.deleted",
-      "rows.created",
-      "rows.updated",
-      "rows.deleted",
-    ].includes(event_type)
+    ["rows.created", "rows.updated", "rows.deleted"].includes(event_type)
   ) {
     const { results: payments } = await fetch(
-      `${BASEROW_API_URL}?user_field_names=true&size=0&include=Amount+Paid,Payment+Status`,
+      `${env.BASEROW_API_URL}?user_field_names=true&size=0&include=Amount+Paid,Payment+Status`,
       {
         headers: {
-          Authorization: `Token ${BASEROW_TOKEN}`,
+          Authorization: `Token ${env.BASEROW_TOKEN}`,
         },
       }
     ).then((res) => res.json());
 
-    const paidPayments = payments.filter(
-      (row) => row["Payment Status"] === "paid"
-    );
+    const paidPayments = payments
+      .filter((row) => row["Payment Status"] === "paid")
+      .map((row) => parseInt(row["Amount Paid"]));
 
-    const supportersCount = paidPayments.length;
+    const supportersCount = paidPayments.length,
+      totalAmountRaised = paidPayments.reduce((a, b) => a + b, 0);
 
-    const initialAmount = 0;
+    await Promise.all([
+      env.BASEROW_STATS.put("Number of Supporters", supportersCount),
+      env.BASEROW_STATS.put("Total Amount Raised", totalAmountRaised),
+    ]);
 
-    const totalAmountRaised = paidPayments.reduce(
-      (total, payment) => total + parseInt(payment["Amount Paid"]),
-      initialAmount
-    );
-
-    await BASEROW_STATS.put("Number of Supporters", supportersCount);
-    await BASEROW_STATS.put("Total Amount Raised", totalAmountRaised);
-
-    // Trigger a rebuild of the dilmahtea.me website
-    await fetch(CLOUDFLARE_PAGES_DEPLOY_HOOK, { method: "POST" });
+    // trigger a rebuild of the website to update the stats
+    await fetch(env.CLOUDFLARE_PAGES_DEPLOY_HOOK, { method: "POST" });
 
     return reply(
       JSON.stringify({ message: "BASEROW_STATS KV Namespace Updated" }),
@@ -79,43 +49,7 @@ async function handlePOST(request) {
   return reply(JSON.stringify({ error: "Bad Request" }), 400);
 }
 
-function handleOPTIONS(request) {
-  if (
-    request.headers.get("Origin") !== null &&
-    request.headers.get("Access-Control-Request-Method") !== null &&
-    request.headers.get("Access-Control-Request-Headers") !== null
-  ) {
-    // Handle CORS pre-flight request.
-    return new Response(null, {
-      headers,
-    });
-  } else {
-    // Handle standard OPTIONS request.
-    return new Response(null, {
-      headers: {
-        Allow: "POST, OPTIONS",
-      },
-    });
-  }
-}
-
-addEventListener("fetch", (event) => {
-  const { request } = event;
-
-  let { pathname: urlPathname } = new URL(request.url);
-
-  if (urlPathname === "/") {
-    switch (request.method) {
-      case "GET":
-        return event.respondWith(handleGET(request));
-      case "POST":
-        return event.respondWith(handlePOST(request));
-      case "OPTIONS":
-        return event.respondWith(handleOPTIONS(request));
-    }
-  }
-
-  return event.respondWith(
-    reply(JSON.stringify({ error: `Method or Path Not Allowed` }), 405)
-  );
+export default createModuleWorker({
+  pathname: "/",
+  methods: { GET: handleGET, POST: handlePOST },
 });

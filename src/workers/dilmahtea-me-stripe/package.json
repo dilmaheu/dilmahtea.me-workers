@@ -17,14 +17,10 @@
     "prettier": "^2.8.4"
   },
   "dependencies": {
-    "@chantouchsek/validatorjs": "^1.2.0",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "esbuild": "^0.17.11",
-    "stripe": "^11.14.0"
-  },
-  "pnpm": {
-    "patchedDependencies": {
-      "@chantouchsek/validatorjs@1.2.0": "patches/@chantouchsek__validatorjs@1.2.0.patch"
-    }
+    "stripe": "^11.14.0",
+    "zod": "^3.21.4",
+    "zod-validation-error": "^1.1.0"
   }
 }
