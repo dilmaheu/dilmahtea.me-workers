@@ -1,5 +1,8 @@
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
+// env.BASEROW_CROWDFUNDING_TABLE_ID
+// env.BASEROW_PAYMENT_RECORDS_TABLE_ID
+
 async function handleGET(request, env) {
   const [supportersCount, totalAmountRaised] = await Promise.all([
     env.BASEROW_STATS.get("Number of Supporters"),
@@ -13,7 +16,7 @@ async function handlePOST(request, env) {
   const { table_id, event_type } = await request.json();
 
   if (
-    table_id === 67746 &&
+    table_id === env.BASEROW_CROWDFUNDING_TABLE_ID &&
     ["rows.created", "rows.updated", "rows.deleted"].includes(event_type)
   ) {
     const { results: payments } = await fetch(
