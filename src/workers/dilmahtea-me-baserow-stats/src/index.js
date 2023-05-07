@@ -13,7 +13,7 @@ async function handlePOST(request, env) {
   const { table_id, event_type } = await request.json();
 
   if (
-    table_id === 67746 &&
+    table_id === env.BASEROW_CROWDFUNDING_TABLE_ID &&
     ["rows.created", "rows.updated", "rows.deleted"].includes(event_type)
   ) {
     const { results: payments } = await fetch(

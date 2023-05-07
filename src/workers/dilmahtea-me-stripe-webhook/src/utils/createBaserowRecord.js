@@ -27,9 +27,9 @@ export default async function createBaserowRecord(paymentIntentData, env) {
 
   const databaseTableID =
     payment_type === "crowdfunding"
-      ? 67746
+      ? env.BASEROW_CROWDFUNDING_TABLE_ID
       : payment_type === "ecommerce"
-      ? 108632
+      ? env.BASEROW_PAYMENT_RECORDS_TABLE_ID
       : null;
 
   const createRecordRequestBody = {
