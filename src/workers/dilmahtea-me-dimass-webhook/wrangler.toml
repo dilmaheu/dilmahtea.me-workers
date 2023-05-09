@@ -13,8 +13,3 @@ routes = [
     { pattern = "dev.dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
 [env.development.vars]
-# The necessary secrets are:
-# - DIMASS_APIKEY
-# - DIMASS_SIGNATURE
-# - STRAPI_APIKEY
-# Run `echo <VALUE> | wrangler secret put <NAME>` for each of these
