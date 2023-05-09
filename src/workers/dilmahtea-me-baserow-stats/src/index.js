@@ -11,9 +11,8 @@ async function handleGET(request, env) {
 
 async function handlePOST(request, env) {
   const { table_id, event_type } = await request.json();
-
   if (
-    table_id === env.BASEROW_CROWDFUNDING_TABLE_ID &&
+    `${table_id}` === env.BASEROW_CROWDFUNDING_TABLE_ID &&
     ["rows.created", "rows.updated", "rows.deleted"].includes(event_type)
   ) {
     const { results: payments } = await fetch(
@@ -45,7 +44,6 @@ async function handlePOST(request, env) {
       200
     );
   }
-
   return reply(JSON.stringify({ error: "Bad Request" }), 400);
 }
 
