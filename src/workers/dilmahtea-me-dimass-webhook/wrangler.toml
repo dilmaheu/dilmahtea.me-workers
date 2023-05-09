@@ -6,10 +6,9 @@ workers_dev = true
 routes = [
     { pattern = "dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
-[vars]
+
 [env.development]
 name = "dilmahtea-me-dimass-dev"
 routes = [
     { pattern = "dev.dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
-[env.development.vars]
