@@ -87,10 +87,15 @@ export async function getValidatedData(paymentData, env) {
       Authorization: `Bearer ${env.CMS_ACCESS_TOKEN}`,
     },
     body: JSON.stringify({ query }),
-  }).then((response) => {
-    console.log(JSON.stringify(response, null, 2));
-    return response.json();
-  });
+  })
+    .then((response) => {
+      console.log(JSON.stringify(response, null, 2));
+      return response.json();
+    })
+    .catch((e) => {
+      console.log("error", e);
+      throw new Error(e);
+    });
 
   const {
     data: {
