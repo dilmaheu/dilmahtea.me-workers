@@ -98,15 +98,21 @@ export async function getValidatedData(paymentData, env) {
     },
   } = CMSData;
 
+  console.log('1')
+  console.log(CMSDATA)
   const crowdfundingPerks = {};
 
   crowdfundingPlans.forEach(({ attributes: { Perk, Price_EUR_excl_VAT } }) => {
     crowdfundingPerks[Perk] = Price_EUR_excl_VAT;
   });
 
+  console.log('2')
+
   const locales = i18NLocales.map(({ attributes: { code } }) =>
     code.substring(0, 2)
   );
+
+  console.log('3')
 
   const products = [];
 
@@ -134,6 +140,8 @@ export async function getValidatedData(paymentData, env) {
     };
   });
 
+  console.log('4')
+
   const countries = CMSData.data.countries.data.map(
       ({ attributes: { name } }) => name
     ),
@@ -149,6 +157,8 @@ export async function getValidatedData(paymentData, env) {
     }
   );
 
+
+  console.log('5')
   const companyName = recurringElement.attributes.Company_name;
 
   // validate data
@@ -157,6 +167,7 @@ export async function getValidatedData(paymentData, env) {
   paymentData.price = +paymentData.price;
   paymentData.shipping_cost = +paymentData.shipping_cost;
   paymentData.cart = JSON.parse(paymentData.cart);
+
 
   const BasePaymentIntentSchema = z.object({
     first_name: z.string(),
@@ -170,6 +181,7 @@ export async function getValidatedData(paymentData, env) {
     origin_url: z.string().url(),
     success_url: z.string().url(),
   });
+  console.log('6')
 
   const CrowdfundingPaymentIntentSchema = BasePaymentIntentSchema.extend({
     payment_type: z.literal("crowdfunding"),
@@ -183,6 +195,7 @@ export async function getValidatedData(paymentData, env) {
       .number()
       .refine((value) => value === crowdfundingPerks[paymentData.perk]),
   });
+  console.log('7')
 
   const EcommercePaymentIntentSchema = BasePaymentIntentSchema.extend({
     payment_type: z.literal("ecommerce"),
@@ -254,11 +267,14 @@ export async function getValidatedData(paymentData, env) {
             100
       ),
   });
+  console.log('8')
 
   const PaymentIntentSchema = z.union([
     CrowdfundingPaymentIntentSchema.strict(),
     EcommercePaymentIntentSchema.strict(),
   ]);
+
+  console.log('9')
 
   try {
     console.log("paymentData", paymentData);
