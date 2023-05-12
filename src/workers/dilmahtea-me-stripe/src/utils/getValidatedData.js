@@ -261,8 +261,10 @@ export async function getValidatedData(paymentData, env) {
   ]);
 
   try {
+    console.log("paymentData", paymentData);
     return PaymentIntentSchema.parse(paymentData);
   } catch (error) {
+    console.log("errored here!");
     return {
       message: "Validation error!",
       errors: fromZodError(error).toString().slice(18).split(";"),
