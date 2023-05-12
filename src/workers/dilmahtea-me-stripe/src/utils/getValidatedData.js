@@ -77,9 +77,6 @@ const query = `
 `;
 
 export async function getValidatedData(paymentData, env) {
-  console.log(env.CMS_GRAPHQL_ENDPOINT);
-  console.log(env.CMS_ACCESS_TOKEN);
-  console.log(JSON.stringify({ query }));
   // process data for validation
   const CMSData = await fetch(env.CMS_GRAPHQL_ENDPOINT, {
     method: "POST",
@@ -88,15 +85,7 @@ export async function getValidatedData(paymentData, env) {
       Authorization: `Bearer ${env.CMS_ACCESS_TOKEN}`,
     },
     body: JSON.stringify({ query }),
-  })
-    .then((response) => {
-      console.log(JSON.stringify(response, null, 2));
-      return response.json();
-    })
-    .catch((e) => {
-      console.log("error", e);
-      throw new Error(e);
-    });
+  }).then((response) => response.json());
 
   const {
     data: {
@@ -107,20 +96,15 @@ export async function getValidatedData(paymentData, env) {
     },
   } = CMSData;
 
-  console.log("1");
   const crowdfundingPerks = {};
 
   crowdfundingPlans.forEach(({ attributes: { Perk, Price_EUR_excl_VAT } }) => {
     crowdfundingPerks[Perk] = Price_EUR_excl_VAT;
   });
 
-  console.log("2");
-
   const locales = i18NLocales.map(({ attributes: { code } }) =>
     code.substring(0, 2)
   );
-
-  console.log("3");
 
   const products = [];
 
@@ -148,8 +132,6 @@ export async function getValidatedData(paymentData, env) {
     };
   });
 
-  console.log("4");
-
   const countries = CMSData.data.countries.data.map(
       ({ attributes: { name } }) => name
     ),
@@ -165,7 +147,6 @@ export async function getValidatedData(paymentData, env) {
     }
   );
 
-  console.log("5");
   const companyName = recurringElement.attributes.Company_name;
 
   // validate data
@@ -187,7 +168,6 @@ export async function getValidatedData(paymentData, env) {
     origin_url: z.string().url(),
     success_url: z.string().url(),
   });
-  console.log("6");
 
   const CrowdfundingPaymentIntentSchema = BasePaymentIntentSchema.extend({
     payment_type: z.literal("crowdfunding"),
@@ -201,7 +181,6 @@ export async function getValidatedData(paymentData, env) {
       .number()
       .refine((value) => value === crowdfundingPerks[paymentData.perk]),
   });
-  console.log("7");
 
   const EcommercePaymentIntentSchema = BasePaymentIntentSchema.extend({
     payment_type: z.literal("ecommerce"),
@@ -273,20 +252,15 @@ export async function getValidatedData(paymentData, env) {
             100
       ),
   });
-  console.log("8");
 
   const PaymentIntentSchema = z.union([
     CrowdfundingPaymentIntentSchema.strict(),
     EcommercePaymentIntentSchema.strict(),
   ]);
 
-  console.log("9");
-
   try {
-    console.log("paymentData", paymentData);
     return PaymentIntentSchema.parse(paymentData);
   } catch (error) {
-    console.log("errored here!");
     return {
       message: "Validation error!",
       errors: fromZodError(error).toString().slice(18).split(";"),
