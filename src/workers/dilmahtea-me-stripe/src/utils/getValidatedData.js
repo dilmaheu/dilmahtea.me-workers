@@ -88,7 +88,7 @@ export async function getValidatedData(paymentData, env) {
     },
     body: JSON.stringify({ query }),
   }).then((response) => {
-    console.log(response);
+    console.log(JSON.stringify(response, null, 2));
     return response.json();
   });
 
