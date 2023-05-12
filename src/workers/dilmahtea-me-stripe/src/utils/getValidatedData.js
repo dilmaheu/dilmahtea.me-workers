@@ -99,7 +99,6 @@ export async function getValidatedData(paymentData, env) {
   } = CMSData;
 
   console.log('1')
-  console.log(CMSDATA)
   const crowdfundingPerks = {};
 
   crowdfundingPlans.forEach(({ attributes: { Perk, Price_EUR_excl_VAT } }) => {
