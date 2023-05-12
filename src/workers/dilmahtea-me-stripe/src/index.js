@@ -88,8 +88,8 @@ const handlePOST = async (request, env) => {
 
   const PAYMENT_INTENTS =
     payment_type === "crowdfunding"
-      ? env.CROWDFUNDINGS
-      : env.ECOMMERCE_PAYMENTS;
+      ? env.BASEROW_CROWDFUNDING_TABLE_ID
+      : env.BASEROW_PAYMENT_RECORDS_TABLE_ID;
 
   await PAYMENT_INTENTS.put(paymentID, paymentData);
 
