@@ -35,8 +35,8 @@ async function handlePOST(request, env) {
 
   const PAYMENT_INTENTS =
     payment_type === "crowdfunding"
-      ? env.BASEROW_CROWDFUNDING_TABLE_ID
-      : env.BASEROW_PAYMENT_RECORDS_TABLE_ID;
+      ? env.CROWDFUNDINGS
+      : env.ECOMMERCE_PAYMENTS;
 
   const paymentIntentData = JSON.parse(await PAYMENT_INTENTS.get(paymentID)),
     { origin_url } = paymentIntentData;
