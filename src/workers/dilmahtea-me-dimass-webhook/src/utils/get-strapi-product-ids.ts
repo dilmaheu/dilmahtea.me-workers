@@ -30,7 +30,7 @@ export default async function(env: ENV, skus: SKU[]) {
   });
 
   if (!idsFromStrapiResponse.ok) {
-    throw new Error(idsFromStrapiResponse.statusText);
+    throw new Error(`Strapi: ${idsFromStrapiResponse.statusText}`);
   }
 
   const idsFromStrapiData: StrapiResponseProducts = await idsFromStrapiResponse.json();
