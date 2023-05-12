@@ -77,6 +77,8 @@ const query = `
 `;
 
 export async function getValidatedData(paymentData, env) {
+  console.log(paymentData);
+  console.log("typeof paymentData", typeof paymentData);
   // process data for validation
   const CMSData = await fetch(env.CMS_GRAPHQL_ENDPOINT, {
     method: "POST",
