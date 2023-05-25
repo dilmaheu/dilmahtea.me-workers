@@ -65,7 +65,7 @@ async function handlePOST(request, env) {
 
     if (domain === "dilmahtea.me" && payment_type === "ecommerce") {
       const { cart, request_headers } = paymentIntentData,
-        purchasedProducts = Object.values(JSON.parse(cart)),
+        purchasedProducts = Object.values(cart),
         purchaseEventRequestHeaders = new Headers(request_headers);
 
       purchaseEventRequestHeaders.set("Content-Type", "application/json");
