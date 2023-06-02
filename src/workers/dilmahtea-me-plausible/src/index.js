@@ -69,7 +69,7 @@ async function handlePOST(request, env) {
         method: "POST",
         headers: responseHeaders,
         body: JSON.stringify({
-          name: "Add to Cart (Test)",
+          name: "Add to Cart",
           url: originURL,
           domain: "dilmahtea.me",
           props: {
