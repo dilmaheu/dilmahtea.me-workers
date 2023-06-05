@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "dilmahtea-me-baserow-stats",
+  "name": "dilmahtea-me-plausible",
   "version": "1.0.0",
   "description": "A template for kick starting a Cloudflare Workers project",
   "main": "src/index.js",
