@@ -46,6 +46,7 @@ async function getProductDetails(SKU, env) {
 
   const [productData] = response.data.products.data,
     productDetails = {
+      Brand: productData.attributes.brand.data.attributes.Brand_name,
       Category: productData.attributes.category.data.attributes.Title,
       "Sub-category":
         productData.attributes.sub_category.data?.attributes.Title,
