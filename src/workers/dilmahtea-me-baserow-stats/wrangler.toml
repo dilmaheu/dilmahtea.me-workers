@@ -4,7 +4,6 @@ compatibility_date = "2022-11-30"
 main = "./src/index.js"
 workers_dev = true
 logpush=true
-
 routes = [
     { pattern = "crowdfunding-stats.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
@@ -20,3 +19,8 @@ routes = [
 kv_namespaces = [
     { binding = "BASEROW_STATS", id = "b079d7c054bc4bc3b4cbfdb244c5aa29" }
 ]
+
+# secrets
+# BASEROW_TOKEN
+# BASEROW_API_URL
+# CLOUDFLARE_PAGES_DEPLOY_HOOK

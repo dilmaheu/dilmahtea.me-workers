@@ -4,7 +4,6 @@ compatibility_date = "2022-11-30"
 main = "./src/index.js"
 workers_dev = true
 logpush=true
-
 routes = [
     { pattern = "cms-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
@@ -16,3 +15,7 @@ routes = [
     { pattern = "dev.cms-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 kv_namespaces = [{ binding = "MAILS", id = "7001794de1f245c0b37792b9215c1acf" }]
+
+# secrets
+# CMS_ACCESS_TOKEN
+# CMS_GRAPHQL_ENDPOINT
