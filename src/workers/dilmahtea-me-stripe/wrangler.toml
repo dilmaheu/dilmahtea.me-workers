@@ -4,7 +4,6 @@ compatibility_date = "2022-11-30"
 main = "./src/index.js"
 workers_dev = true
 logpush=true
-
 routes = [
     { pattern = "pay.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
@@ -22,3 +21,9 @@ kv_namespaces = [
     { binding = "CROWDFUNDINGS", id = "bce59b3e55474063abce8ef8f5d755e7" },
     { binding = "ECOMMERCE_PAYMENTS", id = "acd54db867fe4fa18351d3b89a00c05a" }
 ]
+
+# secrets
+# CMS_ACCESS_TOKEN
+# CMS_GRAPHQL_ENDPOINT
+# STRIPE_DEVELOPMENT_SECRET_KEY_CODE
+# STRIPE_PRODUCTION_SECRET_KEY_CODE

@@ -4,7 +4,6 @@ compatibility_date = "2022-11-30"
 main = "./src/index.ts"
 workers_dev = true
 logpush=true
-
 routes = [
     { pattern = "dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
@@ -14,3 +13,12 @@ name = "dilmahtea-me-dimass-dev"
 routes = [
     { pattern = "dev.dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
+
+# secrets
+# STRAPI_APIKEY
+# STRAPI_API_ENDPOINT
+# STRAPI_GRAPHQL_ENDPOINT
+# DIMASS_APIKEY
+# DIMASS_SECRET
+# DIMASS_API_ENDPOINT
+# DIMASS_WEBHOOK_SECRET
