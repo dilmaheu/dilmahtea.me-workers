@@ -67,7 +67,7 @@ const handlePOST = async (request, env) => {
     locale: locale,
     mode: "payment",
     customer_email: email,
-    payment_method_types: ["card", "ideal"],
+    payment_method_types: ["card", "ideal", "sofort", "bancontact"],
     cancel_url,
     success_url,
     payment_intent_data: { metadata: { paymentID, payment_type } },
