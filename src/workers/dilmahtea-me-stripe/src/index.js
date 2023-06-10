@@ -1,11 +1,17 @@
 import Stripe from "stripe";
-import { getValidatedData } from "./utils/getValidatedData";
+import getCMSData from "./utils/getCMSData";
+import getValidatedData from "./utils/getValidatedData";
+import getPaymentMethodTypes from "./utils/getPaymentMethodTypes";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
+let CMSData;
+
 const handlePOST = async (request, env) => {
+  CMSData = await getCMSData(env);
+
   const body = await request.formData(),
-    data = Object.fromEntries(body),
-    validatedData = await getValidatedData(data, env);
+    rawPaymentData = Object.fromEntries(body),
+    validatedData = await getValidatedData(rawPaymentData, CMSData, env);
 
   if (validatedData.errors) {
     return reply(JSON.stringify(validatedData), 400);
@@ -60,6 +66,8 @@ const handlePOST = async (request, env) => {
     apiVersion: "2022-11-15",
   });
 
+  const payment_method_types = await getPaymentMethodTypes(country, CMSData);
+
   // Create new Checkout Session for the order.
   // Redirects the customer to s Stripe checkout page.
   // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
@@ -67,7 +75,7 @@ const handlePOST = async (request, env) => {
     locale: locale,
     mode: "payment",
     customer_email: email,
-    payment_method_types: ["card", "ideal", "sofort", "bancontact"],
+    payment_method_types,
     cancel_url,
     success_url,
     payment_intent_data: { metadata: { paymentID, payment_type } },
