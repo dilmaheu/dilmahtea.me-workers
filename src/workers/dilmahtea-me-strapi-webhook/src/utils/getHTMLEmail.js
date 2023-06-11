@@ -45,9 +45,9 @@ const getHTMLEmail = ({
           "
         >
           <img
-            src="https://imagedelivery.net/BX3RwoS0OdbsyY2M52BQzw/c49ecab8-5548-4d65-41e8-efa0e59fb000/opengraph"
             alt="Dilmah Tea Logo"
-            style="display: block; height: 100px; margin: 30px auto auto"
+            src="https://imagedelivery.net/BX3RwoS0OdbsyY2M52BQzw/c49ecab8-5548-4d65-41e8-efa0e59fb000/opengraph"
+            style="display: block; width: auto; height: 100px; margin: 30px auto auto"
           />
         </div>
   
