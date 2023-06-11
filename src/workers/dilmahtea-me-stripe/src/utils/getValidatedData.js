@@ -62,10 +62,10 @@ export default async function getValidatedData(paymentData, CMSData) {
   const companyName = recurringElement.attributes.Company_name;
 
   // validate data
-  paymentData.tax = +paymentData.tax;
-  paymentData.price = +paymentData.price;
-  paymentData.shipping_cost = +paymentData.shipping_cost;
-  paymentData.cart = JSON.parse(paymentData.cart);
+  paymentData.tax &&= +paymentData.tax;
+  paymentData.price &&= +paymentData.price;
+  paymentData.shipping_cost &&= +paymentData.shipping_cost;
+  paymentData.cart &&= JSON.parse(paymentData.cart);
 
   const BasePaymentIntentSchema = z.object({
     first_name: z.string(),
