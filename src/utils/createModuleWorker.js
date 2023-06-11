@@ -35,7 +35,17 @@ export default function ({ pathname: endpointPathname, methods }) {
         methods.OPTIONS = handleOPTIONS;
 
         if (method in methods) {
-          return methods[method](request, env, ctx);
+          const methodHandler = methods[method];
+
+          try {
+            return await methodHandler(request, env, ctx);
+          } catch (error) {
+            if (methodHandler.isPublic) {
+              return reply(JSON.stringify({ error: error.message }), 500);
+            }
+
+            throw error;
+          }
         }
       }
 
