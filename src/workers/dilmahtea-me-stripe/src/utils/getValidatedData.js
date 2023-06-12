@@ -1,99 +1,13 @@
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 
-const query = `
-  {
-    crowdfundingPlans {
-      data {
-        attributes {
-          Perk
-          Price_EUR_excl_VAT
-        }
-      }
-    }
-
-    recurringElement {
-      data {
-        attributes {
-          Company_name
-        }
-      }
-    }
-
-    i18NLocales {
-      data {
-        attributes {
-          code
-        }
-      }
-    }
-
-    products {
-      data {
-        attributes {
-          locale
-          SKU
-          Title
-          Price
-          Weight_tea
-          Weight_tea_unit
-          localizations {
-            data {
-              attributes {
-                locale
-                Title
-              }
-            }
-          }
-        }
-      }
-    }
-
-    countries {
-      data {
-        attributes {
-          name
-        }
-      }
-    }
-
-    kindnessCauses {
-      data {
-        attributes {
-          cause
-        }
-      }
-    }
-
-    shippingMethods {
-      data {
-        attributes {
-          method
-          cost
-        }
-      }
-    }
-  }
-`;
-
-export async function getValidatedData(paymentData, env) {
+export default async function getValidatedData(paymentData, CMSData) {
   // process data for validation
-  const CMSData = await fetch(env.CMS_GRAPHQL_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${env.CMS_ACCESS_TOKEN}`,
-    },
-    body: JSON.stringify({ query }),
-  }).then((response) => response.json());
-
   const {
-    data: {
-      crowdfundingPlans: { data: crowdfundingPlans },
-      recurringElement: { data: recurringElement },
-      i18NLocales: { data: i18NLocales },
-      products: { data: productsData },
-    },
+    crowdfundingPlans: { data: crowdfundingPlans },
+    recurringElement: { data: recurringElement },
+    i18NLocales: { data: i18NLocales },
+    products: { data: productsData },
   } = CMSData;
 
   const crowdfundingPerks = {};
@@ -132,29 +46,26 @@ export async function getValidatedData(paymentData, env) {
     };
   });
 
-  const countries = CMSData.data.countries.data.map(
+  const countries = CMSData.countries.data.map(
       ({ attributes: { name } }) => name
     ),
-    kindnessCauses = CMSData.data.kindnessCauses.data.map(
+    kindnessCauses = CMSData.kindnessCauses.data.map(
       ({ attributes: { cause } }) => cause
     );
 
   const shippingMethods = {};
 
-  CMSData.data.shippingMethods.data.forEach(
-    ({ attributes: { method, cost } }) => {
-      shippingMethods[method] = cost;
-    }
-  );
+  CMSData.shippingMethods.data.forEach(({ attributes: { method, cost } }) => {
+    shippingMethods[method] = cost;
+  });
 
   const companyName = recurringElement.attributes.Company_name;
 
   // validate data
-
-  paymentData.tax = +paymentData.tax;
-  paymentData.price = +paymentData.price;
-  paymentData.shipping_cost = +paymentData.shipping_cost;
-  paymentData.cart = JSON.parse(paymentData.cart);
+  paymentData.tax &&= +paymentData.tax;
+  paymentData.price &&= +paymentData.price;
+  paymentData.shipping_cost &&= +paymentData.shipping_cost;
+  paymentData.cart &&= JSON.parse(paymentData.cart);
 
   const BasePaymentIntentSchema = z.object({
     first_name: z.string(),
