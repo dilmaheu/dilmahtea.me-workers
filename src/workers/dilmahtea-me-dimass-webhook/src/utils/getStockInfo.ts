@@ -1,4 +1,3 @@
-import sha1 from "sha1";
 import { XMLParser as XMLParserConstructor } from "fast-xml-parser";
 
 import { ENV } from "../types";
@@ -30,8 +29,15 @@ export default async function(env: ENV) {
   `;
 
   const nonce = crypto.randomUUID(),
-    timestamp = new Date().getTime().toString(),
-    signature = sha1(`${nonce + timestamp + env.DIMASS_SECRET}`);
+    timestamp = new Date().getTime().toString();
+
+  const encodedSignature = new TextEncoder().encode(
+      nonce + timestamp + env.DIMASS_SECRET
+    ),
+    signatureBuffer = await crypto.subtle.digest("SHA-1", encodedSignature),
+    signature = Array.from(new Uint8Array(signatureBuffer))
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
 
   const headers = {
     nonce,
