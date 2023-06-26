@@ -1,5 +1,5 @@
 import { ENV } from "../types";
-import { ProductsToUpdateType } from "../index";
+import { ProductsStockInfo } from "../index";
 
 interface ProductInfo {
   id: number;
@@ -8,28 +8,27 @@ interface ProductInfo {
 
 export default async function(
   env: ENV,
-  productIds: ProductInfo[],
-  productsQuantity: ProductsToUpdateType[]
+  strapiProductsData: ProductInfo[],
+  productsStockInfo: ProductsStockInfo[]
 ) {
   const headers = {
+    "Content-Type": "application/json",
     Authorization: `Bearer ${env.STRAPI_APIKEY}`,
-    "content-type": "application/json",
-    "User-Agent": "cloudflare-worker",
   };
 
   // mutation query for all products
   const mutationQuery = `
     mutation(
-      ${productIds
+      ${strapiProductsData
         .map(
           (_, i) => `
         $id${i}: ID!
-        $Stock_amount${i}: Long!
+        $Stock_amount${i}: Int!
       `
         )
         .join("")}
     ) {
-        ${productIds
+        ${strapiProductsData
           .map(
             (_, i) => `
               updateProduct${i}: updateProduct(
@@ -50,13 +49,13 @@ export default async function(
   `;
 
   // mutation variables (id and Stock_amount)
-  const mutationVariables = productIds.reduce(
+  const mutationVariables = strapiProductsData.reduce(
     (acc, product, i) => ({
       ...acc,
       [`id${i}`]: product.id,
-      [`Stock_amount${i}`]: Number(
-        productsQuantity.find(({ SKU }) => SKU === product.SKU).quantity
-      ),
+      [`Stock_amount${i}`]: productsStockInfo.find(
+        ({ SKU }) => SKU === product.SKU
+      ).stockAmount,
     }),
     {}
   );
@@ -68,11 +67,7 @@ export default async function(
       query: mutationQuery,
       variables: mutationVariables,
     }),
-  });
+  }).then((res) => res.json());
 
-  if (!response.ok) {
-    console.error(await response.json());
-  }
-
-  console.log("SKUs updated: ", ...productIds.map((product) => product.SKU));
+  console.log(response);
 }

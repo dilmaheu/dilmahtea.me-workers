@@ -20,12 +20,9 @@ importers:
 
   src/workers/dilmahtea-me-dimass-webhook:
     dependencies:
-      '@hendt/xml2json':
-        specifier: ^1.0.3
-        version: 1.0.3
-      qs:
-        specifier: ^6.11.2
-        version: 6.11.2
+      fast-xml-parser:
+        specifier: ^4.2.5
+        version: 4.2.5
       sha1:
         specifier: ^1.1.1
         version: 1.1.1
@@ -97,6 +94,9 @@ importers:
       esbuild-plugin-alias:
         specifier: ^0.2.1
         version: 0.2.1
+      fast-xml-parser:
+        specifier: ^4.2.5
+        version: 4.2.5
       stripe:
         specifier: ^11.18.0
         version: 11.18.0
@@ -548,10 +548,6 @@ packages:
     requiresBuild: true
     dev: false
     optional: true
-
-  /@hendt/xml2json@1.0.3:
-    resolution: {integrity: sha512-9BvcVYnHHS4QGyc1tfE1DBv5++i3DOF/w5hJOm4A5z6HfWd76nI1tBgVxj4LmtRFRRmQSHJm901qSBLXw10Obg==}
-    dev: false
 
   /@iarna/toml@2.2.5:
     resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
@@ -1092,6 +1088,13 @@ packages:
       strip-final-newline: 3.0.0
     dev: false
 
+  /fast-xml-parser@4.2.5:
+    resolution: {integrity: sha512-B9/wizE4WngqQftFPmdaMYlXoJlJOYxGQOanC77fq9k8+Z0v5dDSVh+3glErdIROP//s/jgb7ZuxKfB8nVyo0g==}
+    hasBin: true
+    dependencies:
+      strnum: 1.0.5
+    dev: false
+
   /fill-range@7.0.1:
     resolution: {integrity: sha512-qOo9F+dMUmC2Lcb4BbVvnKJxTPjCm+RRpe4gDuGrzkL7mEVl/djYSu2OdQ2Pa302N4oqkSg9ir6jaLWJ2USVpQ==}
     engines: {node: '>=8'}
@@ -1620,6 +1623,10 @@ packages:
     dependencies:
       '@types/node': 20.2.5
       qs: 6.11.2
+    dev: false
+
+  /strnum@1.0.5:
+    resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
     dev: false
 
   /to-regex-range@5.0.1:

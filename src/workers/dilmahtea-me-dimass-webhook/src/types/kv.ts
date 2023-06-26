@@ -22,6 +22,5 @@ export interface ENV {
 
   // STRAPI
   STRAPI_APIKEY: string;
-  STRAPI_API_ENDPOINT: string;
   STRAPI_GRAPHQL_ENDPOINT: string;
 }

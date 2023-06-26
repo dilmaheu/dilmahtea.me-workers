@@ -1,39 +1,47 @@
-import QueryString from "qs";
 import { ENV } from "../types";
 import { StrapiResponseProducts } from "../types/strapi";
 
 type SKU = string;
 
-export default async function(env: ENV, skus: SKU[]) {
+export default async function(env: ENV, SKUs: SKU[]) {
   const headers = {
-    "content-type": "application/json",
+    "Content-Type": "application/json",
     Authorization: `Bearer ${env.STRAPI_APIKEY}`,
-    "User-Agent": "cloudflare-worker",
   };
 
-  /** query params for Strapi REST API endpoint */
-  const query = QueryString.stringify({
-    filters: {
-      SKU: {
-        $in: skus,
-      },
-    },
-    publicationState: "preview",
-  });
-
-  const url = `${env.STRAPI_API_ENDPOINT}/products?${query}`;
+  const query = `
+    {
+      products(
+        publicationState: PREVIEW
+        filters: { SKU: { in: ${JSON.stringify(SKUs)} } }
+      ) {
+        data {
+          id
+          attributes {
+            SKU
+          }
+        }
+      }
+    }
+  `;
 
   /** get the `id`'s from the products that need to be updated from Strapi */
-  const idsFromStrapiResponse = await fetch(url, {
-    method: "GET",
+  const response = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
+    method: "POST",
     headers,
+    body: JSON.stringify({ query }),
   });
 
-  if (!idsFromStrapiResponse.ok) {
-    throw new Error(`Strapi: ${idsFromStrapiResponse.statusText}`);
+  if (!response.ok) {
+    throw new Error(`Strapi: ${response.statusText}`);
   }
 
-  const idsFromStrapiData: StrapiResponseProducts = await idsFromStrapiResponse.json();
+  const {
+    data: { products },
+  }: StrapiResponseProducts = await response.json();
 
-  return idsFromStrapiData;
+  return products.data.map(({ id, attributes }) => ({
+    id,
+    SKU: attributes.SKU,
+  }));
 }

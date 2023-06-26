@@ -5,27 +5,19 @@ import getStrapiProductIds from "./utils/get-strapi-product-ids";
 import updateStrapiProducts from "./utils/update-strapi-products";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
-export interface ProductsToUpdateType {
-  id?: string;
+export interface ProductsStockInfo {
   SKU: string;
-  quantity: string;
-  originalSku: string;
+  stockAmount: number;
 }
 
 async function handlePOST(request: Request, env: ENV): Promise<Response> {
   const webhookData = await request.json<WebhookResponseData>();
 
-  if (
-    env.DIMASS_WEBHOOK_SECRET !== request.headers.get("Dimass-Webhook-Secret")
-  ) {
-    throw new Error("Invalid webhook secret");
-  }
-
   validateSignature(request, env, webhookData);
 
-  const dimassRes = await getStockDimass(env, true, webhookData.order_date);
+  const productsStockInfo = await getStockDimass(env);
 
-  if (!Array.isArray(dimassRes)) {
+  if (productsStockInfo.length === 0) {
     return reply(
       JSON.stringify(
         {
@@ -39,24 +31,13 @@ async function handlePOST(request: Request, env: ENV): Promise<Response> {
     );
   }
 
-  /**
-   * Dimass saves DILMAH SKU's with a 'DIMA' prefix; the `originalSku` field contains this data.
-   * the 'SKU' is the same value that matches the SKU's in strapi without the 'DIMA' prefix.
-   */
-  const productsToUpdate: ProductsToUpdateType[] = dimassRes.map((p) => ({
-    id: "",
-    SKU: p.SKU,
-    quantity: typeof p.availableStock === "string" ? p.availableStock : "0",
-    originalSku: p.code,
-  }));
-
   /** array of SKU's to query Strapi */
-  const skus = productsToUpdate.map((product) => product.SKU),
-    idsFromStrapiData = await getStrapiProductIds(env, skus);
+  const SKUs = productsStockInfo.map((product) => product.SKU),
+    strapiProductsData = await getStrapiProductIds(env, SKUs);
 
-  if (idsFromStrapiData.data.length === 0) {
+  if (strapiProductsData.length === 0) {
     throw new Error(
-      "The product(s) with the provided SKU('s) don't exist in strapi (yet)."
+      "The product(s) with the provided SKU(s) don't exist in strapi (yet)."
     );
   }
 
@@ -65,15 +46,7 @@ async function handlePOST(request: Request, env: ENV): Promise<Response> {
    * - the `id` necessary to update strapi
    * - the `SKU` is necessary to know what the updated quantity is
    */
-  const productIds: {
-    id: number;
-    SKU: string;
-  }[] = idsFromStrapiData.data.map((product) => ({
-    id: product.id,
-    SKU: product.attributes.SKU,
-  }));
-
-  await updateStrapiProducts(env, productIds, productsToUpdate);
+  await updateStrapiProducts(env, strapiProductsData, productsStockInfo);
 
   return reply(
     JSON.stringify(
