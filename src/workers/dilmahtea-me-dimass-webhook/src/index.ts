@@ -21,7 +21,7 @@ async function handlePOST(request: Request, env: ENV): Promise<Response> {
     throw new Error("Invalid webhook secret");
   }
 
-  // validateSignature(request, env, webhookData);
+  validateSignature(request, env, webhookData);
 
   const dimassRes = await getStockDimass(env, true, webhookData.order_date);
 
