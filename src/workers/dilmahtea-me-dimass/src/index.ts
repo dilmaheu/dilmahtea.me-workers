@@ -1,8 +1,9 @@
 import { ENV, WebhookResponseData } from "./types";
-import getStockDimass from "./utils/get-stock-dimass";
+
+import getStockInfo from "./utils/getStockInfo";
 import validateSignature from "./utils/validateSignature";
-import getStrapiProductIds from "./utils/get-strapi-product-ids";
-import updateStrapiProducts from "./utils/update-strapi-products";
+import updateStrapiProducts from "./utils/updateStrapiProducts";
+import getStrapiProductsData from "./utils/getStrapiProductsData";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 export interface ProductsStockInfo {
@@ -15,7 +16,7 @@ async function handlePOST(request: Request, env: ENV): Promise<Response> {
 
   validateSignature(request, env, webhookData);
 
-  const productsStockInfo = await getStockDimass(env);
+  const productsStockInfo = await getStockInfo(env);
 
   if (productsStockInfo.length === 0) {
     return reply(
@@ -33,7 +34,7 @@ async function handlePOST(request: Request, env: ENV): Promise<Response> {
 
   /** array of SKU's to query Strapi */
   const SKUs = productsStockInfo.map((product) => product.SKU),
-    strapiProductsData = await getStrapiProductIds(env, SKUs);
+    strapiProductsData = await getStrapiProductsData(env, SKUs);
 
   if (strapiProductsData.length === 0) {
     throw new Error(
