@@ -2,7 +2,7 @@
   "private": true,
   "name": "dilmahtea-me-dimass-webhook",
   "version": "1.0.0",
-  "description": "The cloudflare worker handling the webhook requests from dimass.",
+  "description": "The cloudflare worker handling the webhook requests from Dimass.",
   "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
