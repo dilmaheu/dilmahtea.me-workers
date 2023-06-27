@@ -1,3 +1,5 @@
+// @ts-check
+
 export default async function createBaserowRecord(paymentIntentData, env) {
   const {
     first_name,
@@ -65,5 +67,7 @@ export default async function createBaserowRecord(paymentIntentData, env) {
     }
   ).then((res) => res.json());
 
-  console.log(response);
+  console.log({ message: `Baserow record ${response.id} created`, response });
+
+  return response;
 }

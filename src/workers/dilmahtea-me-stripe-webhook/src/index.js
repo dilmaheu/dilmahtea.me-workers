@@ -1,6 +1,11 @@
+// @ts-check
+
 import Stripe from "stripe";
 import sendEmail from "./utils/sendEmail";
+import createOrder from "./utils/createOrder";
 import createBaserowRecord from "./utils/createBaserowRecord";
+import updateBaserowRecord from "./utils/updateBaserowRecord";
+import createPurchaseEvent from "./utils/createPurchaseEvent";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 const webCrypto = Stripe.createSubtleCryptoProvider();
@@ -31,6 +36,7 @@ async function handlePOST(request, env) {
     );
   }
 
+  // @ts-ignore
   const { paymentID, payment_type } = event.data.object.metadata;
 
   const PAYMENT_INTENTS =
@@ -41,7 +47,8 @@ async function handlePOST(request, env) {
   const paymentIntentData = JSON.parse(await PAYMENT_INTENTS.get(paymentID)),
     { origin_url } = paymentIntentData;
 
-  let payment_status;
+  let payment_status,
+    { paymentBaserowRecordID } = paymentIntentData;
 
   switch (event.type) {
     case "payment_intent.succeeded":
@@ -57,6 +64,41 @@ async function handlePOST(request, env) {
 
   const promises = [];
 
+  if (paymentIntentData.payment_status !== payment_status) {
+    promises.push(
+      updateBaserowRecord(
+        paymentBaserowRecordID,
+        { "Payment Status": payment_status },
+        payment_type,
+        env
+      )
+    );
+  } else {
+    const createdBaserowRecord = await createBaserowRecord(
+      createBaserowRecord(
+        {
+          ...paymentIntentData,
+          paymentID,
+          payment_status,
+        },
+        env
+      )
+    );
+
+    paymentBaserowRecordID = createdBaserowRecord.id;
+
+    promises.push(
+      PAYMENT_INTENTS.put(
+        paymentID,
+        JSON.stringify({
+          ...paymentIntentData,
+          paymentBaserowRecordID,
+          payment_status,
+        })
+      )
+    );
+  }
+
   // send thank you email if payment is successful
   if (paymentIntentData && payment_status === "paid") {
     promises.push(sendEmail(paymentIntentData, env));
@@ -64,46 +106,20 @@ async function handlePOST(request, env) {
     const { hostname: domain } = new URL(origin_url);
 
     if (domain === "dilmahtea.me" && payment_type === "ecommerce") {
-      const { cart, request_headers } = paymentIntentData,
-        purchasedProducts = Object.values(cart),
-        purchaseEventRequestHeaders = new Headers(request_headers);
+      promises.push(
+        createOrder(
+          { paymentID, paymentBaserowRecordID, ...paymentIntentData },
+          env
+        )
+      );
 
-      purchaseEventRequestHeaders.set("Content-Type", "application/json");
-
-      purchasedProducts.forEach((product) => {
-        promises.push(
-          fetch("https://plausible.io/api/event", {
-            method: "POST",
-            headers: Object.fromEntries(purchaseEventRequestHeaders),
-            body: JSON.stringify({
-              name: "Purchase",
-              url: origin_url,
-              domain: "dilmahtea.me",
-              props: {
-                SKU: product.sku,
-                Title: JSON.parse(product.names).en,
-                Currency: "EUR",
-                Price: product.price,
-                Quantity: product.quantity,
-                Category: "Tea",
-              },
-            }),
-          })
-        );
+      createPurchaseEvent({
+        promises,
+        origin_url,
+        paymentIntentData,
       });
     }
   }
-
-  promises.push(
-    createBaserowRecord(
-      {
-        ...paymentIntentData,
-        paymentID,
-        payment_status,
-      },
-      env
-    )
-  );
 
   await Promise.all(promises);
 
