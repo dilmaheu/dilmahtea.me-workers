@@ -145,6 +145,8 @@ export default async function createOrder(paymentData, env) {
 
         return value;
       });
+
+      return response;
     })
     .catch(async (error) => {
       await fetch("https://api.mailchannels.net/tx/v1/send", {
@@ -187,7 +189,7 @@ export default async function createOrder(paymentData, env) {
     });
 
   console.log(`Order ${paymentBaserowRecordID} created successfully`, {
-    response: response,
+    response,
   });
 
   await updateBaserowRecord(
