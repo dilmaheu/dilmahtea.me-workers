@@ -23,10 +23,9 @@ export default async function getValidatedData(paymentData, CMSData) {
   const products = [];
 
   productsData.forEach(({ attributes }) => {
-    const { SKU, Price, Weight_tea, Weight_tea_unit, localizations } =
-      attributes;
-
-    const names = {};
+    const { SKU, Price, Stock_amount, localizations } = attributes,
+      tax = Math.round(Price * 9) / 100,
+      names = {};
 
     [{ attributes }, ...localizations.data].forEach(
       ({ attributes: { locale, Title } }) => {
@@ -34,15 +33,12 @@ export default async function getValidatedData(paymentData, CMSData) {
       }
     );
 
-    const size = Weight_tea + Weight_tea_unit,
-      tax = Math.round(Price * 9) / 100;
-
     products[SKU] = {
       sku: SKU,
       names,
       price: Price,
       tax,
-      size,
+      stockAmount: Stock_amount,
     };
   });
 
@@ -120,7 +116,9 @@ export default async function getValidatedData(paymentData, CMSData) {
             names === JSON.stringify(product.names) &&
             tax === Math.round(product.tax * quantity * 100) / 100 &&
             price ===
-              Math.round((product.price + product.tax) * quantity * 100) / 100
+              Math.round((product.price + product.tax) * quantity * 100) /
+                100 &&
+            quantity <= product.stockAmount
           );
         })
     ),

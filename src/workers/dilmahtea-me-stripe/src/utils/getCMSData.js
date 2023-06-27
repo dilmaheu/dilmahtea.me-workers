@@ -32,8 +32,7 @@ const query = `
           SKU
           Title
           Price
-          Weight_tea
-          Weight_tea_unit
+          Stock_amount
           localizations {
             data {
               attributes {
