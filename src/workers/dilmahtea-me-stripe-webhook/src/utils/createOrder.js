@@ -79,16 +79,21 @@ export default async function createOrder(paymentData, env) {
 
   const order = {
     orderLines: {
-      item: Object.values(cart).map(({ sku, quantity }) => ({
+      item: Object.values(cart).map(({ sku, price, quantity }) => ({
         articleCode: `DILM ${sku}`,
         amount: quantity,
+        unitPrice: Math.round((price / quantity) * 100) / 100,
+        vatPercentage: 9,
       })),
     },
+    email,
     partnerCode: "DILM",
     orderNumber: `${
       domain === "dilmahtea.me" ? "DILM" : "DILM-TEST"
     }-${paymentBaserowRecordID}`,
-    email,
+    priceIncludingVat: true,
+    shippingCost: shipping_cost,
+    shippingCostVatPercentage: 9,
     deliveryAddress: {
       company: first_name.trim() + " " + last_name.trim(),
       firstname: first_name,
