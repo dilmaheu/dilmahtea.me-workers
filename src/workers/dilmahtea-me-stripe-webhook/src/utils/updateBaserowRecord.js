@@ -16,7 +16,7 @@ export default async function updateBaserowRecord(
   const response = await fetch(
     `https://api.baserow.io/api/database/rows/table/${databaseTableID}/${rowID}/?user_field_names=true`,
     {
-      method: "POST",
+      method: "PATCH",
       body: JSON.stringify(updatedData),
       headers: {
         Authorization: `Token ${env.BASEROW_TOKEN}`,
