@@ -75,14 +75,12 @@ async function handlePOST(request, env) {
     );
   } else {
     const createdBaserowRecord = await createBaserowRecord(
-      createBaserowRecord(
-        {
-          ...paymentIntentData,
-          paymentID,
-          payment_status,
-        },
-        env
-      )
+      {
+        ...paymentIntentData,
+        paymentID,
+        payment_status,
+      },
+      env
     );
 
     paymentBaserowRecordID = createdBaserowRecord.id;
