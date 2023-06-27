@@ -64,7 +64,10 @@ async function handlePOST(request, env) {
 
   const promises = [];
 
-  if (paymentIntentData.payment_status !== payment_status) {
+  if (
+    paymentBaserowRecordID &&
+    paymentIntentData.payment_status !== payment_status
+  ) {
     promises.push(
       updateBaserowRecord(
         paymentBaserowRecordID,
