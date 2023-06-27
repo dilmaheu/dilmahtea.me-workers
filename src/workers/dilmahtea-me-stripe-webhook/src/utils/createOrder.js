@@ -189,8 +189,6 @@ export default async function createOrder(paymentData, env) {
           ],
         }),
       });
-
-      throw error;
     });
 
   console.log(`Order ${paymentBaserowRecordID} created successfully`, {
