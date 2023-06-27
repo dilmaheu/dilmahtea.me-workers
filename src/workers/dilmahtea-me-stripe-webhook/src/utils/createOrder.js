@@ -36,6 +36,7 @@ export default async function createOrder(paymentData, env) {
   }).then((response) => response.json());
 
   const {
+    domain,
     paymentID,
     paymentBaserowRecordID,
     first_name,
@@ -84,7 +85,9 @@ export default async function createOrder(paymentData, env) {
       })),
     },
     partnerCode: "DILM",
-    orderNumber: `DILM-${paymentBaserowRecordID}`,
+    orderNumber: `${
+      domain === "dilmahtea.me" ? "DILM" : "DILM-TEST"
+    }-${paymentBaserowRecordID}`,
     email,
     deliveryAddress: {
       company: first_name.trim() + " " + last_name.trim(),

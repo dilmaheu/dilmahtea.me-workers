@@ -106,19 +106,21 @@ async function handlePOST(request, env) {
 
     const { hostname: domain } = new URL(origin_url);
 
-    if (domain === "dilmahtea.me" && payment_type === "ecommerce") {
+    if (payment_type === "ecommerce") {
       promises.push(
         createOrder(
-          { paymentID, paymentBaserowRecordID, ...paymentIntentData },
+          { paymentID, domain, paymentBaserowRecordID, ...paymentIntentData },
           env
         )
       );
 
-      createPurchaseEvent({
-        promises,
-        origin_url,
-        paymentIntentData,
-      });
+      if (domain === "dilmahtea.me") {
+        createPurchaseEvent({
+          promises,
+          origin_url,
+          paymentIntentData,
+        });
+      }
     }
   }
 
