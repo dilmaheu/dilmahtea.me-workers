@@ -64,18 +64,17 @@ async function handlePOST(request, env) {
 
   const promises = [];
 
-  if (
-    paymentBaserowRecordID &&
-    paymentIntentData.payment_status !== payment_status
-  ) {
-    promises.push(
-      updateBaserowRecord(
-        paymentBaserowRecordID,
-        { "Payment Status": payment_status },
-        payment_type,
-        env
-      )
-    );
+  if (paymentBaserowRecordID) {
+    if (paymentIntentData.payment_status !== payment_status) {
+      promises.push(
+        updateBaserowRecord(
+          paymentBaserowRecordID,
+          { "Payment Status": payment_status },
+          payment_type,
+          env
+        )
+      );
+    }
   } else {
     const createdBaserowRecord = await createBaserowRecord(
       {
