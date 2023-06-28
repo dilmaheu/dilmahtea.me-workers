@@ -4,7 +4,10 @@ import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 async function handlePOST(request, env) {
   const { event, model } = await request.json();
 
-  if (["entry.update", "entry.publish"].includes(event)) {
+  if (
+    request.headers.get("Webhook-Secret") === env.WEBHOOK_SECRET &&
+    ["entry.update", "entry.publish"].includes(event)
+  ) {
     if (
       [
         "recurring-element",
