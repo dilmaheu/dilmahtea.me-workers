@@ -11,7 +11,9 @@ async function handleGET(request, env) {
 
 async function handlePOST(request, env) {
   const { table_id, event_type } = await request.json();
+
   if (
+    request.headers.get("Webhook-Secret") === env.WEBHOOK_SECRET &&
     `${table_id}` === env.BASEROW_CROWDFUNDING_TABLE_ID &&
     ["rows.created", "rows.updated", "rows.deleted"].includes(event_type)
   ) {
