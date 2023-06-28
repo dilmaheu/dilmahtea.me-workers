@@ -1,3 +1,5 @@
+// @ts-check
+
 export default async function sendEmail(paymentData, env) {
   const {
     first_name,
@@ -75,7 +77,9 @@ export default async function sendEmail(paymentData, env) {
       subject: Subject,
       content: [{ type: "text/html", value: finalHTMLEmail }],
     }),
-  }).then((res) => res.json());
-
-  console.log(response);
+  })
+    .then((res) => res.json())
+    .then((response) => {
+      console.log({ message: "Email sent", response });
+    });
 }

@@ -1,11 +1,7 @@
 dist/
 node_modules/
+
 # Secrets
 .env
 .env.local
 .dev.vars
-
-# testing
-exampleresponse.json
-products.json
-src/workers/dilmahtea-me-dimass-webhook/testing.json

@@ -22,16 +22,12 @@ declare interface Return {
   item: Item[] | Item;
 }
 
-declare interface Item {
+export interface Item {
   code: string;
-  availableStock: string | StockNil;
-  freeStock: string | StockNil;
+  availableStock: number;
+  freeStock: number;
   ean: any;
-  blockedStock: string | StockNil;
-  defectStock: string | StockNil;
-  returnStock: string | StockNil;
-}
-
-declare interface StockNil {
-  "xsi:nil": string;
+  blockedStock: number;
+  defectStock: number;
+  returnStock: number;
 }

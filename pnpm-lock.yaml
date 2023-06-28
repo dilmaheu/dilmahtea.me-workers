@@ -18,17 +18,11 @@ importers:
         specifier: ^2.8.8
         version: 2.8.8
 
-  src/workers/dilmahtea-me-dimass-webhook:
+  src/workers/dilmahtea-me-dimass:
     dependencies:
-      '@hendt/xml2json':
-        specifier: ^1.0.3
-        version: 1.0.3
-      qs:
-        specifier: ^6.11.2
-        version: 6.11.2
-      sha1:
-        specifier: ^1.1.1
-        version: 1.1.1
+      fast-xml-parser:
+        specifier: ^4.2.5
+        version: 4.2.5
     devDependencies:
       '@types/qs':
         specifier: ^6.9.7
@@ -97,6 +91,9 @@ importers:
       esbuild-plugin-alias:
         specifier: ^0.2.1
         version: 0.2.1
+      fast-xml-parser:
+        specifier: ^4.2.5
+        version: 4.2.5
       stripe:
         specifier: ^11.18.0
         version: 11.18.0
@@ -549,10 +546,6 @@ packages:
     dev: false
     optional: true
 
-  /@hendt/xml2json@1.0.3:
-    resolution: {integrity: sha512-9BvcVYnHHS4QGyc1tfE1DBv5++i3DOF/w5hJOm4A5z6HfWd76nI1tBgVxj4LmtRFRRmQSHJm901qSBLXw10Obg==}
-    dev: false
-
   /@iarna/toml@2.2.5:
     resolution: {integrity: sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==}
     dev: false
@@ -873,10 +866,6 @@ packages:
       get-intrinsic: 1.2.1
     dev: false
 
-  /charenc@0.0.2:
-    resolution: {integrity: sha512-yrLQ/yVUFXkzg7EDQsPieE/53+0RlaWTs+wBrvW36cyilJ2SaDWfl4Yj7MtLTXleV9uEKefbAGUPv2/iWSooRA==}
-    dev: false
-
   /chokidar@3.5.3:
     resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
     engines: {node: '>= 8.10.0'}
@@ -943,10 +932,6 @@ packages:
       path-key: 3.1.1
       shebang-command: 2.0.0
       which: 2.0.2
-    dev: false
-
-  /crypt@0.0.2:
-    resolution: {integrity: sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==}
     dev: false
 
   /crypto-browserify@3.12.0:
@@ -1090,6 +1075,13 @@ packages:
       onetime: 6.0.0
       signal-exit: 3.0.7
       strip-final-newline: 3.0.0
+    dev: false
+
+  /fast-xml-parser@4.2.5:
+    resolution: {integrity: sha512-B9/wizE4WngqQftFPmdaMYlXoJlJOYxGQOanC77fq9k8+Z0v5dDSVh+3glErdIROP//s/jgb7ZuxKfB8nVyo0g==}
+    hasBin: true
+    dependencies:
+      strnum: 1.0.5
     dev: false
 
   /fill-range@7.0.1:
@@ -1541,13 +1533,6 @@ packages:
       safe-buffer: 5.2.1
     dev: false
 
-  /sha1@1.1.1:
-    resolution: {integrity: sha512-dZBS6OrMjtgVkopB1Gmo4RQCDKiZsqcpAQpkV/aaj+FCrCg8r4I4qMkDPQjBgLIxlmu9k4nUbWq6ohXahOneYA==}
-    dependencies:
-      charenc: 0.0.2
-      crypt: 0.0.2
-    dev: false
-
   /shebang-command@2.0.0:
     resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
     engines: {node: '>=8'}
@@ -1620,6 +1605,10 @@ packages:
     dependencies:
       '@types/node': 20.2.5
       qs: 6.11.2
+    dev: false
+
+  /strnum@1.0.5:
+    resolution: {integrity: sha512-J8bbNyKKXl5qYcR36TIO8W3mVGVHrmmxsd5PAItGkmyzwJvybiw2IVq5nqd0i4LSNSkB/sx9VHllbfFdr9k1JA==}
     dev: false
 
   /to-regex-range@5.0.1:
