@@ -11,7 +11,7 @@ routes = [
 [env.development]
 name = "dilmahtea-me-plausible-dev"
 routes = [
-    { pattern = "dev.analytics-stats.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+    { pattern = "dev.analytics.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 
 # secrets
