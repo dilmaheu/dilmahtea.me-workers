@@ -6,9 +6,10 @@ async function handlePOST(request, env) {
 
   if (
     request.headers.get("Webhook-Secret") === env.WEBHOOK_SECRET &&
-    ["entry.update", "entry.publish"].includes(event)
+    ["trigger-test", "entry.update", "entry.publish"].includes(event)
   ) {
     if (
+      event === "trigger-test" ||
       [
         "recurring-element",
         "crowdfunding-email",
