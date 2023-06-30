@@ -162,7 +162,14 @@ export default async function createOrder(paymentData, env) {
         body: JSON.stringify({
           personalizations: [
             {
-              to: [{ email: "hello@dilmahtea.me" }],
+              to: [
+                {
+                  email:
+                    domain === "dilmahtea.me"
+                      ? "hello@dilmahtea.me"
+                      : "dev@dilmahtea.me",
+                },
+              ],
               dkim_domain: "dilmahtea.me",
               dkim_selector: "mailchannels",
               dkim_private_key: env.DKIM_PRIVATE_KEY,
