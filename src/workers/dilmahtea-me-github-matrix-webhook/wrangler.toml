@@ -1,0 +1,14 @@
+name = "dilmahtea-me-github-matrix-webhook"
+account_id = "f0f636c746c8673c3905e9104b385251"
+compatibility_date = "2022-11-30"
+main = "./src/index.js"
+workers_dev = true
+logpush=true
+routes = [
+    { pattern = "github-matrix-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+]
+
+# secrets
+# MATRIX_BOT_ACCESS_TOKEN
+# ROOM_ID
+# WEBHOOK_SECRET
