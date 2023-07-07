@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "dilmahtea-me-baserow-matrix-webhook",
+  "version": "1.0.0",
+  "description": "Connection between Baserow to sent webhook payload info as message to a Matrix bot",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "format": "prettier --write '**/*.{js,css,json,md}'"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "prettier": "^2.8.8"
+  }
+}
