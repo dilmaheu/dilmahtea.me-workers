@@ -1,0 +1,18 @@
+name = "dilmahtea-me-exact-auth"
+account_id = "f0f636c746c8673c3905e9104b385251"
+compatibility_date = "2022-11-30"
+main = "./src/index.js"
+workers_dev = false
+logpush=true
+triggers = { crons = ["*/10 * * * *"]}
+kv_namespaces = [{ binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" }]
+
+[env.development]
+name = "dilmahtea-me-exact-auth-dev"
+triggers = { crons = ["*/10 * * * *"]}
+kv_namespaces = [{ binding = "EXACT_TOKENS", id = "194d0b00ac24422bb728e326bb43480c" }]
+
+# secrets
+# CLIENT_ID
+# CLIENT_SECRET
+# EXACT_OAUTH_TOKEN_API_ENDPOINT
