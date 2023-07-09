@@ -4,7 +4,7 @@ compatibility_date = "2022-11-30"
 main = "./src/index.js"
 workers_dev = true
 logpush=true
-
+vars = { ENVIRONMENT = "PRODUCTION" }
 routes = [
     { pattern = "pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
@@ -16,6 +16,7 @@ kv_namespaces = [
 
 [env.development]
 name = "dilmahtea-me-stripe-webhook-dev"
+vars = { ENVIRONMENT = "DEVELOPMENT" }
 routes = [
     { pattern = "dev.pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]

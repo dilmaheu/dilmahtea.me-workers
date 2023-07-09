@@ -113,7 +113,7 @@ async function handlePOST(request, env) {
         )
       );
 
-      if (domain === "dilmahtea.me") {
+      if (env.ENVIRONMENT === "PRODUCTION") {
         createPurchaseEvent({
           promises,
           origin_url,

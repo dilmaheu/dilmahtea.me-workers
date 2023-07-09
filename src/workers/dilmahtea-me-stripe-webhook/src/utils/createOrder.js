@@ -89,7 +89,7 @@ export default async function createOrder(paymentData, env) {
     email,
     partnerCode: "DILM",
     orderNumber: `${
-      domain === "dilmahtea.me" ? "DILM" : "DILM-TEST"
+      env.ENVIRONMENT === "PRODUCTION" ? "DILM" : "DILM-TEST"
     }-${paymentBaserowRecordID}`,
     priceIncludingVat: true,
     shippingCost: shipping_cost,
@@ -165,7 +165,7 @@ export default async function createOrder(paymentData, env) {
               to: [
                 {
                   email:
-                    domain === "dilmahtea.me"
+                    env.ENVIRONMENT === "PRODUCTION"
                       ? "hello@dilmahtea.me"
                       : "dev@dilmahtea.me",
                 },
