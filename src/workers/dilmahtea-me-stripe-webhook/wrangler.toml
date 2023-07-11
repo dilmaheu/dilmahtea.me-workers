@@ -10,6 +10,7 @@ routes = [
 ]
 kv_namespaces = [
     { binding = "MAILS", id = "51f5be62eaf64aa8a9c69bccb81d396e" },
+    { binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" },
     { binding = "CROWDFUNDINGS", id = "c971dd86589647799fb64dde47563fac" },
     { binding = "ECOMMERCE_PAYMENTS", id = "5086c43e26a14fa3a177ea876f514a8f" }
 ]
@@ -22,6 +23,7 @@ routes = [
 ]
 kv_namespaces = [
     { binding = "MAILS", id = "7001794de1f245c0b37792b9215c1acf" },
+    { binding = "EXACT_TOKENS", id = "194d0b00ac24422bb728e326bb43480c" },
     { binding = "CROWDFUNDINGS", id = "bce59b3e55474063abce8ef8f5d755e7" },
     { binding = "ECOMMERCE_PAYMENTS", id = "acd54db867fe4fa18351d3b89a00c05a" }
 ]
@@ -34,6 +36,7 @@ kv_namespaces = [
 # DIMASS_API_KEY
 # DIMASS_API_URL
 # DIMASS_API_SECRET
+# EXACT_API_ENDPOINT
 # STRIPE_DEVELOPMENT_SECRET_KEY
 # STRIPE_DEVELOPMENT_SIGNING_SECRET_KEY
 # STRIPE_PRODUCTION_SECRET_KEY

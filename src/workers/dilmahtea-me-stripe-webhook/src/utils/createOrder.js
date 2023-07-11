@@ -1,40 +1,11 @@
 // @ts-check
 
-import {
-  XMLParser as XMLParserConstructor,
-  XMLBuilder as XMLBuilderConstructor,
-} from "fast-xml-parser";
-
+import getCountryCode from "./getCountryCode";
+import createExactOrder from "./createExactOrder";
+import createDimassOrder from "./createDimassOrder";
 import updateBaserowRecord from "./updateBaserowRecord";
 
-const XMLParser = new XMLParserConstructor(),
-  XMLBuilder = new XMLBuilderConstructor();
-
 export default async function createOrder(paymentData, env) {
-  const {
-    data: { countries },
-  } = await fetch(env.CMS_GRAPHQL_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${env.CMS_ACCESS_TOKEN}`,
-    },
-    body: JSON.stringify({
-      query: `
-        {
-          countries {
-            data {
-              attributes {
-                name
-                code
-              }
-            }
-          }
-        }
-      `,
-    }),
-  }).then((response) => response.json());
-
   const {
     domain,
     paymentID,
@@ -62,145 +33,13 @@ export default async function createOrder(paymentData, env) {
     success_url,
   } = paymentData;
 
-  const countryCode = countries.data.find(
-    ({ attributes: { name } }) => name === country
-  ).attributes.code;
+  paymentData.countryCode = await getCountryCode(country, env);
 
-  const nonce = crypto.randomUUID(),
-    timestamp = new Date().getTime().toString();
+  const salesOrder = await createExactOrder(paymentData, env);
 
-  const encodedSignature = new TextEncoder().encode(
-      nonce + timestamp + env.DIMASS_API_SECRET
-    ),
-    signatureBuffer = await crypto.subtle.digest("SHA-1", encodedSignature),
-    signature = Array.from(new Uint8Array(signatureBuffer))
-      .map((byte) => byte.toString(16).padStart(2, "0"))
-      .join("");
+  const orderNumber = salesOrder.entry.content["m:properties"]["d:OrderNumber"];
 
-  const order = {
-    orderLines: {
-      item: Object.values(cart).map(({ sku, price, quantity }) => ({
-        articleCode: `DILM ${sku}`,
-        amount: quantity,
-        unitPrice: Math.round((price / quantity) * 100) / 100,
-        vatPercentage: 9,
-      })),
-    },
-    email,
-    partnerCode: "DILM",
-    orderNumber: `${
-      env.ENVIRONMENT === "PRODUCTION" ? "DILM" : "DILM-TEST"
-    }-${paymentBaserowRecordID}`,
-    priceIncludingVat: true,
-    shippingCost: shipping_cost,
-    shippingCostVatPercentage: 9,
-    deliveryAddress: {
-      company: first_name.trim() + " " + last_name.trim(),
-      firstname: first_name,
-      lastname: last_name,
-      street,
-      number: "",
-      zipcode: postal_code,
-      city,
-      country: countryCode,
-    },
-    invoiceAddress: {
-      company: first_name.trim() + " " + last_name.trim(),
-      firstname: first_name,
-      lastname: last_name,
-      street,
-      number: "",
-      zipcode: postal_code,
-      city,
-      country: countryCode,
-    },
-  };
-
-  const response = await fetch(env.DIMASS_API_URL, {
-    method: "POST",
-    headers: {
-      nonce,
-      timestamp,
-      signature,
-      apikey: env.DIMASS_API_KEY,
-    },
-    body: `
-      <soapenv:Envelope
-        xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-        xmlns:ord="https://www.supportplaza.nl/papi/order"
-      >
-        <soapenv:Header />
-
-        <soapenv:Body>
-          <ord:createOrder>
-            <order>${XMLBuilder.build(order)}</order>
-          </ord:createOrder>
-        </soapenv:Body>
-      </soapenv:Envelope>
-    `,
-  })
-    .then((response) => response.text())
-    .then((xml) => {
-      const response = XMLParser.parse(xml);
-
-      JSON.stringify(response, (_, value) => {
-        const fault = value && value["SOAP-ENV:Fault"];
-
-        if (fault) throw new Error(fault.faultstring);
-
-        return value;
-      });
-
-      return response;
-    })
-    .catch(async (error) => {
-      await fetch("https://api.mailchannels.net/tx/v1/send", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          personalizations: [
-            {
-              to: [
-                {
-                  email:
-                    env.ENVIRONMENT === "PRODUCTION"
-                      ? "hello@dilmahtea.me"
-                      : "dev@dilmahtea.me",
-                },
-              ],
-              dkim_domain: "dilmahtea.me",
-              dkim_selector: "mailchannels",
-              dkim_private_key: env.DKIM_PRIVATE_KEY,
-            },
-          ],
-          from: {
-            email: "hello@dilmahtea.me",
-            name: "Dilmah Europe",
-          },
-          subject: "Error confirming order",
-          content: [
-            {
-              type: "text/plain",
-              value: `
-                An error happened while confirming an order. Please manually confirm the order.
-
-                Error: ${error.message}
-                Payment ID: ${paymentID}
-              `
-                // just for prettiying the email
-                .replace(/\n +/g, "\n")
-                .slice(1, -1),
-            },
-          ],
-        }),
-      });
-    });
-
-  console.log(`Order ${paymentBaserowRecordID} created successfully`, {
-    response,
-  });
+  await createDimassOrder({ ...paymentData, orderNumber }, env);
 
   await updateBaserowRecord(
     paymentBaserowRecordID,
