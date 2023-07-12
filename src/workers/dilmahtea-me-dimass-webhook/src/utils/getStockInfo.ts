@@ -54,12 +54,22 @@ export default async function(env: ENV) {
       body,
     }
   )
-    .then((res) => {
+    .then(async (res) => {
+      const xml = await res.text();
+
       if (!res.ok) {
         throw new Error(res.statusText);
       }
 
-      return res.text();
+      JSON.stringify(xml, (_, value) => {
+        const fault = value && value["SOAP-ENV:Fault"];
+
+        if (fault) throw new Error(fault.faultstring);
+
+        return value;
+      });
+
+      return xml;
     })
     .then((xml) => XMLParser.parse(xml));
 
