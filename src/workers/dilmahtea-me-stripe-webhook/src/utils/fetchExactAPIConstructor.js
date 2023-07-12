@@ -26,7 +26,7 @@ export default function fetchExactAPIConstructor(paymentID, env) {
         const response = XMLParser.parse(xml);
 
         JSON.stringify(response, (_, value) => {
-          const error = value && value["error"];
+          const error = value && (value["error"] || value["d:Errors"]);
 
           if (error) throw new Error(error.message);
 
