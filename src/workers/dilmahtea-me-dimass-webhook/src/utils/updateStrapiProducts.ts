@@ -60,7 +60,7 @@ export default async function(
     {}
   );
 
-  const response = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
+  await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers,
     body: JSON.stringify({
@@ -68,6 +68,4 @@ export default async function(
       variables: mutationVariables,
     }),
   }).then((res) => res.json());
-
-  console.log(response);
 }
