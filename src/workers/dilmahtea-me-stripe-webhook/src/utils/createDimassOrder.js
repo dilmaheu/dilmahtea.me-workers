@@ -112,7 +112,11 @@ export default async function createDimassOrder(
 
       return response;
     })
-    .catch((error) => sendErrorEmail(error, "Dimass", paymentID, env));
+    .catch((error) => {
+      error.platform = "Dimass";
+
+      throw error;
+    });
 
   console.log(`Order ${paymentBaserowRecordID} created successfully`, {
     response,

@@ -1,13 +1,12 @@
 // @ts-check
 
-import fetchExactAPIConstructor from "./fetchExactAPIConstructor";
+import fetchExactAPIConstructor from "../../../../utils/fetchExactAPIConstructor";
 
 export default async function createCustomer(
   { locale, Name, Email, FirstName, LastName, Address },
-  paymentID,
   env
 ) {
-  const fetchExactAPI = fetchExactAPIConstructor(paymentID, env);
+  const fetchExactAPI = fetchExactAPIConstructor(env);
 
   const customer = await fetchExactAPI("POST", "/CRM/Accounts", {
     Name,

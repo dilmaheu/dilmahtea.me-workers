@@ -1,11 +1,10 @@
 // @ts-check
 
-import sendErrorEmail from "./sendErrorEmail";
 import { XMLParser as XMLParserConstructor } from "fast-xml-parser";
 
 const XMLParser = new XMLParserConstructor();
 
-export default function fetchExactAPIConstructor(paymentID, env) {
+export default function fetchExactAPIConstructor(env) {
   const fetchExactAPI = async (method, url, data) =>
     fetch(env.EXACT_API_ENDPOINT + url, {
       method,
@@ -34,8 +33,7 @@ export default function fetchExactAPIConstructor(paymentID, env) {
         });
 
         return response;
-      })
-      .catch((error) => sendErrorEmail(error, "Exact", paymentID, env));
+      });
 
   return fetchExactAPI;
 }

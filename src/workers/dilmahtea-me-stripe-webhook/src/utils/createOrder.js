@@ -1,6 +1,7 @@
 // @ts-check
 
 import getCountryCode from "./getCountryCode";
+import sendErrorEmail from "./sendErrorEmail";
 import createExactOrder from "./createExactOrder";
 import createDimassOrder from "./createDimassOrder";
 import updateBaserowRecord from "./updateBaserowRecord";
@@ -35,16 +36,27 @@ export default async function createOrder(paymentData, env) {
 
   paymentData.countryCode = await getCountryCode(country, env);
 
-  const salesOrder = await createExactOrder(paymentData, env);
+  try {
+    const salesOrder = await createExactOrder(paymentData, env).catch(
+      (error) => {
+        error.platform = "Exact";
 
-  const orderNumber = salesOrder.entry.content["m:properties"]["d:OrderNumber"];
+        throw error;
+      }
+    );
 
-  await createDimassOrder({ ...paymentData, orderNumber }, env);
+    const orderNumber =
+      salesOrder.entry.content["m:properties"]["d:OrderNumber"];
 
-  await updateBaserowRecord(
-    paymentBaserowRecordID,
-    { "Order Status": "Confirmed" },
-    payment_type,
-    env
-  );
+    await createDimassOrder({ ...paymentData, orderNumber }, env);
+
+    await updateBaserowRecord(
+      paymentBaserowRecordID,
+      { "Order Status": "Confirmed" },
+      payment_type,
+      env
+    );
+  } catch (error) {
+    await sendErrorEmail(error, paymentID, env);
+  }
 }

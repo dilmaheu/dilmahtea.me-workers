@@ -1,6 +1,6 @@
 // @ts-check
 
-const sendErrorEmail = (error, platform, paymentID, env) =>
+const sendErrorEmail = (error, paymentID, env) =>
   fetch("https://api.mailchannels.net/tx/v1/send", {
     method: "POST",
     headers: {
@@ -26,12 +26,12 @@ const sendErrorEmail = (error, platform, paymentID, env) =>
         email: "hello@dilmahtea.me",
         name: "Dilmah Europe",
       },
-      subject: `Error creating ${platform} order`,
+      subject: `Error creating ${error.platform} order`,
       content: [
         {
           type: "text/plain",
           value: `
-            An error happened while creating an order at ${platform}. Please manually confirm the order.
+            An error happened while creating an order at ${error.platform}. Please manually confirm the order.
 
             Error: ${error.message}
             Payment ID: ${paymentID}

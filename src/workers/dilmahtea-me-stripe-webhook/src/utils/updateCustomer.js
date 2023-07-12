@@ -1,14 +1,13 @@
 // @ts-check
 
-import fetchExactAPIConstructor from "./fetchExactAPIConstructor";
+import fetchExactAPIConstructor from "../../../../utils/fetchExactAPIConstructor";
 
 export default async function updateCustomer(
   { Name, FirstName, LastName, Address },
   customer,
-  paymentID,
   env
 ) {
-  const fetchExactAPI = fetchExactAPIConstructor(paymentID, env);
+  const fetchExactAPI = fetchExactAPIConstructor(env);
 
   const promises = [];
 

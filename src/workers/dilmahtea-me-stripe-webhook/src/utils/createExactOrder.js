@@ -1,8 +1,8 @@
 // @ts-check
 
 import createCustomer from "./createCustomer";
-import fetchExactAPIConstructor from "./fetchExactAPIConstructor";
 import updateCustomer from "./updateCustomer";
+import fetchExactAPIConstructor from "../../../../utils/fetchExactAPIConstructor";
 
 export default async function createExactOrder(
   {
@@ -14,12 +14,11 @@ export default async function createExactOrder(
     postal_code: Postcode,
     street,
     cart,
-    paymentID,
     countryCode: Country,
   },
   env
 ) {
-  const fetchExactAPI = fetchExactAPIConstructor(paymentID, env);
+  const fetchExactAPI = fetchExactAPIConstructor(env);
 
   const Name = `${FirstName} ${LastName}`;
 
@@ -66,13 +65,11 @@ export default async function createExactOrder(
     await updateCustomer(
       { Name, FirstName, LastName, Address },
       existingCustomer,
-      paymentID,
       env
     );
   } else {
     customerID = await createCustomer(
       { locale, Name, Email, FirstName, LastName, Address },
-      paymentID,
       env
     );
 
