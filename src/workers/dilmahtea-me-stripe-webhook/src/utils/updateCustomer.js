@@ -1,14 +1,10 @@
 // @ts-check
 
-import fetchExactAPIConstructor from "../../../../utils/fetchExactAPIConstructor";
-
 export default async function updateCustomer(
   { Name, FirstName, LastName, Address },
   customer,
-  env
+  fetchExactAPI
 ) {
-  const fetchExactAPI = fetchExactAPIConstructor(env);
-
   const promises = [];
 
   const Customer = customer.feed.entry.content["m:properties"];

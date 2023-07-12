@@ -65,12 +65,12 @@ export default async function createExactOrder(
     await updateCustomer(
       { Name, FirstName, LastName, Address },
       existingCustomer,
-      env
+      fetchExactAPI
     );
   } else {
     customerID = await createCustomer(
       { locale, Name, Email, FirstName, LastName, Address },
-      env
+      fetchExactAPI
     );
 
     console.log("Exact: Customer created successfully");
