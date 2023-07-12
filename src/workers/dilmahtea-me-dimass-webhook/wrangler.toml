@@ -7,11 +7,17 @@ logpush=true
 routes = [
     { pattern = "dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
+kv_namespaces = [
+    { binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" },
+]
 
 [env.development]
 name = "dilmahtea-me-dimass-webhook-dev"
 routes = [
     { pattern = "dev.dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
+]
+kv_namespaces = [
+    { binding = "EXACT_TOKENS", id = "194d0b00ac24422bb728e326bb43480c" },
 ]
 
 # secrets

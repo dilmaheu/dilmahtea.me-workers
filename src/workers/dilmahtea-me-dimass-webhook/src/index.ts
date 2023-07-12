@@ -1,10 +1,9 @@
-import { ENV, WebhookResponseData } from "./types";
+import { ENV, Shipment, WebhookResponseData } from "./types";
 
-import getStockInfo from "./utils/getStockInfo";
+import updateStock from "./utils/updateStock";
 import validateSignature from "./utils/validateSignature";
-import updateStrapiProducts from "./utils/updateStrapiProducts";
-import getStrapiProductsData from "./utils/getStrapiProductsData";
-import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
+import createModuleWorker from "../../../utils/createModuleWorker";
+import handleShipmentWebhook from "./utils/handleShipmentWebhook";
 
 export interface ProductsStockInfo {
   SKU: string;
@@ -16,47 +15,13 @@ async function handlePOST(request: Request, env: ENV): Promise<Response> {
 
   validateSignature(request, env, webhookData);
 
-  const productsStockInfo = await getStockInfo(env);
+  // type guard for Shipment
+  const isShipment = (data: WebhookResponseData): data is Shipment =>
+    "shipment_lines" in data;
 
-  if (productsStockInfo.length === 0) {
-    return reply(
-      JSON.stringify(
-        {
-          success: false,
-          message: "The items to update aren't relevant for the CMS.",
-        },
-        null,
-        2
-      ),
-      400
-    );
-  }
-
-  /** array of SKU's to query Strapi */
-  const SKUs = productsStockInfo.map((product) => product.SKU),
-    strapiProductsData = await getStrapiProductsData(env, SKUs);
-
-  if (strapiProductsData.length === 0) {
-    throw new Error(
-      "The product(s) with the provided SKU(s) don't exist in strapi (yet)."
-    );
-  }
-
-  /**
-   * co-locating the SKU's and id's so that we can update the quantity for the correct SKU + id
-   * - the `id` necessary to update strapi
-   * - the `SKU` is necessary to know what the updated quantity is
-   */
-  await updateStrapiProducts(env, strapiProductsData, productsStockInfo);
-
-  return reply(
-    JSON.stringify(
-      { success: true, message: "Stock has been updated." },
-      null,
-      2
-    ),
-    200
-  );
+  return await (isShipment(webhookData)
+    ? handleShipmentWebhook(env, webhookData)
+    : updateStock(env));
 }
 
 export default createModuleWorker({

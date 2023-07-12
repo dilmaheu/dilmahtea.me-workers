@@ -1,19 +1,3 @@
-/**
- * DIMASS WEBHOOK RESPONSE TYPES
- * ### 1. ORDERS
- */
-export interface WebhookResponseData {
-  id: number;
-  delivery_address: DeliveryAddress;
-  email: string;
-  external_id: string;
-  order_date: string;
-  order_number: string;
-  order_lines: OrderLine[];
-  partner: Partner;
-  state: number;
-}
-
 declare interface DeliveryAddress {
   id: number;
   firstname: string;
@@ -47,6 +31,42 @@ declare interface Partner {
   code: string;
   name: string;
 }
+
+declare interface Order {
+  id: number;
+  delivery_address: DeliveryAddress;
+  email: string;
+  external_id: string;
+  order_date: string;
+  order_number: string;
+  order_lines: OrderLine[];
+  partner: Partner;
+  state: number;
+}
+
+declare interface ShipmentLine {
+  id: number;
+  quantity: number;
+  order_line: OrderLine;
+}
+
+declare interface ShipmentColli {
+  id: number;
+  tracking_url: string;
+  courier_reference: string;
+  courier_code: string;
+}
+
+export interface Shipment {
+  id: number;
+  order: Order;
+  state: 0 | 5 | 10 | 15;
+  sub_state: 1500 | 1530 | null;
+  shipment_lines: ShipmentLine[];
+  shipment_colli: ShipmentColli[];
+}
+
+export type WebhookResponseData = Order | Shipment;
 
 // /**
 //  * Dimass webhook event types

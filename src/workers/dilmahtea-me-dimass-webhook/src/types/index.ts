@@ -1,6 +1,14 @@
-import type { ENV } from "./kv";
-import type { WebhookResponseData } from "./dimassWebhook";
-import type { Item, GetDimassStockResponse } from "./dimassWebhookGetStockResponse";
-import type { StrapiResponseProducts, StrapiResponseProduct } from "./strapi";
+import { ENV } from "./kv";
+import { Shipment, WebhookResponseData } from "./dimassWebhook";
+import { StrapiResponseProducts, StrapiResponseProduct } from "./strapi";
+import { Item, GetDimassStockResponse } from "./dimassWebhookGetStockResponse";
 
-export { ENV, WebhookResponseData, Item, GetDimassStockResponse, StrapiResponseProducts, StrapiResponseProduct };
+export {
+  ENV,
+  Shipment,
+  WebhookResponseData,
+  Item,
+  GetDimassStockResponse,
+  StrapiResponseProducts,
+  StrapiResponseProduct,
+};
