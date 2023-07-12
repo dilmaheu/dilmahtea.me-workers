@@ -13,10 +13,7 @@ export default async function handleShipmentWebhook(
   const orderNumber = +webhookData.order.order_number;
 
   if (Number.isNaN(orderNumber) || orderNumber < 20000) {
-    return reply(
-      JSON.stringify({ success: null, message: "Irrelevant order" }, null, 2),
-      200
-    );
+    return reply({ success: null, message: "Irrelevant order" }, 200);
   }
 
   const salesOrder = await fetchExactAPI(
@@ -29,23 +26,10 @@ export default async function handleShipmentWebhook(
   if (webhookData.state === 15 && webhookData.sub_state === null) {
     await sendInvoice(orderID, orderNumber, fetchExactAPI, env);
 
-    return reply(
-      JSON.stringify({ success: true, message: "Sales invoice sent" }, null, 2),
-      200
-    );
+    return reply({ success: true, message: "Sales invoice sent" }, 200);
   } else if (webhookData.state === 15 && webhookData.sub_state === 1530) {
     // update delivery status
   } else {
-    return reply(
-      JSON.stringify(
-        {
-          success: false,
-          message: "Invalid shipment state",
-        },
-        null,
-        2
-      ),
-      400
-    );
+    return reply({ success: false, message: "Invalid shipment state" }, 400);
   }
 }

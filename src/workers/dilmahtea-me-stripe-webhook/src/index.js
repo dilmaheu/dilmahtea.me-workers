@@ -30,10 +30,7 @@ async function handlePOST(request, env) {
   );
 
   if (!event.data) {
-    return reply(
-      JSON.stringify({ error: "Issue with trying to get Stripe Event" }),
-      400
-    );
+    return reply({ error: "Issue with trying to get Stripe Event" }, 400);
   }
 
   // @ts-ignore
@@ -125,7 +122,7 @@ async function handlePOST(request, env) {
 
   await Promise.all(promises);
 
-  return reply(JSON.stringify({ received: true }), 200);
+  return reply({ received: true }, 200);
 }
 
 export default createModuleWorker({

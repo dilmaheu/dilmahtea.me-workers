@@ -7,6 +7,12 @@ const headers = new Headers({
 });
 
 export const reply = (message, status) => {
+  if (typeof message === "object") {
+    console.log(message);
+
+    message = JSON.stringify(message, null, 2);
+  }
+
   return new Response(message, { status, headers });
 };
 
@@ -41,7 +47,7 @@ export default function ({ pathname: endpointPathname, methods }) {
             return await methodHandler(request, env, ctx);
           } catch (error) {
             if (methodHandler.isPublic) {
-              return reply(JSON.stringify({ error: error.message }), 500);
+              return reply({ error: error.message }, 500);
             }
 
             throw error;
@@ -49,10 +55,7 @@ export default function ({ pathname: endpointPathname, methods }) {
         }
       }
 
-      return reply(
-        JSON.stringify({ error: `Method or Path Not Allowed` }),
-        405
-      );
+      return reply({ error: `Method or Path Not Allowed` }, 405);
     },
   };
 

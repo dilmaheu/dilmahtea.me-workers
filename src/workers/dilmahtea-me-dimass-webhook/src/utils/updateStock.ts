@@ -1,23 +1,19 @@
 import { ENV } from "../types";
 
+import { reply } from "../../../../utils/createModuleWorker";
 import getStockInfo from "./getStockInfo";
 import updateStrapiProducts from "./updateStrapiProducts";
 import getStrapiProductsData from "./getStrapiProductsData";
-import { reply } from "../../../../utils/createModuleWorker";
 
 export default async function updateStock(env: ENV) {
   const productsStockInfo = await getStockInfo(env);
 
   if (productsStockInfo.length === 0) {
     return reply(
-      JSON.stringify(
-        {
-          success: false,
-          message: "The items to update aren't relevant for the CMS.",
-        },
-        null,
-        2
-      ),
+      {
+        success: false,
+        message: "The items to update aren't relevant for the CMS.",
+      },
       400
     );
   }
@@ -34,8 +30,5 @@ export default async function updateStock(env: ENV) {
 
   await updateStrapiProducts(env, strapiProductsData, productsStockInfo);
 
-  return reply(
-    JSON.stringify({ success: true, message: "Stock updated" }, null, 2),
-    200
-  );
+  return reply({ success: true, message: "Stock updated" }, 200);
 }

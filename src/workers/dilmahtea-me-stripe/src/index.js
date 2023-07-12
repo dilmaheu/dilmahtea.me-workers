@@ -14,7 +14,7 @@ const handlePOST = async (request, env) => {
     validatedData = await getValidatedData(rawPaymentData, CMSData, env);
 
   if (validatedData.errors) {
-    return reply(JSON.stringify(validatedData), 400);
+    return reply(validatedData, 400);
   }
 
   const request_headers = Object.fromEntries(request.headers);

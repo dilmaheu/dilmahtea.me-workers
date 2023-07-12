@@ -1,12 +1,12 @@
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
-async function handleGET(request, env) {
+async function handleGET(_, env) {
   const [supportersCount, totalAmountRaised] = await Promise.all([
     env.BASEROW_STATS.get("Number of Supporters"),
     env.BASEROW_STATS.get("Total Amount Raised"),
   ]);
 
-  return reply(JSON.stringify({ supportersCount, totalAmountRaised }), 200);
+  return reply({ supportersCount, totalAmountRaised }, 200);
 }
 
 async function handlePOST(request, env) {
@@ -41,12 +41,10 @@ async function handlePOST(request, env) {
     // trigger a rebuild of the website to update the stats
     await fetch(env.CLOUDFLARE_PAGES_DEPLOY_HOOK, { method: "POST" });
 
-    return reply(
-      JSON.stringify({ message: "BASEROW_STATS KV Namespace Updated" }),
-      200
-    );
+    return reply({ message: "BASEROW_STATS KV Namespace Updated" }, 200);
   }
-  return reply(JSON.stringify({ error: "Bad Request" }), 400);
+
+  return reply({ error: "Bad Request" }, 400);
 }
 
 export default createModuleWorker({

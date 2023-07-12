@@ -193,8 +193,5 @@ export async function updateMailsStore(env) {
     })
   );
 
-  return reply(
-    JSON.stringify({ message: `Updated 'Mails' KV Namespace` }),
-    200
-  );
+  return reply({ message: `Updated 'Mails' KV Namespace` }, 200);
 }

@@ -19,10 +19,10 @@ async function handlePOST(request, env) {
       return await updateMailsStore(env);
     }
 
-    return reply(JSON.stringify({ message: "No op" }), 200);
+    return reply({ message: "No op" }, 200);
   }
 
-  return reply(JSON.stringify({ error: "Bad Request" }), 400);
+  return reply({ error: "Bad Request" }, 400);
 }
 
 export default createModuleWorker({
