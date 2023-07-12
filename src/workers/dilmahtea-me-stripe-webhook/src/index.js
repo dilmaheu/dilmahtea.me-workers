@@ -30,7 +30,7 @@ async function handlePOST(request, env) {
   );
 
   if (!event.data) {
-    reply(
+    return reply(
       JSON.stringify({ error: "Issue with trying to get Stripe Event" }),
       400
     );
