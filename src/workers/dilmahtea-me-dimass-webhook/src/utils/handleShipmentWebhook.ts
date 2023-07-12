@@ -10,35 +10,42 @@ export default async function handleShipmentWebhook(
 ) {
   const fetchExactAPI = fetchExactAPIConstructor(env);
 
-  const { order_number } = webhookData.order;
+  const orderNumber = +webhookData.order.order_number;
+
+  if (Number.isNaN(orderNumber) || orderNumber < 20000) {
+    return reply(
+      JSON.stringify({ success: null, message: "Irrelevant order" }, null, 2),
+      200
+    );
+  }
 
   const salesOrder = await fetchExactAPI(
     "GET",
-    `/salesorder/SalesOrders?$filter=OrderNumber eq ${order_number}&$select=OrderID`
+    `/salesorder/SalesOrders?$filter=OrderNumber eq ${orderNumber}&$select=OrderID`
   );
 
-  const {
-    "d:OrderID": orderID,
-    "d:OrderNumber": orderNumber,
-  } = salesOrder.entry.content["m:properties"];
+  const { "d:OrderID": orderID } = salesOrder.entry.content["m:properties"];
 
-  if (webhookData.sub_state === 1530) {
-    // update delivery status
-  } else if (webhookData.state === 15) {
+  if (webhookData.state === 15 && webhookData.sub_state === null) {
     await sendInvoice(orderID, orderNumber, fetchExactAPI, env);
 
     return reply(
       JSON.stringify({ success: true, message: "Sales invoice sent" }, null, 2),
       200
     );
+  } else if (webhookData.state === 15 && webhookData.sub_state === 1530) {
+    // update delivery status
+  } else {
+    return reply(
+      JSON.stringify(
+        {
+          success: false,
+          message: "Invalid shipment state",
+        },
+        null,
+        2
+      ),
+      400
+    );
   }
-
-  return reply(
-    JSON.stringify(
-      { success: false, message: "Invalid Shipment data" },
-      null,
-      2
-    ),
-    400
-  );
 }
