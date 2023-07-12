@@ -83,7 +83,7 @@ export default async function createExactOrder(
     OrderedBy: customerID,
     Description: `Sales to ${Name}`,
     SalesOrderLines: await Promise.all(
-      Object.values(cart).map(async ({ sku, quantity, price, tax }) => {
+      Object.values(cart).map(async ({ sku, quantity, price }) => {
         const item = await fetchExactAPI(
           "GET",
           `/logistics/Items?$filter=Code eq '${sku}'&$select=ID`
