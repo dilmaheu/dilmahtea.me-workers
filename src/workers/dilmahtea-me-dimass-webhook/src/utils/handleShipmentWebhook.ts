@@ -21,7 +21,7 @@ export default async function handleShipmentWebhook(
     `/salesorder/SalesOrders?$filter=OrderNumber eq ${orderNumber}&$select=OrderID`
   );
 
-  const { "d:OrderID": orderID } = salesOrder.entry.content["m:properties"];
+  const orderID = salesOrder.feed.entry.content["m:properties"]["d:OrderID"];
 
   if (webhookData.state === 15 && webhookData.sub_state === null) {
     await sendInvoice(orderID, orderNumber, fetchExactAPI, env);
