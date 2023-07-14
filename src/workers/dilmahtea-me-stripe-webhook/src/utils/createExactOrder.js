@@ -79,6 +79,7 @@ export default async function createExactOrder(
   const salesOrder = await fetchExactAPI("POST", "/salesorder/SalesOrders", {
     OrderedBy: customerID,
     Description: `Sales to ${Name}`,
+    PaymentCondition: env.PAYMENT_CONDITION,
     SalesOrderLines: await Promise.all(
       Object.values(cart).map(async ({ sku, quantity, price }) => {
         const item = await fetchExactAPI(
