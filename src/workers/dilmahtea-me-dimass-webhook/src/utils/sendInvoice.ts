@@ -6,12 +6,25 @@ export default async function sendInvoice(
   fetchExactAPI,
   env
 ) {
+  const OrderedBy = await fetchExactAPI(
+    "GET",
+    "/salesorder/SalesOrders?$filter=OrderNumber eq 20002"
+  ).then(({ feed }) => feed.entry.content["m:properties"]["d:OrderedBy"]);
+
+  const Language = await fetchExactAPI(
+    "GET",
+    `/crm/Accounts(guid'${OrderedBy}')?$select=Language`
+  ).then(({ entry }) => entry.content["m:properties"]["d:Language"]);
+
+  const [EmailLayout, DocumentLayout] = await Promise.all([
+    env.EXACT_LAYOUTS.get(`EMAIL_${Language}`),
+    env.EXACT_LAYOUTS.get(`INVOICE_${Language}`),
+  ]);
+
   await fetchExactAPI("POST", "/salesinvoice/InvoiceSalesOrders", {
     CreateMode: 1,
     InvoiceMode: 1,
-    Description: tracking_url,
     JournalCode: env.JOURNAL_CODE,
-    ShippingMethod: shippingMethodID,
     SalesOrderIDs: [{ ID: orderID }],
   });
 
@@ -22,16 +35,18 @@ export default async function sendInvoice(
     `/salesinvoice/SalesInvoices?$filter=OrderNumber eq ${orderNumber}&$select=InvoiceID`
   );
 
-  const { "d:InvoiceID": invoiceID } =
+  const { "d:InvoiceID": InvoiceID } =
     invoice.feed.entry.content["m:properties"];
 
   await Promise.all([
-    fetchExactAPI("PUT", `/salesinvoice/SalesInvoices(guid'${invoiceID}')`, {
+    fetchExactAPI("PUT", `/salesinvoice/SalesInvoices(guid'${InvoiceID}')`, {
       Description: tracking_url,
       ShippingMethod: shippingMethodID,
     }).then(() =>
       fetchExactAPI("POST", "/salesinvoice/PrintedSalesInvoices", {
-        InvoiceID: invoiceID,
+        InvoiceID,
+        EmailLayout,
+        DocumentLayout,
         SendEmailToCustomer: true,
       })
     ),
