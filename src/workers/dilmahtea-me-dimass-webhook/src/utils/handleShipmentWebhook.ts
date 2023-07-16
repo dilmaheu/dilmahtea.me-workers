@@ -33,7 +33,11 @@ export default async function handleShipmentWebhook(
     );
 
     const [shipment_colli] = shipment.shipment_colli,
-      { tracking_url, courier_code } = shipment_colli;
+      {
+        tracking_url,
+        courier_code,
+        courier_reference: TrackingNumber,
+      } = shipment_colli;
 
     const shippingMethod = await fetchExactAPI(
       "GET",
@@ -55,7 +59,15 @@ export default async function handleShipmentWebhook(
 
       return reply({ success: true, message: "Sales invoice sent" }, 200);
     } else {
-      // update delivery status
+      await createGoodsDelivery(
+        orderID,
+        orderNumber,
+        TrackingNumber,
+        shippingMethodID,
+        fetchExactAPI
+      );
+
+      return reply({ success: true, message: "Delivery status updated" }, 200);
     }
   }
 
