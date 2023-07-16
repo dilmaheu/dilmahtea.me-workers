@@ -5,14 +5,11 @@ import {
   XMLBuilder as XMLBuilderConstructor,
 } from "fast-xml-parser";
 
-import sendErrorEmail from "./sendErrorEmail";
-
 const XMLParser = new XMLParserConstructor(),
   XMLBuilder = new XMLBuilderConstructor();
 
 export default async function createDimassOrder(
   {
-    paymentID,
     paymentBaserowRecordID,
     first_name,
     last_name,
