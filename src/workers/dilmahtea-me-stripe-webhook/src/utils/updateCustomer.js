@@ -3,7 +3,7 @@
 import AddressTypes from "./AddressTypes";
 
 export default async function updateCustomer(
-  { Name, FirstName, LastName, Address },
+  { Name, FirstName, LastName, Language, Address },
   customer,
   fetchExactAPI
 ) {
@@ -11,23 +11,38 @@ export default async function updateCustomer(
 
   const Customer = customer.feed.entry.content["m:properties"];
 
-  const shouldUpdateContact = Name !== Customer["d:Name"];
+  const shouldUpdateContact = Name !== Customer["d:Name"],
+    shouldUpdateLanguage = Language !== Customer["d:Language"];
 
   if (shouldUpdateContact) {
     promises.push(
-      Promise.all([
-        fetchExactAPI("PUT", `/CRM/Accounts(guid'${Customer["d:ID"]}')`, {
-          Name,
-        }),
-        fetchExactAPI(
-          "PUT",
-          `/CRM/Contacts(guid'${Customer["d:MainContact"]}')`,
-          {
-            FirstName,
-            LastName,
-          }
-        ),
-      ]).then(() => console.log("Exact: Customer contact updated"))
+      fetchExactAPI(
+        "PUT",
+        `/CRM/Contacts(guid'${Customer["d:MainContact"]}')`,
+        {
+          FirstName,
+          LastName,
+        }
+      ).then(() => console.log("Exact: Customer contact updated"))
+    );
+  }
+
+  if (shouldUpdateContact || shouldUpdateLanguage) {
+    promises.push(
+      fetchExactAPI("PUT", `/CRM/Accounts(guid'${Customer["d:ID"]}')`, {
+        Name,
+        Language,
+      }).then(() =>
+        console.log(
+          `Exact: Customer ${
+            shouldUpdateContact || shouldUpdateLanguage
+              ? "name & language"
+              : shouldUpdateContact
+              ? "name"
+              : "language"
+          } updated`
+        )
+      )
     );
   }
 

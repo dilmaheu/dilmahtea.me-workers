@@ -3,14 +3,14 @@
 import AddressTypes from "./AddressTypes";
 
 export default async function createCustomer(
-  { locale, Name, Email, FirstName, LastName, Address },
+  { Name, Email, FirstName, LastName, Language, Address },
   fetchExactAPI
 ) {
   const customer = await fetchExactAPI("POST", "/CRM/Accounts", {
     Name,
     Email,
+    Language,
     Status: "C",
-    Language: locale.toUpperCase(),
     ...Address,
   });
 

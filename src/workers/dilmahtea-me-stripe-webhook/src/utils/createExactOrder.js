@@ -20,7 +20,8 @@ export default async function createExactOrder(
 ) {
   const fetchExactAPI = fetchExactAPIConstructor(env);
 
-  const Name = `${FirstName} ${LastName}`;
+  const Name = `${FirstName} ${LastName}`,
+    Language = locale.toUpperCase();
 
   // split street into lines of 60 characters
   const addressLines = [],
@@ -52,7 +53,7 @@ export default async function createExactOrder(
 
   const existingCustomer = await fetchExactAPI(
     "GET",
-    `/CRM/Accounts?$filter=Email eq '${Email}'&$select=ID,Name,MainContact`
+    `/CRM/Accounts?$filter=Email eq '${Email}'&$select=ID,Name,Language,MainContact`
   );
 
   const customerExists = !!existingCustomer.feed.entry;
@@ -63,13 +64,13 @@ export default async function createExactOrder(
     customerID = existingCustomer.feed.entry.content["m:properties"]["d:ID"];
 
     await updateCustomer(
-      { Name, FirstName, LastName, Address },
+      { Name, FirstName, LastName, Language, Address },
       existingCustomer,
       fetchExactAPI
     );
   } else {
     customerID = await createCustomer(
-      { locale, Name, Email, FirstName, LastName, Address },
+      { Name, Email, FirstName, LastName, Language, Address },
       fetchExactAPI
     );
 
