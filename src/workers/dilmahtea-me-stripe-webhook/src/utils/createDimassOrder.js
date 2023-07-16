@@ -51,7 +51,7 @@ export default async function createDimassOrder(
     shippingCost: shipping_cost,
     shippingCostVatPercentage: 9,
     deliveryAddress: {
-      company: first_name.trim() + " " + last_name.trim(),
+      // company: first_name.trim() + " " + last_name.trim(),
       firstname: first_name,
       lastname: last_name,
       street,
@@ -61,7 +61,7 @@ export default async function createDimassOrder(
       country: countryCode,
     },
     invoiceAddress: {
-      company: first_name.trim() + " " + last_name.trim(),
+      // company: first_name.trim() + " " + last_name.trim(),
       firstname: first_name,
       lastname: last_name,
       street,
