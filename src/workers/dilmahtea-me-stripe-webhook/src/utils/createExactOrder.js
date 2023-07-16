@@ -77,24 +77,26 @@ export default async function createExactOrder(
     console.log("Exact: Customer created successfully");
   }
 
+  const SKUsFilterQuery = Object.values(cart)
+    .map(({ sku }) => `Code eq '${sku}'`)
+    .join(" or ");
+
+  const items = await fetchExactAPI(
+    "GET",
+    `/logistics/Items?$filter=${SKUsFilterQuery}&$select=ID,Code`
+  ).then(({ feed }) =>
+    feed.entry.map(({ content }) => content["m:properties"])
+  );
+
   const salesOrder = await fetchExactAPI("POST", "/salesorder/SalesOrders", {
     OrderedBy: customerID,
     Description: `Sales to ${Name}`,
     PaymentCondition: env.PAYMENT_CONDITION,
-    SalesOrderLines: await Promise.all(
-      Object.values(cart).map(async ({ sku, quantity, price }) => {
-        const item = await fetchExactAPI(
-          "GET",
-          `/logistics/Items?$filter=Code eq '${sku}'&$select=ID`
-        );
-
-        return {
-          Item: item.feed.entry.content["m:properties"]["d:ID"],
-          Quantity: quantity,
-          AmountFC: price,
-        };
-      })
-    ),
+    SalesOrderLines: Object.values(cart).map(({ sku, quantity, price }) => ({
+      Item: items.find((props) => props["d:Code"] === sku)["d:ID"],
+      Quantity: quantity,
+      AmountFC: price,
+    })),
   });
 
   console.log("Exact: Sales order created successfully");
