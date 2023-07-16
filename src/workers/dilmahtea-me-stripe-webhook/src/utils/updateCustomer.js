@@ -1,5 +1,7 @@
 // @ts-check
 
+import AddressTypes from "./AddressTypes";
+
 export default async function updateCustomer(
   { Name, FirstName, LastName, Address },
   customer,
@@ -32,34 +34,39 @@ export default async function updateCustomer(
   promises.push(
     fetchExactAPI(
       "GET",
-      `/CRM/Addresses?$filter=Account eq guid'${Customer["d:ID"]}'&$select=City,Country,Postcode,AddressLine1,AddressLine2,AddressLine3`
+      `/CRM/Addresses?$filter=Account eq guid'${Customer["d:ID"]}'&$select=Type,City,Country,Postcode,AddressLine1,AddressLine2,AddressLine3`
     )
       .then(({ feed: { entry } }) => (Array.isArray(entry) ? entry : [entry]))
-      .then(async (linkedAddresses) => {
-        const shouldCreateNewAddress = linkedAddresses.every(
-          ({ content: { "m:properties": props } }) =>
-            JSON.stringify(Address) !==
-            JSON.stringify({
-              AddressLine1: props["d:AddressLine1"],
-              // remove empty string address lines
-              AddressLine2: props["d:AddressLine2"] || undefined,
-              AddressLine3: props["d:AddressLine3"] || undefined,
-              City: props["d:City"],
-              Country: props["d:Country"],
-              Postcode: String(props["d:Postcode"]),
-            })
-        );
+      .then(async (linkedAddresses) =>
+        Promise.all(
+          Object.values(AddressTypes).map(async (Type) => {
+            const shouldCreateNewAddress = linkedAddresses.every(
+              ({ content: { "m:properties": props } }) =>
+                props["d:Type"] !== Type ||
+                JSON.stringify({ Type, ...Address }) !==
+                  JSON.stringify({
+                    Type: props["d:Type"],
+                    AddressLine1: props["d:AddressLine1"],
+                    // remove empty string address lines
+                    AddressLine2: props["d:AddressLine2"] || undefined,
+                    AddressLine3: props["d:AddressLine3"] || undefined,
+                    City: props["d:City"],
+                    Country: props["d:Country"],
+                    Postcode: props["d:Postcode"],
+                  })
+            );
 
-        if (shouldCreateNewAddress) {
-          await fetchExactAPI("POST", "/CRM/Addresses", {
-            Account: Customer["d:ID"],
-            Contact: Customer["d:MainContact"],
-            Main: true,
-            ...Address,
-          });
-
-          console.log("Exact: Customer address created");
-        }
-      })
+            if (shouldCreateNewAddress) {
+              await fetchExactAPI("POST", "/CRM/Addresses", {
+                Type,
+                Main: true,
+                Account: Customer["d:ID"],
+                Contact: Customer["d:MainContact"],
+                ...Address,
+              });
+            }
+          })
+        )
+      )
   );
 }
