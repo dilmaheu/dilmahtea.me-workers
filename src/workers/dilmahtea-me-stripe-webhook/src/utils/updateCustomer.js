@@ -90,6 +90,8 @@ export default async function updateCustomer(
                   Main: true,
                 }
               );
+
+              console.log("Exact: Address found, set as main");
             }
 
             if (shouldCreateNewAddress) {
@@ -100,6 +102,8 @@ export default async function updateCustomer(
                 Contact: Customer["d:MainContact"],
                 ...Address,
               });
+
+              console.log("Exact: New address created");
             }
           })
         )
