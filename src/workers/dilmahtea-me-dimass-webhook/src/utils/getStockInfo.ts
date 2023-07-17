@@ -5,7 +5,7 @@ import { Item, GetDimassStockResponse } from "../types";
 
 const XMLParser = new XMLParserConstructor();
 
-export default async function(env: ENV) {
+export default async function (env: ENV) {
   const body = `
     <soapenv:Envelope
       xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -73,9 +73,10 @@ export default async function(env: ENV) {
     })
     .then((xml) => XMLParser.parse(xml));
 
-  const { item } = dimassStockResponse["SOAP-ENV:Envelope"]["SOAP-ENV:Body"][
-    "ns1:getStockResponse"
-  ].return;
+  const { item } =
+    dimassStockResponse["SOAP-ENV:Envelope"]["SOAP-ENV:Body"][
+      "ns1:getStockResponse"
+    ].return;
 
   const productsStockInfo = ((Array.isArray ? item : [item]) as Item[]).map(
     (item) => ({
