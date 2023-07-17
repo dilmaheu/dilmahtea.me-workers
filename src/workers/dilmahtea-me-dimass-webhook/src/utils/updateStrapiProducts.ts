@@ -6,7 +6,7 @@ interface ProductInfo {
   SKU: string;
 }
 
-export default async function(
+export default async function updateStrapiProducts(
   env: ENV,
   strapiProductsData: ProductInfo[],
   productsStockInfo: ProductsStockInfo[]
