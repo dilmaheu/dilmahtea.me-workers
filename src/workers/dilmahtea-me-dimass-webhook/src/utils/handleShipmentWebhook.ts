@@ -28,10 +28,6 @@ export default async function handleShipmentWebhook(
 
     const orderID = salesOrder.feed.entry.content["m:properties"]["d:OrderID"];
 
-    console.log(
-      salesOrder.feed.entry.content["m:properties"]["d:SalesOrderLines"]
-    );
-
     const [shipment_colli] = shipment.shipment_colli,
       {
         tracking_url,
