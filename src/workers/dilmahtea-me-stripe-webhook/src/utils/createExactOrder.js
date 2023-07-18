@@ -77,6 +77,13 @@ export default async function createExactOrder(
     console.log("Exact: Customer created successfully");
   }
 
+  // add shipping cost to cart
+  cart["SHP-WEBSHOP"] = {
+    sku: "SHP-WEBSHOP",
+    quantity: 1,
+    price: 4.5,
+  };
+
   const SKUsFilterQuery = Object.values(cart)
     .map(({ sku }) => `Code eq '${sku}'`)
     .join(" or ");
