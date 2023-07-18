@@ -54,9 +54,7 @@ async function handlePOST(request, env) {
     body: `${messagePrefix}New order - ID: ${order.id}, City: ${order.City}, Country: ${order.Country}. Purpose: ${order["Cup of Kindness"]}${messagePostfix}`,
   };
 
-  const matrixRequestUrl = `${
-    env.MATRIX_SERVER_URL
-  }/_matrix/client/r0/rooms/${encodeURIComponent(
+  const matrixRequestUrl = `https://matrix.org/_matrix/client/r0/rooms/${encodeURIComponent(
     env.MATRIX_ROOM_ID
   )}/send/m.room.message?access_token=${env.MATRIX_BOT_ACCESS_TOKEN}`;
 
