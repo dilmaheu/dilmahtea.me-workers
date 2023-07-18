@@ -7,8 +7,3 @@ routes = [
     { pattern = "*dilmahtea.me/rpcq/*", zone_name = "dilmahtea.me" }
 ]
 
-[env.development]
-name = "dilmahtea-me-stats-dev"
-routes = [
-    { pattern = "dev.stats.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
-]
