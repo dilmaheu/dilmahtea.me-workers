@@ -104,7 +104,7 @@ const handlePOST = async (request, env) => {
   return Response.redirect(session.url, 303);
 };
 
-handlePOST.isPublic = true;
+handlePOST.catchError = true;
 
 export default createModuleWorker({
   pathname: "/",
