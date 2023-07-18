@@ -99,11 +99,15 @@ export default async function createExactOrder(
     OrderedBy: customerID,
     Description: `Sales to ${Name}`,
     PaymentCondition: env.PAYMENT_CONDITION,
-    SalesOrderLines: Object.values(cart).map(({ sku, quantity, price }) => ({
-      Item: items.find((props) => props["d:Code"] === sku)["d:ID"],
-      Quantity: quantity,
-      AmountFC: price,
-    })),
+    SalesOrderLines: Object.values(cart).map(
+      ({ sku, quantity, price, tax }) => ({
+        Item: items.find((props) => props["d:Code"] === sku)["d:ID"],
+        Quantity: quantity,
+        NetPrice: !tax
+          ? price
+          : Math.round((price / quantity - tax / quantity) * 100) / 100,
+      })
+    ),
   });
 
   console.log("Exact: Sales order created successfully");
