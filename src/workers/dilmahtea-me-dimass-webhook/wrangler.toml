@@ -4,6 +4,7 @@ compatibility_date = "2022-11-30"
 main = "./src/index.ts"
 workers_dev = false
 logpush=true
+vars = { JOURNAL_CODE = "VER" }
 routes = [
     { pattern = "dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
@@ -14,6 +15,7 @@ kv_namespaces = [
 
 [env.development]
 name = "dilmahtea-me-dimass-webhook-dev"
+vars = { JOURNAL_CODE = "VER" }
 routes = [
     { pattern = "dev.dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
