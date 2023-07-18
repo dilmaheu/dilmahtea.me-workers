@@ -8,12 +8,6 @@ routes = [
     { pattern = "analytics.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 
-[env.development]
-name = "dilmahtea-me-plausible-dev"
-routes = [
-    { pattern = "dev.analytics.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
-]
-
 # secrets
 # CMS_ACCESS_TOKEN
 # CMS_GRAPHQL_ENDPOINT
