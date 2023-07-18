@@ -73,13 +73,16 @@ export default async function createExactOrder(
   }
 
   // add shipping cost to cart
-  cart["SHP-WEBSHOP"] = {
-    sku: "SHP-WEBSHOP",
-    quantity: 1,
-    price: 4.5,
+  const cartWithShippingCost = {
+    ...cart,
+    "SHP-WEBSHOP": {
+      sku: "SHP-WEBSHOP",
+      quantity: 1,
+      price: 4.5,
+    },
   };
 
-  const SKUsFilterQuery = Object.values(cart)
+  const SKUsFilterQuery = Object.values(cartWithShippingCost)
     .map(({ sku }) => `Code eq '${sku}'`)
     .join(" or ");
 
@@ -94,7 +97,7 @@ export default async function createExactOrder(
     OrderedBy: customerID,
     Description: `Sales to ${Name}`,
     PaymentCondition: env.PAYMENT_CONDITION,
-    SalesOrderLines: Object.values(cart).map(
+    SalesOrderLines: Object.values(cartWithShippingCost).map(
       ({ sku, quantity, price, tax }) => ({
         Item: items.find((props) => props["d:Code"] === sku)["d:ID"],
         Quantity: quantity,
