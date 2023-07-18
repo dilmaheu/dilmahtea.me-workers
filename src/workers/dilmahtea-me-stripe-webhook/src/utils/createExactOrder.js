@@ -49,6 +49,8 @@ export default async function createExactOrder(
     Postcode,
   };
 
+  const Customer = { Name, Email, FirstName, LastName, Language, Address };
+
   let customerID;
 
   const existingCustomer = await fetchExactAPI(
@@ -63,16 +65,9 @@ export default async function createExactOrder(
 
     customerID = existingCustomer.feed.entry.content["m:properties"]["d:ID"];
 
-    await updateCustomer(
-      { Name, FirstName, LastName, Language, Address },
-      existingCustomer,
-      fetchExactAPI
-    );
+    await updateCustomer(Customer, existingCustomer, fetchExactAPI);
   } else {
-    customerID = await createCustomer(
-      { Name, Email, FirstName, LastName, Language, Address },
-      fetchExactAPI
-    );
+    customerID = await createCustomer(Customer, fetchExactAPI);
 
     console.log("Exact: Customer created successfully");
   }
