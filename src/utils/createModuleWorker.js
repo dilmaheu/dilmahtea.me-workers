@@ -46,8 +46,8 @@ export default function ({ pathname: endpointPathname, methods }) {
           try {
             return await methodHandler(request, env, ctx);
           } catch (error) {
-            if (methodHandler.isPublic) {
-              return reply({ error: error.message }, 500);
+            if (methodHandler.catchError) {
+              return reply({ error: `Error: ${error.message}` }, 500);
             }
 
             throw error;
