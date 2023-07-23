@@ -12,26 +12,26 @@ async function handlePOST(request, env) {
 
   const requestBody = await request.json();
 
-  if (!(requestBody.items.length > 0 && requestBody.table_id)) {
+  if (!(requestBody.items.length > 0 && requestBody.old_items.length > 0 && requestBody.table_id)) {
     throw new Error("Missing required fields in payload");
   }
 
   const [order] = requestBody.items;
+  const [oldOrder] = requestBody.old_items;
 
   if (
-    order.id === undefined ||
+    order["Order Number"] === undefined ||
     order.Country === undefined ||
     order.City === undefined ||
-    order["Cup of Kindness"] === undefined ||
-    order["Payment Status"] === undefined ||
-    order["Order Status"] === undefined
+    order["Order Status"] === undefined ||
+    oldOrder["Order Status"] === undefined
   ) {
     throw new Error("Missing required fields in payload item");
   }
 
-  // Send message only when "Payment Status" is "paid" and "Order Status" is "Confirmed"
+  // Send message only when old "Order Status" is "unconfirmed" and new "Order Status" is "Confirmed"
   if (
-    order["Payment Status"] !== "paid" ||
+    oldOrder["Order Status"] !== "unconfirmed" ||
     order["Order Status"] !== "Confirmed"
   ) {
     return reply("Condition not met", 200);
@@ -51,7 +51,7 @@ async function handlePOST(request, env) {
 
   const constructedMessage = {
     msgtype: "m.text",
-    body: `${messagePrefix}New order - ID: ${order.id}, City: ${order.City}, Country: ${order.Country}. Purpose: ${order["Cup of Kindness"]}${messagePostfix}`,
+    body: `${messagePrefix}New order - Order Number: ${order["Order Number"]}, City: ${order.City}, Country: ${order.Country}${messagePostfix}`,
   };
 
   const matrixRequestUrl = `https://matrix.org/_matrix/client/r0/rooms/${encodeURIComponent(
