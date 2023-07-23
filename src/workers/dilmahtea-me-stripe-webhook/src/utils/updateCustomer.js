@@ -2,15 +2,14 @@
 
 import AddressTypes from "./AddressTypes";
 
-async function updateContact(customer, ExistingCustomer, fetchExactAPI) {
-  const { Name, Email, FirstName, LastName, Language } = customer;
-
-  const contact = await fetchExactAPI(
-    "GET",
-    `/CRM/Contacts?$filter=Email eq '${Email}'`
-  ).then(({ feed }) => feed.entry.content["m:properties"]);
-
-  const contactID = contact["d:ID"];
+async function updateContact(
+  customer,
+  ExistingCustomer,
+  contact,
+  fetchExactAPI
+) {
+  const contactID = contact["d:ID"],
+    { Name, FirstName, LastName, Language } = customer;
 
   const promises = [];
 
@@ -46,12 +45,18 @@ async function updateContact(customer, ExistingCustomer, fetchExactAPI) {
   await Promise.all(promises);
 }
 
-async function updateAddress(customer, ExistingCustomer, fetchExactAPI) {
-  const { Address } = customer;
+async function updateAddress(
+  customer,
+  ExistingCustomer,
+  contact,
+  fetchExactAPI
+) {
+  const { Address } = customer,
+    contactID = contact["d:ID"];
 
   const linkedAddresses = await fetchExactAPI(
     "GET",
-    `/CRM/Addresses?$filter=Account eq guid'${ExistingCustomer["d:ID"]}'&$select=ID,Main,Type,City,Country,Postcode,AddressLine1,AddressLine2,AddressLine3`
+    `/CRM/Addresses?$filter=Account eq guid'${ExistingCustomer["d:ID"]}'&$select=ID,Main,Contact,Type,City,Country,Postcode,AddressLine1,AddressLine2,AddressLine3`
   ).then(({ feed: { entry } }) => (Array.isArray(entry) ? entry : [entry]));
 
   await Promise.all(
@@ -83,12 +88,16 @@ async function updateAddress(customer, ExistingCustomer, fetchExactAPI) {
           })()
       );
 
-      if (matchedAddress && !matchedAddress["d:Main"]) {
+      if (
+        matchedAddress &&
+        (!matchedAddress["d:Main"] || matchedAddress["d:Contact"] !== contactID)
+      ) {
         await fetchExactAPI(
           "PUT",
           `/CRM/Addresses(guid'${matchedAddress["d:ID"]}')`,
           {
             Main: true,
+            Contact: contactID,
           }
         );
 
@@ -117,8 +126,13 @@ export default async function updateCustomer(
 ) {
   const ExistingCustomer = existingCustomer.feed.entry.content["m:properties"];
 
+  const contact = await fetchExactAPI(
+    "GET",
+    `/CRM/Contacts?$filter=Email eq '${customer.Email}'`
+  ).then(({ feed }) => feed.entry.content["m:properties"]);
+
   await Promise.all([
-    updateContact(customer, ExistingCustomer, fetchExactAPI),
-    updateAddress(customer, ExistingCustomer, fetchExactAPI),
+    updateContact(customer, ExistingCustomer, contact, fetchExactAPI),
+    updateAddress(customer, ExistingCustomer, contact, fetchExactAPI),
   ]);
 }
