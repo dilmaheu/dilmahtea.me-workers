@@ -48,7 +48,13 @@ export default async function createOrder(paymentData, env) {
     const orderNumber =
       salesOrder.entry.content["m:properties"]["d:OrderNumber"];
 
-    await createDimassOrder({ ...paymentData, orderNumber }, env);
+    await createDimassOrder({ ...paymentData, orderNumber }, env).catch(
+      (error) => {
+        error.platform = "Dimass";
+
+        throw error;
+      }
+    );
 
     await updateBaserowRecord(
       paymentBaserowRecordID,
