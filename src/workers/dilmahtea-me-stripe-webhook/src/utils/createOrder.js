@@ -1,10 +1,11 @@
 // @ts-check
 
 import getCountryCode from "./getCountryCode";
-import sendErrorEmail from "./sendErrorEmail";
 import createExactOrder from "./createExactOrder";
 import createDimassOrder from "./createDimassOrder";
 import updateBaserowRecord from "./updateBaserowRecord";
+
+import sendErrorEmail from "../../../../utils/sendErrorEmail";
 
 export default async function createOrder(paymentData, env) {
   const {
@@ -63,6 +64,6 @@ export default async function createOrder(paymentData, env) {
       env
     );
   } catch (error) {
-    await sendErrorEmail(error, paymentID, env);
+    await sendErrorEmail(error, { paymentID }, env);
   }
 }
