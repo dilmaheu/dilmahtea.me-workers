@@ -52,7 +52,7 @@ export default async function createOrder(paymentData, env) {
 
     await updateBaserowRecord(
       paymentBaserowRecordID,
-      { "Order Status": "Confirmed" },
+      { "Order Number": orderNumber, "Order Status": "Confirmed" },
       payment_type,
       env
     );
