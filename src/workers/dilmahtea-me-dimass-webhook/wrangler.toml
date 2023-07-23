@@ -5,7 +5,7 @@ main = "./src/index.ts"
 workers_dev = false
 logpush = true
 placement = { mode = "smart" }
-vars = { JOURNAL_CODE = "VER" }
+vars = { ENVIRONMENT = "PRODUCTION", JOURNAL_CODE = "VER" }
 routes = [
     { pattern = "dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
@@ -16,7 +16,7 @@ kv_namespaces = [
 
 [env.development]
 name = "dilmahtea-me-dimass-webhook-dev"
-vars = { JOURNAL_CODE = "VER" }
+vars = { ENVIRONMENT = "DEVELOPMENT", JOURNAL_CODE = "VER" }
 routes = [
     { pattern = "dev.dimass-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]

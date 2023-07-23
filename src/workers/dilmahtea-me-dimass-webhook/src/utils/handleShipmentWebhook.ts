@@ -4,6 +4,7 @@ import { reply } from "../../../../utils/createModuleWorker";
 
 import sendInvoice from "./sendInvoice";
 import createGoodsDelivery from "./createGoodsDelivery";
+import sendErrorEmail from "../../../../utils/sendErrorEmail";
 import fetchExactAPIConstructor from "../../../../utils/fetchExactAPIConstructor";
 
 export default async function handleShipmentWebhook(
@@ -43,27 +44,36 @@ export default async function handleShipmentWebhook(
     const shippingMethodID =
       shippingMethod.feed.entry.content["m:properties"]["d:ID"];
 
-    if (sub_state === null) {
-      await sendInvoice(
-        orderID,
-        orderNumber,
-        tracking_url,
-        shippingMethodID,
-        fetchExactAPI,
-        env
-      );
+    try {
+      if (sub_state === null) {
+        await sendInvoice(
+          orderID,
+          orderNumber,
+          tracking_url,
+          shippingMethodID,
+          fetchExactAPI,
+          env
+        );
 
-      return reply({ success: true, message: "Sales invoice sent" }, 200);
-    } else {
-      await createGoodsDelivery(
-        orderID,
-        orderNumber,
-        TrackingNumber,
-        shippingMethodID,
-        fetchExactAPI
-      );
+        return reply({ success: true, message: "Sales invoice sent" }, 200);
+      } else {
+        await createGoodsDelivery(
+          orderID,
+          orderNumber,
+          TrackingNumber,
+          shippingMethodID,
+          fetchExactAPI
+        );
 
-      return reply({ success: true, message: "Delivery status updated" }, 200);
+        return reply(
+          { success: true, message: "Delivery status updated" },
+          200
+        );
+      }
+    } catch (error) {
+      error.platform = "Exact";
+
+      await sendErrorEmail(error, { orderNumber }, env);
     }
   }
 

@@ -1,6 +1,6 @@
 // @ts-check
 
-const sendErrorEmail = (error, paymentID, env) =>
+const sendErrorEmail = (error, { orderNumber = null, paymentID = null }, env) =>
   fetch("https://api.mailchannels.net/tx/v1/send", {
     method: "POST",
     headers: {
@@ -31,10 +31,16 @@ const sendErrorEmail = (error, paymentID, env) =>
         {
           type: "text/plain",
           value: `
-            An error happened while creating an order at ${error.platform}. Please manually confirm the order.
+            An error happened while creating an order at ${
+              error.platform
+            }. Please manually confirm the order.
 
             Error: ${error.message}
-            Payment ID: ${paymentID}
+            ${
+              orderNumber
+                ? `Order number: ${orderNumber}`
+                : `Payment ID: ${paymentID}`
+            }
           `
             // just for prettiying the email
             .replace(/\n +/g, "\n")
