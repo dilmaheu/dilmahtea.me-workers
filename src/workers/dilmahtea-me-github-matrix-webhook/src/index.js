@@ -3,14 +3,25 @@
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 async function handlePOST(request, env) {
-  const webhookPayload = await request.json(),
-    roomId = env.ROOM_ID,
+  const roomId = env.ROOM_ID,
     matrixBotAccessToken = env.MATRIX_BOT_ACCESS_TOKEN;
 
   if (!roomId || !matrixBotAccessToken) {
     return new Response("Missing environment variables", { status: 500 });
   }
 
+  const body = await request.arrayBuffer();
+  const signature = await request.headers.get('x-hub-signature-256');
+  const expectedSignature = await crypto.subtle.digest(
+    'SHA-256',
+    new TextEncoder().encode(WEBHOOK_SECRET + body)
+  );
+
+  if ('sha256=' + new TextDecoder('hex').decode(expectedSignature) !== signature) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  const webhookPayload = await request.json();
   let message = "";
 
   if (
