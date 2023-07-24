@@ -10,18 +10,23 @@ async function handlePOST(request, env) {
     return new Response("Missing environment variables", { status: 500 });
   }
 
-  const body = await request.arrayBuffer();
-  const signature = await request.headers.get('x-hub-signature-256');
+  const body = await request.arrayBuffer(),
+    signature = await request.headers.get("x-hub-signature-256");
+
   const expectedSignature = await crypto.subtle.digest(
-    'SHA-256',
-    new TextEncoder().encode(WEBHOOK_SECRET + body)
+    "SHA-256",
+    new TextEncoder().encode(env.WEBHOOK_SECRET + body)
   );
 
-  if ('sha256=' + new TextDecoder('hex').decode(expectedSignature) !== signature) {
+  if (
+    "sha256=" + new TextDecoder("hex").decode(expectedSignature) !==
+    signature
+  ) {
     return new Response("Unauthorized", { status: 401 });
   }
 
   const webhookPayload = await request.json();
+
   let message = "";
 
   if (
