@@ -16,19 +16,13 @@ export const reply = (message, status) => {
   return new Response(message, { status, headers });
 };
 
-const handleOPTIONS = (request) => {
-  if (
-    request.headers.get("Origin") ??
-    request.headers.get("Access-Control-Request-Method") ??
-    request.headers.get("Access-Control-Request-Headers") !== null
-  ) {
-    // Handle CORS pre-flight request.
-    return new Response(null, { headers });
-  }
-
-  // Handle standard OPTIONS request.
-  return new Response(null, { headers: { Allow: "POST, OPTIONS" } });
-};
+const handleOPTIONS = (methods) =>
+  new Response(null, {
+    headers: {
+      ...Object.fromEntries(headers),
+      "access-control-allow-methods": Object.keys(methods).join(", "),
+    },
+  });
 
 export default function ({ pathname: endpointPathname, methods }) {
   const worker = {
@@ -38,7 +32,7 @@ export default function ({ pathname: endpointPathname, methods }) {
       if (pathname === endpointPathname) {
         const { method } = request;
 
-        methods.OPTIONS = handleOPTIONS;
+        methods.OPTIONS = () => handleOPTIONS(methods);
 
         if (method in methods) {
           const methodHandler = methods[method];

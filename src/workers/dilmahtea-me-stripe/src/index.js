@@ -1,12 +1,13 @@
 import Stripe from "stripe";
 import getCMSData from "./utils/getCMSData";
 import getValidatedData from "./utils/getValidatedData";
+import createBaserowRecord from "./utils/createBaserowRecord";
 import getPaymentMethodTypes from "./utils/getPaymentMethodTypes";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 let CMSData;
 
-const handlePOST = async (request, env) => {
+const handlePOST = async (request, env, ctx) => {
   CMSData = await getCMSData(env);
 
   const body = await request.formData(),
@@ -58,7 +59,7 @@ const handlePOST = async (request, env) => {
     cancel_url = origin_url + "?" + queryString;
 
   const paymentID = crypto.randomUUID(),
-    paymentData = JSON.stringify({ ...validatedData, request_headers });
+    paymentData = { ...validatedData, request_headers };
 
   const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
     // Cloudflare Workers use the Fetch API for their API requests.
@@ -77,7 +78,7 @@ const handlePOST = async (request, env) => {
     customer_email: email,
     payment_method_types,
     cancel_url,
-    success_url,
+    success_url: success_url + "&paymentID=" + paymentID,
     payment_intent_data: { metadata: { paymentID, payment_type } },
     line_items: [
       {
@@ -94,12 +95,30 @@ const handlePOST = async (request, env) => {
     ],
   });
 
-  const PAYMENT_INTENTS =
-    payment_type === "crowdfunding"
-      ? env.CROWDFUNDINGS
-      : env.ECOMMERCE_PAYMENTS;
+  ctx.waitUntil(
+    createBaserowRecord(
+      {
+        ...paymentData,
+        paymentID,
+      },
+      env
+    ).then((createdBaserowRecord) => {
+      const paymentBaserowRecordID = createdBaserowRecord.id;
 
-  await PAYMENT_INTENTS.put(paymentID, paymentData);
+      const PAYMENT_INTENTS =
+        payment_type === "crowdfunding"
+          ? env.CROWDFUNDINGS
+          : env.ECOMMERCE_PAYMENTS;
+
+      return PAYMENT_INTENTS.put(
+        paymentID,
+        JSON.stringify({
+          ...paymentData,
+          paymentBaserowRecordID,
+        })
+      );
+    })
+  );
 
   return Response.redirect(session.url, 303);
 };

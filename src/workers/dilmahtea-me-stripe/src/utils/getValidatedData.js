@@ -43,11 +43,8 @@ export default async function getValidatedData(paymentData, CMSData) {
   });
 
   const countries = CMSData.countries.data.map(
-      ({ attributes: { name } }) => name
-    ),
-    kindnessCauses = CMSData.kindnessCauses.data.map(
-      ({ attributes: { cause } }) => cause
-    );
+    ({ attributes: { name } }) => name
+  );
 
   const shippingMethods = {};
 
@@ -92,7 +89,6 @@ export default async function getValidatedData(paymentData, CMSData) {
   const EcommercePaymentIntentSchema = BasePaymentIntentSchema.extend({
     payment_type: z.literal("ecommerce"),
     country: z.enum(countries),
-    kindness_cause: z.enum(kindnessCauses),
     shipping_method: z.enum(Object.keys(shippingMethods)),
     shipping_cost: z
       .number()
