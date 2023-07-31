@@ -3,7 +3,7 @@
 import Stripe from "stripe";
 import sendEmail from "./utils/sendEmail";
 import createOrder from "./utils/createOrder";
-import createBaserowRecord from "./utils/createBaserowRecord";
+import createBaserowRecord from "../../dilmahtea-me-stripe/src/utils/createBaserowRecord";
 import updateBaserowRecord from "./utils/updateBaserowRecord";
 import createPurchaseEvent from "./utils/createPurchaseEvent";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
@@ -61,37 +61,13 @@ async function handlePOST(request, env) {
 
   const promises = [];
 
-  if (paymentBaserowRecordID) {
-    if (paymentIntentData.payment_status !== payment_status) {
-      promises.push(
-        updateBaserowRecord(
-          paymentBaserowRecordID,
-          { "Payment Status": payment_status },
-          payment_type,
-          env
-        )
-      );
-    }
-  } else {
-    const createdBaserowRecord = await createBaserowRecord(
-      {
-        ...paymentIntentData,
-        paymentID,
-        payment_status,
-      },
-      env
-    );
-
-    paymentBaserowRecordID = createdBaserowRecord.id;
-
+  if (paymentIntentData.payment_status !== payment_status) {
     promises.push(
-      PAYMENT_INTENTS.put(
-        paymentID,
-        JSON.stringify({
-          ...paymentIntentData,
-          paymentBaserowRecordID,
-          payment_status,
-        })
+      updateBaserowRecord(
+        paymentBaserowRecordID,
+        { "Payment Status": payment_status },
+        payment_type,
+        env
       )
     );
   }
