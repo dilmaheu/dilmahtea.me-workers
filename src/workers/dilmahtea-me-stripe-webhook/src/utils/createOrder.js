@@ -64,6 +64,8 @@ export default async function createOrder(paymentData, env) {
       env
     );
   } catch (error) {
+    error.creation = "order";
+
     await sendErrorEmail(error, { paymentID }, env);
   }
 }
