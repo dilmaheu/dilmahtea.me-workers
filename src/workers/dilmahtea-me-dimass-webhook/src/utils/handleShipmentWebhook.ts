@@ -53,7 +53,11 @@ export default async function handleShipmentWebhook(
           shippingMethodID,
           fetchExactAPI,
           env
-        );
+        ).catch((error) => {
+          error.creation = "invoice";
+
+          throw error;
+        });
 
         return reply({ success: true, message: "Sales invoice sent" }, 200);
       } else {
@@ -63,7 +67,11 @@ export default async function handleShipmentWebhook(
           TrackingNumber,
           shippingMethodID,
           fetchExactAPI
-        );
+        ).catch((error) => {
+          error.creation = "goods delivery";
+
+          throw error;
+        });
 
         return reply(
           { success: true, message: "Delivery status updated" },
