@@ -1,4 +1,4 @@
-name = "dilmahtea-me-stripe"
+name = "dilmahtea-me-baserow"
 account_id = "f0f636c746c8673c3905e9104b385251"
 compatibility_date = "2022-11-30"
 main = "./src/index.js"
@@ -6,7 +6,7 @@ workers_dev = false
 logpush = true
 placement = { mode = "smart" }
 routes = [
-    { pattern = "pay.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+    { pattern = "baserow.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 kv_namespaces = [
     { binding = "CROWDFUNDINGS", id = "c971dd86589647799fb64dde47563fac" },
@@ -14,9 +14,9 @@ kv_namespaces = [
 ]
 
 [env.development]
-name = "dilmahtea-me-stripe-dev"
+name = "dilmahtea-me-baserow-dev"
 routes = [
-    { pattern = "dev.pay.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+    { pattern = "dev.baserow.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 kv_namespaces = [
     { binding = "CROWDFUNDINGS", id = "bce59b3e55474063abce8ef8f5d755e7" },
@@ -24,10 +24,6 @@ kv_namespaces = [
 ]
 
 # secrets
-# CMS_ACCESS_TOKEN
-# CMS_GRAPHQL_ENDPOINT
-# STRIPE_DEVELOPMENT_SECRET_KEY_CODE
-# STRIPE_PRODUCTION_SECRET_KEY_CODE
 # BASEROW_TOKEN
 # BASEROW_CROWDFUNDING_TABLE_ID
 # BASEROW_PAYMENT_RECORDS_TABLE_ID

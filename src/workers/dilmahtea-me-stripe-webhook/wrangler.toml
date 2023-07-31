@@ -18,7 +18,7 @@ kv_namespaces = [
 
 [env.development]
 name = "dilmahtea-me-stripe-webhook-dev"
-vars = { ENVIRONMENT = "DEVELOPMENT", PAYMENT_CONDITION = "VB" }
+vars = { ENVIRONMENT = "DEVELOPMENT", PAYMENT_CONDITION = "IN" }
 routes = [
     { pattern = "dev.pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
