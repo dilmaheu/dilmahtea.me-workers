@@ -19,7 +19,7 @@ async function handlePOST(request, env) {
       return await updateMailsStore(env);
     }
 
-    return reply({ message: "No op" }, 204);
+    return reply({ message: "No op" }, 200);
   }
 
   return reply({ error: "Bad Request" }, 400);

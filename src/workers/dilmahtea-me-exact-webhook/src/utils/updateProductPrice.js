@@ -40,7 +40,7 @@ export default async function updateProductPrice(itemCode, itemPrice, env) {
       productEntries[0].attributes.Price !== itemPrice
     )
   ) {
-    return reply({ message: "No op!" }, 204);
+    return reply({ message: "No op!" }, 200);
   } else {
     const mutationQuery = `
       mutation(
