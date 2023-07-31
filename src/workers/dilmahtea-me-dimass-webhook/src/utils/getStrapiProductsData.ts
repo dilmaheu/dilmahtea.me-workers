@@ -12,6 +12,7 @@ export default async function getStrapiProductsData(env: ENV, SKUs: SKU[]) {
   const query = `
     {
       products(
+        locale: "all"
         publicationState: PREVIEW
         filters: { SKU: { in: ${JSON.stringify(SKUs)} } }
       ) {
