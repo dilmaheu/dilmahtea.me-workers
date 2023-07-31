@@ -26,14 +26,14 @@ const sendErrorEmail = (error, { orderNumber = null, paymentID = null }, env) =>
         email: "hello@dilmahtea.me",
         name: "Dilmah Europe",
       },
-      subject: `Error creating ${error.platform} order`,
+      subject: `Error creating ${error.creation} at ${error.platform}`,
       content: [
         {
           type: "text/plain",
           value: `
-            An error happened while creating an order at ${
+            An error happened while creating ${error.creation} at ${
               error.platform
-            }. Please manually confirm the order.
+            }. Please manually confirm the ${error.creation}.
 
             Error: ${error.message}
             ${
