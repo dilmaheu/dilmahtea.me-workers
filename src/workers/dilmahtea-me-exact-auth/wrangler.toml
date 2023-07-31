@@ -4,7 +4,6 @@ compatibility_date = "2022-11-30"
 main = "./src/index.js"
 workers_dev = false
 logpush = true
-placement = { mode = "smart" }
 triggers = { crons = ["*/10 * * * *"]}
 kv_namespaces = [{ binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" }]
 
