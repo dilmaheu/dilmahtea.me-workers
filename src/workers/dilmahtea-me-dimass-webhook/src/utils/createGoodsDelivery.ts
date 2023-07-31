@@ -33,5 +33,5 @@ export default async function createGoodsDelivery(
     }),
   ]);
 
-  await console.log("Exact: Goods delivery created successfully");
+  console.log("Exact: Goods delivery created successfully");
 }
