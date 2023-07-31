@@ -6,7 +6,7 @@ const XMLParser = new XMLParserConstructor();
 
 export default function fetchExactAPIConstructor(env) {
   const fetchExactAPI = async (method, url, data) =>
-    fetch(env.EXACT_API_ENDPOINT + url, {
+    fetch(url.startsWith("https://") ? url : env.EXACT_API_ENDPOINT + url, {
       method,
       headers: {
         "Content-Type": "application/json",

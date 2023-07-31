@@ -49,6 +49,12 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
 
+  src/workers/dilmahtea-me-exact-webhook:
+    devDependencies:
+      prettier:
+        specifier: ^3.0.0
+        version: 3.0.0
+
   src/workers/dilmahtea-me-github-matrix-webhook:
     devDependencies:
       prettier:
