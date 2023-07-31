@@ -15,6 +15,12 @@ importers:
         specifier: ^4.20230710.1
         version: 4.20230710.1
 
+  src/workers/dilmahtea-me-baserow:
+    devDependencies:
+      prettier:
+        specifier: ^3.0.0
+        version: 3.0.0
+
   src/workers/dilmahtea-me-baserow-matrix-webhook:
     devDependencies:
       prettier:
