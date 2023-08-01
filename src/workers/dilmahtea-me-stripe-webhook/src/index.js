@@ -3,7 +3,6 @@
 import Stripe from "stripe";
 import sendEmail from "./utils/sendEmail";
 import createOrder from "./utils/createOrder";
-import createBaserowRecord from "../../dilmahtea-me-stripe/src/utils/createBaserowRecord";
 import updateBaserowRecord from "./utils/updateBaserowRecord";
 import createPurchaseEvent from "./utils/createPurchaseEvent";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
