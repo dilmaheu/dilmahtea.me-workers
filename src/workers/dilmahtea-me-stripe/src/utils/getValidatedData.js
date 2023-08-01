@@ -159,8 +159,8 @@ export default async function getValidatedData(paymentData, CMSData) {
   });
 
   const PaymentIntentSchema = z.union([
-    CrowdfundingPaymentIntentSchema.strict(),
-    EcommercePaymentIntentSchema.strict(),
+    CrowdfundingPaymentIntentSchema,
+    EcommercePaymentIntentSchema,
   ]);
 
   try {
