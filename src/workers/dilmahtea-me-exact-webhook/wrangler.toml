@@ -15,8 +15,9 @@ name = "dilmahtea-me-exact-webhook-dev"
 routes = [
     { pattern = "dev.exact-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
-kv_namespaces = [{ binding = "EXACT_TOKENS", id = "194d0b00ac24422bb728e326bb43480c" }]
+kv_namespaces = [{ binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" }]
 
 # secrets
+# EXACT_WEBHOOK_SECRET
 # CMS_ACCESS_TOKEN
 # CMS_GRAPHQL_ENDPOINT
