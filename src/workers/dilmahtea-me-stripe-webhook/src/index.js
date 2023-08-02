@@ -73,7 +73,8 @@ async function handlePOST(request, env) {
 
   // send thank you email if payment is successful
   if (paymentIntentData && payment_status === "paid") {
-    promises.push(sendEmail(paymentIntentData, env));
+    payment_type === "crowdfunding" &&
+      promises.push(sendEmail(paymentIntentData, env));
 
     const { hostname: domain } = new URL(origin_url);
 

@@ -1,5 +1,6 @@
 // @ts-check
 
+import sendEmail from "./sendEmail";
 import getCountryCode from "./getCountryCode";
 import createExactOrder from "./createExactOrder";
 import createDimassOrder from "./createDimassOrder";
@@ -57,12 +58,15 @@ export default async function createOrder(paymentData, env) {
       }
     );
 
-    await updateBaserowRecord(
-      paymentBaserowRecordID,
-      { "Order Number": orderNumber, "Order Status": "Confirmed" },
-      payment_type,
-      env
-    );
+    await Promise.all([
+      sendEmail({ orderNumber, ...paymentData }, env),
+      updateBaserowRecord(
+        paymentBaserowRecordID,
+        { "Order Number": orderNumber, "Order Status": "Confirmed" },
+        payment_type,
+        env
+      ),
+    ]);
   } catch (error) {
     error.creation = "order";
 

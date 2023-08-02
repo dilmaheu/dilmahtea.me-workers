@@ -1,7 +1,10 @@
+// @ts-check
+
 const getHTMLEmail = ({
   Overview,
   Total,
   Invoice,
+  Shipping,
   VAT,
   Company_address,
   previewText,
@@ -27,7 +30,7 @@ const getHTMLEmail = ({
         />
       </head>
       
-      <body style="padding: 0; margin: 0">
+      <body style="padding: 0; margin: 0; background-color: #2b4b50;">
         <!-- Preview Text -->
         <div style="display: none;"><${previewText}></div>
   
@@ -47,13 +50,13 @@ const getHTMLEmail = ({
           <img
             alt="Dilmah Tea Logo"
             src="https://imagedelivery.net/BX3RwoS0OdbsyY2M52BQzw/c49ecab8-5548-4d65-41e8-efa0e59fb000/opengraph"
-            style="display: block; width: auto; height: 100px; margin: 30px auto auto"
+            style="display: block; width: auto; height: 100px; padding-top: 20px; margin: 0 auto;"
           />
         </div>
   
         <div
           role="main"
-          style="display: block; justify-content: center; background-color: #2b4b50"
+          style="display: block; justify-content: center;"
         >
           <div
             style="
@@ -121,35 +124,47 @@ const getHTMLEmail = ({
                     ${Overview}
                   </h2>
 
-                  <table width="100%" style="padding-top: 40px;">
+                  <table width="100%" style="padding-top: 15px;">
                     <tbody>
-                      <tr>
-                        <td style="vertical-align: middle">\${perk}</td>
-                        <td align="right" style="vertical-align: middle; padding-left: 10px">
-                          €\${price}
-                        </td>
-                      </tr>
+                      \${line_items}
 
-                      <tr>
-                        <td style="vertical-align: middle; padding-top: 15px">${VAT}</td>
-                        <td align="right" style="vertical-align: middle; padding-top: 15px; padding-left: 10px">
-                          €\${tax}
-                        </td>
-                      </tr>
+                      ${
+                        !Shipping
+                          ? ""
+                          : `<tr>
+                              <td
+                                style="vertical-align: middle; padding-top: 15px"
+                              >
+                                ${Shipping}
+                              </td>
+                              
+                              <td
+                                align="right"
+                                style="vertical-align: middle; padding-top: 15px; padding-left: 10px;"
+                              >
+                                €\${shipping_cost}
+                              </td>
+                            </tr>`
+                      }
                     </tbody>
                   </table>
 
                   <div
                     style="
                       display: block;
-                      margin-top: 50px;
+                      margin-top: 40px;
                       border: 1px solid rgba(43, 75, 80, 0.3);
                     "
                   ></div>
 
-                  <p style="padding-top: 15px; font-size: 28px; font-weight: 600">
+                  <p style="padding-top: 15px; font-size: 28px; font-weight: 600;">
                     <span style="float: left">${Total}</span>
-                    <span style="float: right">€\${price}</span>
+                    <span style="float: right; padding-left: 10px;">€\${price}</span>
+                  </p>
+
+                  <p style="padding-top: 20px;">
+                    <span style="float: left">${VAT}</span>
+                    <span style="float: right; padding-left: 10px;">€\${tax}</span>
                   </p>
                 </div>
   
@@ -168,12 +183,12 @@ const getHTMLEmail = ({
 
                   <address
                     style="
-                    font-style: normal;
-                    line-height: 120%;
-                    white-space: pre-line;
-                  "
+                      font-style: normal;
+                      line-height: 120%;  
+                      padding-top: 20px;                
+                    "
                   >
-                    \${street}<br />\${postal_code} \${city}<br />\${country}
+                    \${name}<br>\${street}<br>\${postal_code} \${city}<br>\${country}
                   </address>
                 </div>
               </div>
