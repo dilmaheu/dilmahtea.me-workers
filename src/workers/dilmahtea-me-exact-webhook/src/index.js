@@ -1,9 +1,9 @@
 // @ts-check
 
-import fetchExactAPIConstructor from "../../../utils/fetchExactAPIConstructor";
-import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 import validateSignature from "./utils/validateSignature";
 import updateProductPrice from "./utils/updateProductPrice";
+import createModuleWorker from "../../../utils/createModuleWorker";
+import fetchExactAPIConstructor from "../../../utils/fetchExactAPIConstructor";
 
 async function handlePOST(request, env) {
   const webhookData = await request.json(),
