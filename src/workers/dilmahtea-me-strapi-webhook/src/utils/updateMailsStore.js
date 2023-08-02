@@ -1,36 +1,53 @@
+// @ts-check
+
 import getHTMLEmail from "./getHTMLEmail.js";
 import { reply } from "../../../../utils/createModuleWorker.js";
 
 const query = `
+  fragment EcommercePaymentConfirmationMailAttributes on EcommercePaymentConfirmationMail {
+    locale
+    From_name
+    From_email
+    Subject
+    Preview_text
+    Preheader_text
+    Body
+    Overview
+    Total
+    Invoice
+    VAT
+    Shipping
+  }
+
+  fragment CrowdfundingEmailAttributes on CrowdfundingEmail {
+    locale
+    From_name
+    From_email
+    Subject
+    Preview_text
+    Preheader_text
+    Body
+    Overview
+    Total
+    Invoice
+    VAT
+  }
+
+  fragment RecurringElementAttributes on RecurringElement {
+    locale
+    Footer_text
+    Company_address
+  }
+
   {
     ecommercePaymentConfirmationMail {
       data {
         attributes {
-          locale
-          From_name
-          From_email
-          Subject
-          Preview_text
-          Preheader_text
-          Body
-          Overview
-          Total
-          Invoice
-          VAT
+          ...EcommercePaymentConfirmationMailAttributes
           localizations {
             data {
               attributes {
-                locale
-                From_name
-                From_email
-                Subject
-                Preview_text
-                Preheader_text
-                Body
-                Overview
-                Total
-                Invoice
-                VAT
+                ...EcommercePaymentConfirmationMailAttributes
               }
             }
           }
@@ -41,31 +58,11 @@ const query = `
     crowdfundingEmail {
       data {
         attributes {
-          locale
-          From_name
-          From_email
-          Subject
-          Preview_text
-          Preheader_text
-          Body
-          Overview
-          Total
-          Invoice
-          VAT
+          ...CrowdfundingEmailAttributes
           localizations {
             data {
               attributes {
-                locale
-                From_name
-                From_email
-                Subject
-                Preview_text
-                Preheader_text
-                Body
-                Overview
-                Total
-                Invoice
-                VAT
+                ...CrowdfundingEmailAttributes
               }
             }
           }
@@ -76,15 +73,11 @@ const query = `
     recurringElement {
       data {
         attributes {
-          locale
-          Footer_text
-          Company_address
+          ...RecurringElementAttributes
           localizations {
             data {
               attributes {
-                locale
-                Footer_text
-                Company_address
+                ...RecurringElementAttributes
               }
             }
           }
@@ -143,6 +136,7 @@ export async function updateMailsStore(env) {
           Total,
           Invoice,
           VAT,
+          Shipping,
         } = mail;
 
         const previewText = Preview_text + "&nbsp;".repeat(100),
@@ -173,6 +167,7 @@ export async function updateMailsStore(env) {
           Overview,
           Total,
           Invoice,
+          Shipping,
           VAT,
           Company_address,
           previewText,

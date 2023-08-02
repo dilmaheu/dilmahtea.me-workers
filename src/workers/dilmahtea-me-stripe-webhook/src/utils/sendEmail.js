@@ -2,6 +2,10 @@
 
 export default async function sendEmail(paymentData, env) {
   const {
+    orderNumber,
+    domain,
+    paymentID,
+    paymentBaserowRecordID,
     first_name,
     last_name,
     email,
@@ -25,6 +29,15 @@ export default async function sendEmail(paymentData, env) {
     success_url,
   } = paymentData;
 
+  const name = `${first_name} ${last_name}`;
+
+  const lineItems = !cart
+    ? [[perk, price.toFixed(2).replace(".", ",")]]
+    : Object.values(cart).map(({ names, quantity, price }) => [
+        quantity + "x " + JSON.parse(names)[locale],
+        price.toFixed(2).replace(".", ","),
+      ]);
+
   const mailKey =
     payment_type === "crowdfunding"
       ? "Crowdfunding Email"
@@ -35,17 +48,38 @@ export default async function sendEmail(paymentData, env) {
   const mail = mailData[locale],
     { Subject, From_name, From_email, htmlEmail } = mail;
 
+  const finalSubject = Subject.replaceAll("<order_no>", orderNumber);
+
   const finalHTMLEmail = htmlEmail
+    .replaceAll("<order_no>", orderNumber)
+    .replaceAll("${name}", name)
     .replaceAll("${first_name}", first_name)
     .replaceAll("${perk}", perk || product_desc)
-    .replaceAll("${price}", price)
-    .replaceAll("${tax}", tax)
+    .replaceAll("${price}", price.toFixed(2).replace(".", ","))
+    .replaceAll("${shipping_cost}", shipping_cost?.toFixed(2).replace(".", ","))
+    .replaceAll("${tax}", tax.toFixed(2).replace(".", ","))
     .replaceAll("${street}", street)
     .replaceAll("${postal_code}", postal_code)
     .replaceAll("${city}", city)
-    .replaceAll("${country}", country);
-
-  const name = `${first_name} ${last_name}`;
+    .replaceAll("${country}", country)
+    .replace(
+      "${line_items}",
+      lineItems
+        .map(([name, price]) =>
+          `<tr>
+            <td style="vertical-align: middle; padding-top: 15px;">\${name}</td>
+            <td
+              align="right"
+              style="vertical-align: middle; padding-top: 15px; padding-left: 10px;"
+            >
+              €\${price}
+            </td>
+          </tr>`
+            .replace("${name}", name)
+            .replace("${price}", price)
+        )
+        .join("\n")
+    );
 
   const BCCRecipients =
     payment_type === "ecommerce"
@@ -55,7 +89,7 @@ export default async function sendEmail(paymentData, env) {
         ]
       : [];
 
-  const response = await fetch("https://api.mailchannels.net/tx/v1/send", {
+  await fetch("https://api.mailchannels.net/tx/v1/send", {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -74,7 +108,7 @@ export default async function sendEmail(paymentData, env) {
         email: From_email,
         name: From_name,
       },
-      subject: Subject,
+      subject: finalSubject,
       content: [{ type: "text/html", value: finalHTMLEmail }],
     }),
   })
