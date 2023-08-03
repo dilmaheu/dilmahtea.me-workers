@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -8,8 +12,8 @@ importers:
         specifier: ^4.2.5
         version: 4.2.5
       wrangler:
-        specifier: ^3.2.0
-        version: 3.2.0
+        specifier: ^3.1.1
+        version: 3.1.1
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20230710.1
@@ -1094,8 +1098,8 @@ packages:
       '@cloudflare/workerd-windows-64': 1.20230710.0
     dev: false
 
-  /wrangler@3.2.0:
-    resolution: {integrity: sha512-Fne5c91uolV4+E0B60F/meWbD/sr/oSPBfr6x1gapu6I7Ipu5uUt29K/fuGRgXRQcVVKnd5k3fS++ruuLODoxA==}
+  /wrangler@3.1.1:
+    resolution: {integrity: sha512-iG6QGOt+qgSm7UroJ8IJ+JdXEcDcW7yp9ilP0V7alCGhKm8shqa/M1iyMOpukZSCSZo8Vmn5nH2C9OY1PR3dQQ==}
     engines: {node: '>=16.13.0'}
     hasBin: true
     dependencies:

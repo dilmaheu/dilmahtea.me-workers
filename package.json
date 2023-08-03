@@ -18,7 +18,7 @@
   "homepage": "https://github.com/dilmaheu/dilmahtea.me-workers#readme",
   "dependencies": {
     "fast-xml-parser": "^4.2.5",
-    "wrangler": "^3.2.0"
+    "wrangler": "^3.1.1"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230710.1"
