@@ -2,6 +2,11 @@
 
 import AddressTypes from "./AddressTypes";
 
+const NonVisitAddressTypes = structuredClone(AddressTypes);
+
+// @ts-ignore
+delete NonVisitAddressTypes.Visit;
+
 export default async function createCustomer(
   { Name, Email, FirstName, LastName, Language, Address },
   fetchExactAPI
@@ -25,28 +30,28 @@ export default async function createCustomer(
 
   const contactID = customerContact.entry.content["m:properties"]["d:ID"];
 
+  // link Visit Address created during Customer creation to the created Contact
+  await fetchExactAPI(
+    "GET",
+    `/CRM/Addresses?$filter=Account eq guid'${customerID}'&$select=ID`
+  )
+    .then(({ feed }) => feed.entry.content["m:properties"]["d:ID"])
+    .then((addressID) =>
+      fetchExactAPI("PUT", `/CRM/Addresses(guid'${addressID}')`, {
+        Contact: contactID,
+      })
+    );
+
+  // create new Invoice & Delivery Addresses
   await Promise.all(
-    Object.values(AddressTypes).map((Type) =>
-      Type === 1
-        ? // link Visit Address created during Customer creation to the created Contact
-          fetchExactAPI(
-            "GET",
-            `/CRM/Addresses?$filter=Account eq guid'${customerID}'&$select=ID`
-          )
-            .then(({ feed }) => feed.entry.content["m:properties"]["d:ID"])
-            .then((addressID) =>
-              fetchExactAPI("PUT", `/CRM/Addresses(guid'${addressID}')`, {
-                Contact: contactID,
-              })
-            )
-        : // create new Invoice & Delivery Addresses
-          fetchExactAPI("POST", "/CRM/Addresses", {
-            Type,
-            Main: true,
-            Contact: contactID,
-            Account: customerID,
-            ...Address,
-          })
+    Object.values(NonVisitAddressTypes).map((Type) =>
+      fetchExactAPI("POST", "/CRM/Addresses", {
+        Type,
+        Main: true,
+        Contact: contactID,
+        Account: customerID,
+        ...Address,
+      })
     )
   );
 
