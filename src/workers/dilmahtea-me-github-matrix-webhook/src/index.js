@@ -1,32 +1,24 @@
 // @ts-check
 
+import validateSignature from "../../../utils/validateSignature";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 async function handlePOST(request, env) {
-  const roomId = env.ROOM_ID,
+  const webhookPayload = await request.json(),
+    roomId = env.ROOM_ID,
     matrixBotAccessToken = env.MATRIX_BOT_ACCESS_TOKEN;
+
+  await validateSignature(
+    webhookPayload,
+    "SHA-256",
+    request.headers.get("x-hub-signature-256").slice(7),
+    env.WEBHOOK_SECRET
+  );
 
   if (!roomId || !matrixBotAccessToken) {
     return new Response("Missing environment variables", { status: 500 });
   }
 
-  const body = await request.arrayBuffer(),
-    signature = await request.headers.get("x-hub-signature-256");
-
-  const expectedSignature = await crypto.subtle.digest(
-    "SHA-256",
-    new TextEncoder().encode(env.WEBHOOK_SECRET + body)
-  );
-
-  const hexSignature = Array.from(new Uint8Array(expectedSignature))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-
-  if ("sha256=" + hexSignature !== signature) {
-    return new Response("Unauthorized", { status: 401 });
-  }
-
-  const webhookPayload = await request.json();
   let message = "";
 
   if (
