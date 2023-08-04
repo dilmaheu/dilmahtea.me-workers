@@ -1,9 +1,10 @@
 import { ENV, Shipment, WebhookResponseData } from "./types";
 
 import updateStock from "./utils/updateStock";
-import validateSignature from "./utils/validateSignature";
-import createModuleWorker from "../../../utils/createModuleWorker";
 import handleShipmentWebhook from "./utils/handleShipmentWebhook";
+
+import validateSignature from "../../../utils/validateSignature";
+import createModuleWorker from "../../../utils/createModuleWorker";
 
 export interface ProductsStockInfo {
   SKU: string;
@@ -13,7 +14,12 @@ export interface ProductsStockInfo {
 async function handlePOST(request: Request, env: ENV): Promise<Response> {
   const webhookData = await request.json<WebhookResponseData>();
 
-  validateSignature(request, env, webhookData);
+  await validateSignature(
+    webhookData,
+    "SHA-1",
+    request.headers.get("X-SP-Signature"),
+    env.DIMASS_WEBHOOK_SECRET
+  );
 
   // type guard for Shipment
   const isShipment = (data: WebhookResponseData): data is Shipment =>
