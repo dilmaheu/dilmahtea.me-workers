@@ -25,7 +25,6 @@ export default async function createOrder(paymentData, env) {
     shipping_method,
     shipping_cost,
     perk,
-    product_name,
     product_desc,
     cart,
     price,

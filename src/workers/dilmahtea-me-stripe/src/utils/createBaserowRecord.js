@@ -14,7 +14,6 @@ export default async function createBaserowRecord(paymentIntentData, env) {
     shipping_method,
     shipping_cost,
     perk,
-    product_name,
     product_desc,
     cart,
     price,
