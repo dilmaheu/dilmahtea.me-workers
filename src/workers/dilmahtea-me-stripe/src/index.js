@@ -34,7 +34,6 @@ const handlePOST = async (request, env, ctx) => {
     shipping_method,
     shipping_cost,
     perk,
-    product_name,
     product_desc,
     cart,
     price,
@@ -82,19 +81,32 @@ const handlePOST = async (request, env, ctx) => {
     cancel_url,
     success_url: success_url + "&paymentID=" + paymentID,
     payment_intent_data: { metadata: { paymentID, payment_type } },
-    line_items: [
-      {
-        quantity: 1,
-        price_data: {
-          currency: "eur",
-          unit_amount: Math.round(price * 100),
-          product_data: {
-            name: product_name,
-            description: product_desc,
+    line_items: (payment_type === "ecommerce"
+      ? [
+          ...Object.values(cart),
+          {
+            name: shipping_method,
+            price: shipping_cost,
+            quantity: 1,
           },
+        ]
+      : [
+          {
+            name: product_desc,
+            price,
+            quantity: 1,
+          },
+        ]
+    ).map(({ name, names, price, quantity }) => ({
+      quantity,
+      price_data: {
+        currency: "eur",
+        unit_amount: Math.round((price * 100) / quantity),
+        product_data: {
+          name: name || JSON.parse(names)[locale],
         },
       },
-    ],
+    })),
   });
 
   ctx.waitUntil(
