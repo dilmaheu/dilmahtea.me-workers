@@ -9,14 +9,6 @@ const query = `
       }
     }
 
-    recurringElement {
-      data {
-        attributes {
-          Company_name
-        }
-      }
-    }
-
     i18NLocales {
       data {
         attributes {

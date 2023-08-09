@@ -5,7 +5,6 @@ export default async function getValidatedData(paymentData, CMSData) {
   // process data for validation
   const {
     crowdfundingPlans: { data: crowdfundingPlans },
-    recurringElement: { data: recurringElement },
     i18NLocales: { data: i18NLocales },
     products: { data: productsData },
   } = CMSData;
@@ -52,8 +51,6 @@ export default async function getValidatedData(paymentData, CMSData) {
     shippingMethods[method] = cost;
   });
 
-  const companyName = recurringElement.attributes.Company_name;
-
   // validate data
   paymentData.tax &&= +paymentData.tax;
   paymentData.price &&= +paymentData.price;
@@ -67,7 +64,6 @@ export default async function getValidatedData(paymentData, CMSData) {
     city: z.string(),
     street: z.string(),
     postal_code: z.string().regex(/^[\w- ]+$/),
-    product_name: z.literal(companyName),
     locale: z.enum(locales),
     origin_url: z.string().url(),
     success_url: z.string().url(),
