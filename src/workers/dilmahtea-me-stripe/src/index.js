@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 import getCMSData from "./utils/getCMSData";
+import getCustomerID from "./utils/getCustomerID";
 import getValidatedData from "./utils/getValidatedData";
 import createBaserowRecord from "./utils/createBaserowRecord";
 import getPaymentMethodTypes from "./utils/getPaymentMethodTypes";
@@ -67,7 +68,8 @@ const handlePOST = async (request, env, ctx) => {
     apiVersion: "2022-11-15",
   });
 
-  const payment_method_types = await getPaymentMethodTypes(country, CMSData);
+  const customer = await getCustomerID(stripe, paymentData, CMSData),
+    payment_method_types = await getPaymentMethodTypes(country, CMSData);
 
   // Create new Checkout Session for the order.
   // Redirects the customer to s Stripe checkout page.
@@ -75,7 +77,7 @@ const handlePOST = async (request, env, ctx) => {
   const session = await stripe.checkout.sessions.create({
     locale: locale,
     mode: "payment",
-    customer_email: email,
+    customer: customer.id,
     payment_method_types,
     cancel_url,
     success_url: success_url + "&paymentID=" + paymentID,
