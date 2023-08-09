@@ -49,6 +49,7 @@ const query = `
       data {
         attributes {
           name
+          code
         }
       }
     }
