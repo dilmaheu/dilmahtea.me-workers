@@ -68,17 +68,14 @@ async function updateAddress(
           props["d:Type"] !== Type ||
           (() => {
             const isCurrentAddress =
-              JSON.stringify({ Type, ...Address }) ===
-              JSON.stringify({
-                Type: props["d:Type"],
-                AddressLine1: props["d:AddressLine1"],
-                // remove empty string address lines
-                AddressLine2: props["d:AddressLine2"] || undefined,
-                AddressLine3: props["d:AddressLine3"] || undefined,
-                City: props["d:City"],
-                Country: props["d:Country"],
-                Postcode: props["d:Postcode"],
-              });
+              Type === props["d:Type"] &&
+              Address.AddressLine1 === props["d:AddressLine1"] &&
+              // handle empty string address lines
+              Address.AddressLine2 === (props["d:AddressLine2"] || undefined) &&
+              Address.AddressLine3 === (props["d:AddressLine3"] || undefined) &&
+              Address.City === props["d:City"] &&
+              Address.Country === props["d:Country"] &&
+              Address.Postcode === props["d:Postcode"];
 
             if (isCurrentAddress) {
               matchedAddress = props;
