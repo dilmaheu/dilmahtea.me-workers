@@ -142,7 +142,7 @@ const getHTMLEmail = ({
                                 align="right"
                                 style="vertical-align: middle; padding-top: 15px; padding-left: 10px;"
                               >
-                                €\${shipping_cost}
+                                &euro;\${shipping_cost}
                               </td>
                             </tr>`
                       }
@@ -159,12 +159,12 @@ const getHTMLEmail = ({
 
                   <p style="padding-top: 15px; font-size: 28px; font-weight: 600;">
                     <span style="float: left">${Total}</span>
-                    <span style="float: right; padding-left: 10px;">€\${price}</span>
+                    <span style="float: right; padding-left: 10px;">&euro;\${price}</span>
                   </p>
 
                   <p style="padding-top: 20px;">
                     <span style="float: left">${VAT}</span>
-                    <span style="float: right; padding-left: 10px;">€\${tax}</span>
+                    <span style="float: right; padding-left: 10px;">&euro;\${tax}</span>
                   </p>
                 </div>
   
