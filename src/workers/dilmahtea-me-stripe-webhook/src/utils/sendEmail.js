@@ -71,7 +71,7 @@ export default async function sendEmail(paymentData, env) {
               align="right"
               style="vertical-align: middle; padding-top: 15px; padding-left: 10px;"
             >
-              €\${price}
+              &euro;\${price}
             </td>
           </tr>`
             .replace("${name}", name)
