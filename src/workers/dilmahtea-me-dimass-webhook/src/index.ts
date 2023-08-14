@@ -14,12 +14,13 @@ export interface ProductsStockInfo {
 async function handlePOST(request: Request, env: ENV): Promise<Response> {
   const webhookData = await request.json<WebhookResponseData>();
 
-  await validateSignature(
-    webhookData,
-    "SHA-1",
-    request.headers.get("X-SP-Signature"),
-    env.DIMASS_WEBHOOK_SECRET
-  );
+  // disable signature validation temporarily till Dimass fixes incorrect signature issue
+  // await validateSignature(
+  //   webhookData,
+  //   "SHA-1",
+  //   request.headers.get("X-SP-Signature"),
+  //   env.DIMASS_WEBHOOK_SECRET
+  // );
 
   // type guard for Shipment
   const isShipment = (data: WebhookResponseData): data is Shipment =>
