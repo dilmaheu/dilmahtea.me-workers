@@ -14,7 +14,7 @@ At the end of the day, what matters is shifting back to people, letting them kno
 The simple act of sharing a piece of code is, in itself, an invitation, providing a glimpse into the potential that can be unlocked.
 We believe by sharing code and participating in open source software platforms can bridge technological gaps and foster collaborations. It will also promote community spirit and shared growth.
 
-Please see the license file as well.
+Please see the LICENSE file as well.
 
 ##  Cloudflare workers
 The files in this repositories are related to the dilmahtea.me content & e-commerce platform. Most of the workers are related to combine the platform with third parties such as Cloudflare, Stripe, Baserow, Strapi, Exact online, Dimass and Plausible.
