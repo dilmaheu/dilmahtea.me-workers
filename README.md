@@ -17,4 +17,5 @@ Please see the license file as well.
 
 ##  Cloudflare workers
 The files in this repositories are related to the dilmahtea.me content, the e-commerce platform and third parties such as Stripe, Baserow, Strapi, Exact online, Dimass and Plausible.
+
 For more information please see the [Documentation](https://docs.dilmahtea.me/setup-and-workflow/dilmahteame-workers/).
