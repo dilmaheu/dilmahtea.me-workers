@@ -82,10 +82,7 @@ export default async function sendEmail(paymentData, env) {
 
   const BCCRecipients =
     payment_type === "ecommerce"
-      ? [
-          { email: "hello@dilmahtea.me" },
-          { email: "jurjen.devries@dilmahtea.me" },
-        ]
+      ? [{ email: "jurjen.devries@dilmahtea.me" }]
       : [];
 
   await fetch("https://api.mailchannels.net/tx/v1/send", {
