@@ -13,12 +13,12 @@ async function handlePOST(request, env) {
   const { table_id, event_type } = await request.json();
 
   if (
-    request.headers.get("Webhook-Secret") === env.WEBHOOK_SECRET &&
+    request.headers.get("Webhook-Secret") === env.BASEROW_WEBHOOK_SECRET &&
     `${table_id}` === env.BASEROW_CROWDFUNDING_TABLE_ID &&
     ["rows.created", "rows.updated", "rows.deleted"].includes(event_type)
   ) {
     const { results: payments } = await fetch(
-      `${env.BASEROW_API_URL}?user_field_names=true&size=0&include=Amount+Paid,Payment+Status`,
+      `https://api.baserow.io/api/database/rows/table/${env.BASEROW_CROWDFUNDING_TABLE_ID}/?user_field_names=true&size=0&include=Amount+Paid,Payment+Status`,
       {
         headers: {
           Authorization: `Token ${env.BASEROW_TOKEN}`,

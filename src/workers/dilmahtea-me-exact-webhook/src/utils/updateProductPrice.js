@@ -5,11 +5,11 @@ import { reply } from "../../../../utils/createModuleWorker";
 export default async function updateProductPrice(itemCode, itemPrice, env) {
   const headers = new Headers({
     "Content-Type": "application/json",
-    Authorization: "Bearer " + env.CMS_ACCESS_TOKEN,
+    Authorization: "Bearer " + env.STRAPI_ACCESS_TOKEN,
   });
 
   // update pricings for all locales
-  const productEntries = await fetch(env.CMS_GRAPHQL_ENDPOINT, {
+  const productEntries = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers,
     body: JSON.stringify({
@@ -83,7 +83,7 @@ export default async function updateProductPrice(itemCode, itemPrice, env) {
       {}
     );
 
-    const updatedProductResponse = await fetch(env.CMS_GRAPHQL_ENDPOINT, {
+    const updatedProductResponse = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
       method: "POST",
       headers,
       body: JSON.stringify({

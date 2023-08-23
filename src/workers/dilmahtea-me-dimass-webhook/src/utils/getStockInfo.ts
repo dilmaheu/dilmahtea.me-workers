@@ -32,7 +32,7 @@ export default async function (env: ENV) {
     timestamp = new Date().getTime().toString();
 
   const encodedSignature = new TextEncoder().encode(
-      nonce + timestamp + env.DIMASS_SECRET
+      nonce + timestamp + env.DIMASS_API_SECRET
     ),
     signatureBuffer = await crypto.subtle.digest("SHA-1", encodedSignature),
     signature = Array.from(new Uint8Array(signatureBuffer))
@@ -43,7 +43,7 @@ export default async function (env: ENV) {
     nonce,
     timestamp,
     signature,
-    apikey: env.DIMASS_APIKEY,
+    apikey: env.DIMASS_API_KEY,
   };
 
   const dimassStockResponse: GetDimassStockResponse = await fetch(

@@ -13,7 +13,7 @@ export default async function updateStrapiProducts(
 ) {
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${env.STRAPI_APIKEY}`,
+    Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
   };
 
   // mutation query for all products

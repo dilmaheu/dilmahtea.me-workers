@@ -6,7 +6,7 @@ async function handlePOST(request, env) {
   // Check for 'Webhook-Secret' header in the incoming request
   const incomingWebhookSecret = request.headers.get("Webhook-Secret");
 
-  if (incomingWebhookSecret !== env.WEBHOOK_SECRET) {
+  if (incomingWebhookSecret !== env.BASEROW_WEBHOOK_SECRET) {
     throw new Error("Invalid webhook secret");
   }
 

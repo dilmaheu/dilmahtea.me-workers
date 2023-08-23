@@ -88,11 +88,11 @@ const query = `
 `;
 
 export async function updateMailsStore(env) {
-  const response = await fetch(env.CMS_GRAPHQL_ENDPOINT, {
+  const response = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${env.CMS_ACCESS_TOKEN}`,
+      Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
     },
     body: JSON.stringify({ query }),
   });

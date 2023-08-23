@@ -6,7 +6,7 @@ type SKU = string;
 export default async function getStrapiProductsData(env: ENV, SKUs: SKU[]) {
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${env.STRAPI_APIKEY}`,
+    Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
   };
 
   const query = `
