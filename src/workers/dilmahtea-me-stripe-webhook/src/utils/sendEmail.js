@@ -80,11 +80,6 @@ export default async function sendEmail(paymentData, env) {
         .join("\n")
     );
 
-  const BCCRecipients =
-    payment_type === "ecommerce"
-      ? [{ email: "jurjen.devries@dilmahtea.me" }]
-      : [];
-
   await fetch("https://api.mailchannels.net/tx/v1/send", {
     method: "POST",
     headers: {
@@ -94,7 +89,6 @@ export default async function sendEmail(paymentData, env) {
       personalizations: [
         {
           to: [{ email, name }],
-          bcc: BCCRecipients,
           dkim_domain: "dilmahtea.me",
           dkim_selector: "mailchannels",
           dkim_private_key: env.DKIM_PRIVATE_KEY,
