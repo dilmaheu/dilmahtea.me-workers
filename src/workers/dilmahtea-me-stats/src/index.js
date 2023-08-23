@@ -24,7 +24,7 @@ async function getScript(event, extensions) {
   let response = await caches.default.match(event.request);
   if (!response) {
     response = await fetch(
-      "https://plausible.io/js/plausible." + extensions.join(".")
+      "https://plausible.io/js/plausible." + extensions.join("."),
     );
     event.waitUntil(caches.default.put(event.request, response.clone()));
   }

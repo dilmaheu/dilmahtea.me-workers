@@ -9,8 +9,5 @@
     "format": "prettier --write '**/*.{js,css,json,md}'"
   },
   "author": "Cris Shaki <cmshaki@gmail.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "prettier": "^3.0.0"
-  }
+  "license": "MIT"
 }

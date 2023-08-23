@@ -115,7 +115,7 @@ const handlePOST = async (request, env, ctx) => {
         ...paymentData,
         paymentID,
       },
-      env
+      env,
     ).then((createdBaserowRecord) => {
       const paymentBaserowRecordID = createdBaserowRecord.id;
 
@@ -129,9 +129,9 @@ const handlePOST = async (request, env, ctx) => {
         JSON.stringify({
           ...paymentData,
           paymentBaserowRecordID,
-        })
+        }),
       );
-    })
+    }),
   );
 
   return Response.redirect(session.url, 303);

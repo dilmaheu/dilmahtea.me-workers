@@ -16,7 +16,7 @@ export default function fetchExactAPIConstructor(env) {
     })
       .then((res) => {
         console.log(
-          `RateLimit-Remaining: ${res.headers.get("x-ratelimit-remaining")}`
+          `RateLimit-Remaining: ${res.headers.get("x-ratelimit-remaining")}`,
         );
 
         return res.text();

@@ -43,7 +43,7 @@ export default async function createOrder(paymentData, env) {
         error.platform = "Exact";
 
         throw error;
-      }
+      },
     );
 
     const orderNumber =
@@ -54,7 +54,7 @@ export default async function createOrder(paymentData, env) {
         error.platform = "Dimass";
 
         throw error;
-      }
+      },
     );
 
     await Promise.all([
@@ -63,7 +63,7 @@ export default async function createOrder(paymentData, env) {
         paymentBaserowRecordID,
         { "Order Number": orderNumber, "Order Status": "Confirmed" },
         payment_type,
-        env
+        env,
       ),
     ]);
   } catch (error) {

@@ -9,7 +9,7 @@ delete NonVisitAddressTypes.Visit;
 
 export default async function createCustomer(
   { Name, Email, FirstName, LastName, Language, Address },
-  fetchExactAPI
+  fetchExactAPI,
 ) {
   const customer = await fetchExactAPI("POST", "/CRM/Accounts", {
     Name,
@@ -33,13 +33,13 @@ export default async function createCustomer(
   // link Visit Address created during Customer creation to the created Contact
   await fetchExactAPI(
     "GET",
-    `/CRM/Addresses?$filter=Account eq guid'${customerID}'&$select=ID`
+    `/CRM/Addresses?$filter=Account eq guid'${customerID}'&$select=ID`,
   )
     .then(({ feed }) => feed.entry.content["m:properties"]["d:ID"])
     .then((addressID) =>
       fetchExactAPI("PUT", `/CRM/Addresses(guid'${addressID}')`, {
         Contact: contactID,
-      })
+      }),
     );
 
   // create new Invoice & Delivery Addresses
@@ -51,8 +51,8 @@ export default async function createCustomer(
         Contact: contactID,
         Account: customerID,
         ...Address,
-      })
-    )
+      }),
+    ),
   );
 
   return customerID;

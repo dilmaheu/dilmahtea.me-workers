@@ -16,7 +16,7 @@ export default async function getValidatedData(paymentData, CMSData) {
   });
 
   const locales = i18NLocales.map(({ attributes: { code } }) =>
-    code.substring(0, 2)
+    code.substring(0, 2),
   );
 
   const products = [];
@@ -29,7 +29,7 @@ export default async function getValidatedData(paymentData, CMSData) {
     [{ attributes }, ...localizations.data].forEach(
       ({ attributes: { locale, Title } }) => {
         names[locale.substring(0, 2)] = Title;
-      }
+      },
     );
 
     products[SKU] = {
@@ -42,7 +42,7 @@ export default async function getValidatedData(paymentData, CMSData) {
   });
 
   const countries = CMSData.countries.data.map(
-    ({ attributes: { name } }) => name
+    ({ attributes: { name } }) => name,
   );
 
   const shippingMethods = {};
@@ -89,7 +89,7 @@ export default async function getValidatedData(paymentData, CMSData) {
     shipping_cost: z
       .number()
       .refine(
-        (value) => value === shippingMethods[paymentData.shipping_method]
+        (value) => value === shippingMethods[paymentData.shipping_method],
       ),
     cart: z.record(
       z.enum(Object.keys(products)),
@@ -112,7 +112,7 @@ export default async function getValidatedData(paymentData, CMSData) {
                 100 &&
             quantity <= product.stockAmount
           );
-        })
+        }),
     ),
     product_desc: z.string().refine(
       (value) =>
@@ -120,9 +120,9 @@ export default async function getValidatedData(paymentData, CMSData) {
         Object.values(paymentData.cart)
           .map(
             ({ names, quantity }) =>
-              `${quantity}x ${JSON.parse(names)[paymentData.locale]}`
+              `${quantity}x ${JSON.parse(names)[paymentData.locale]}`,
           )
-          .join(", ")
+          .join(", "),
     ),
     price: z
       .number()
@@ -132,12 +132,12 @@ export default async function getValidatedData(paymentData, CMSData) {
           Math.round(
             (Object.values(paymentData.cart).reduce(
               (total, { price }) => total + price,
-              0
+              0,
             ) +
               paymentData.shipping_cost) *
-              100
+              100,
           ) /
-            100
+            100,
       ),
     tax: z
       .number()
@@ -147,10 +147,10 @@ export default async function getValidatedData(paymentData, CMSData) {
           Math.round(
             Object.values(paymentData.cart).reduce(
               (total, { tax }) => total + tax,
-              0
-            ) * 100
+              0,
+            ) * 100,
           ) /
-            100
+            100,
       ),
   });
 

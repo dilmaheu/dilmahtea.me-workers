@@ -27,7 +27,7 @@ export default {
         await env.EXACT_TOKENS.put("REFRESH_TOKEN", response.refresh_token);
 
         resolve();
-      })
+      }),
     );
   },
 };

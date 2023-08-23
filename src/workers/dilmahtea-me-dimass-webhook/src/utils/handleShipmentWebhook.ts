@@ -9,7 +9,7 @@ import fetchExactAPIConstructor from "../../../../utils/fetchExactAPIConstructor
 
 export default async function handleShipmentWebhook(
   env: ENV,
-  shipment: Shipment
+  shipment: Shipment,
 ) {
   const fetchExactAPI = fetchExactAPIConstructor(env);
 
@@ -27,7 +27,7 @@ export default async function handleShipmentWebhook(
   if (state === 15 && [null, 1530].includes(sub_state)) {
     const salesOrder = await fetchExactAPI(
       "GET",
-      `/salesorder/SalesOrders?$filter=OrderNumber eq ${orderNumber}&$select=OrderID,SalesOrderLines`
+      `/salesorder/SalesOrders?$filter=OrderNumber eq ${orderNumber}&$select=OrderID,SalesOrderLines`,
     );
 
     const orderID = salesOrder.feed.entry.content["m:properties"]["d:OrderID"];
@@ -41,7 +41,7 @@ export default async function handleShipmentWebhook(
 
     const shippingMethod = await fetchExactAPI(
       "GET",
-      `/sales/ShippingMethods?$filter=Code eq '${courier_code}'&$select=ID`
+      `/sales/ShippingMethods?$filter=Code eq '${courier_code}'&$select=ID`,
     );
 
     const shippingMethodID =
@@ -55,7 +55,7 @@ export default async function handleShipmentWebhook(
           tracking_url,
           shippingMethodID,
           fetchExactAPI,
-          env
+          env,
         ).catch((error) => {
           error.creation = "invoice";
 
@@ -69,7 +69,7 @@ export default async function handleShipmentWebhook(
           orderNumber,
           TrackingNumber,
           shippingMethodID,
-          fetchExactAPI
+          fetchExactAPI,
         ).catch((error) => {
           error.creation = "goods delivery";
 
@@ -78,7 +78,7 @@ export default async function handleShipmentWebhook(
 
         return reply(
           { success: true, message: "Delivery status updated" },
-          200
+          200,
         );
       }
     } catch (error) {

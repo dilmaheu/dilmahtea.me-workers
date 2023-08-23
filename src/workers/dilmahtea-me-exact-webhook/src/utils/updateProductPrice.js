@@ -49,7 +49,7 @@ export default async function updateProductPrice(itemCode, itemPrice, env) {
             (_, i) => `
           $id${i}: ID!
           $Price${i}: Float!
-        `
+        `,
           )
           .join("")}
       ) {
@@ -67,7 +67,7 @@ export default async function updateProductPrice(itemCode, itemPrice, env) {
                     }
                   }
                 }
-              `
+              `,
             )
             .join("")}
       }
@@ -80,7 +80,7 @@ export default async function updateProductPrice(itemCode, itemPrice, env) {
         [`id${i}`]: entry.id,
         [`Price${i}`]: itemPrice,
       }),
-      {}
+      {},
     );
 
     const updatedProductResponse = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
@@ -97,7 +97,7 @@ export default async function updateProductPrice(itemCode, itemPrice, env) {
         message: `Product ${itemCode} price updated`,
         response: updatedProductResponse,
       },
-      200
+      200,
     );
   }
 }

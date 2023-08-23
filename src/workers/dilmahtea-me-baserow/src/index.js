@@ -30,7 +30,7 @@ async function handlePATCH(request, env) {
           Authorization: `Token ${env.BASEROW_TOKEN}`,
           "Content-Type": "application/json",
         },
-      }
+      },
     ).then((res) => res.json());
 
   const response = await sendBaserowRequest();
@@ -40,7 +40,7 @@ async function handlePATCH(request, env) {
       message: `Baserow record ${response.id} ${rowID ? "updated" : "created"}`,
       response,
     },
-    200
+    200,
   );
 }
 

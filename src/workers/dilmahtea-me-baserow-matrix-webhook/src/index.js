@@ -12,7 +12,13 @@ async function handlePOST(request, env) {
 
   const requestBody = await request.json();
 
-  if (!(requestBody.items.length > 0 && requestBody.old_items.length > 0 && requestBody.table_id)) {
+  if (
+    !(
+      requestBody.items.length > 0 &&
+      requestBody.old_items.length > 0 &&
+      requestBody.table_id
+    )
+  ) {
     throw new Error("Missing required fields in payload");
   }
 
@@ -55,7 +61,7 @@ async function handlePOST(request, env) {
   };
 
   const matrixRequestUrl = `https://matrix.org/_matrix/client/r0/rooms/${encodeURIComponent(
-    env.MATRIX_ROOM_ID
+    env.MATRIX_ROOM_ID,
   )}/send/m.room.message?access_token=${env.MATRIX_BOT_ACCESS_TOKEN}`;
 
   const matrixResponse = await fetch(matrixRequestUrl, {
@@ -66,7 +72,7 @@ async function handlePOST(request, env) {
 
   if (!matrixResponse.ok) {
     throw new Error(
-      `Matrix API responded with status ${matrixResponse.status}`
+      `Matrix API responded with status ${matrixResponse.status}`,
     );
   }
 

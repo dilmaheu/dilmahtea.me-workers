@@ -9,9 +9,6 @@
     "format": "prettier --write '**/*.{js,css,json,md}'"
   },
   "license": "MIT",
-  "devDependencies": {
-    "prettier": "^3.0.0"
-  },
   "dependencies": {
     "fast-xml-parser": "^4.2.5"
   }

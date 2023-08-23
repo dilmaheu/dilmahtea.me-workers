@@ -16,7 +16,7 @@ export default async function createExactOrder(
     cart,
     countryCode: Country,
   },
-  env
+  env,
 ) {
   const fetchExactAPI = fetchExactAPIConstructor(env);
 
@@ -55,7 +55,7 @@ export default async function createExactOrder(
 
   const existingCustomer = await fetchExactAPI(
     "GET",
-    `/CRM/Accounts?$filter=Email eq '${Email}'&$select=ID,Name,Language,MainContact`
+    `/CRM/Accounts?$filter=Email eq '${Email}'&$select=ID,Name,Language,MainContact`,
   );
 
   const customerExists = !!existingCustomer.feed.entry;
@@ -88,9 +88,9 @@ export default async function createExactOrder(
 
   const items = await fetchExactAPI(
     "GET",
-    `/logistics/Items?$filter=${SKUsFilterQuery}&$select=ID,Code`
+    `/logistics/Items?$filter=${SKUsFilterQuery}&$select=ID,Code`,
   ).then(({ feed }) =>
-    feed.entry.map(({ content }) => content["m:properties"])
+    feed.entry.map(({ content }) => content["m:properties"]),
   );
 
   const salesOrder = await fetchExactAPI("POST", "/salesorder/SalesOrders", {
@@ -104,7 +104,7 @@ export default async function createExactOrder(
         NetPrice: !tax
           ? price
           : Math.round((price / quantity - tax / quantity) * 100) / 100,
-      })
+      }),
     ),
   });
 

@@ -32,7 +32,7 @@ export default async function (env: ENV) {
     timestamp = new Date().getTime().toString();
 
   const encodedSignature = new TextEncoder().encode(
-      nonce + timestamp + env.DIMASS_API_SECRET
+      nonce + timestamp + env.DIMASS_API_SECRET,
     ),
     signatureBuffer = await crypto.subtle.digest("SHA-1", encodedSignature),
     signature = Array.from(new Uint8Array(signatureBuffer))
@@ -52,7 +52,7 @@ export default async function (env: ENV) {
       method: "POST",
       headers,
       body,
-    }
+    },
   )
     .then(async (res) => {
       const xml = await res.text();
@@ -83,7 +83,7 @@ export default async function (env: ENV) {
       stockAmount: item.availableStock,
       /** SKU value without Dimass's 'DILM' prefix. */
       SKU: item.code.split(" ").pop() as string,
-    })
+    }),
   );
 
   return productsStockInfo;

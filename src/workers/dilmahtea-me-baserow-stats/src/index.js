@@ -23,7 +23,7 @@ async function handlePOST(request, env) {
         headers: {
           Authorization: `Token ${env.BASEROW_TOKEN}`,
         },
-      }
+      },
     ).then((res) => res.json());
 
     const paidPayments = payments

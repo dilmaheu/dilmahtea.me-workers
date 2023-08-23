@@ -5,17 +5,8 @@
   "description": "A template for kick starting a Cloudflare Workers project",
   "type": "module",
   "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write '**/*.{js,css,json,md}'",
-    "build": "node build",
-    "build:dev": "node build --dev"
-  },
   "author": "Cris Shaki <cmshaki@gmail.com>",
   "license": "MIT",
-  "devDependencies": {
-    "prettier": "^3.0.0"
-  },
   "dependencies": {
     "fast-xml-parser": "^4.2.5",
     "stripe": "^12.12.0"

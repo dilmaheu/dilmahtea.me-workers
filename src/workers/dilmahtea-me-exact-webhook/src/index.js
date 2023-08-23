@@ -14,7 +14,7 @@ async function handlePOST(request, env) {
     Content,
     "SHA-256",
     HashCode.toLowerCase(),
-    env.EXACT_WEBHOOK_SECRET
+    env.EXACT_WEBHOOK_SECRET,
   );
 
   const fetchExactAPI = fetchExactAPIConstructor(env);

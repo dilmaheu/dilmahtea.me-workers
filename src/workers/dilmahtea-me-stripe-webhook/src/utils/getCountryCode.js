@@ -26,7 +26,7 @@ export default async function getCountryCode(country, env) {
   }).then((response) => response.json());
 
   const countryCode = countries.data.find(
-    ({ attributes: { name } }) => name === country
+    ({ attributes: { name } }) => name === country,
   ).attributes.code;
 
   return countryCode;
