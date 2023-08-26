@@ -17,7 +17,7 @@ export default async function syncProductPrice(ItemsRecord, env) {
             locale: "all"
             publicationState: PREVIEW
             filters: { SKU: { in: ${JSON.stringify(
-              Object.keys(ItemsRecord)
+              Object.keys(ItemsRecord),
             )} } }
           ) {
             data {
@@ -45,7 +45,7 @@ export default async function syncProductPrice(ItemsRecord, env) {
             (_, i) => `
           $id${i}: ID!
           $Price${i}: Float!
-        `
+        `,
           )
           .join("")}
       ) {
@@ -63,7 +63,7 @@ export default async function syncProductPrice(ItemsRecord, env) {
                     }
                   }
                 }
-              `
+              `,
             )
             .join("")}
       }
@@ -75,7 +75,7 @@ export default async function syncProductPrice(ItemsRecord, env) {
         [`id${i}`]: entry.id,
         [`Price${i}`]: ItemsRecord[entry.attributes.SKU],
       }),
-      {}
+      {},
     );
 
     await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
