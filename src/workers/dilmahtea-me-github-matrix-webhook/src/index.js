@@ -12,7 +12,7 @@ async function handlePOST(request, env) {
     webhookPayload,
     "SHA-256",
     request.headers.get("x-hub-signature-256").slice(7),
-    env.WEBHOOK_SECRET
+    env.WEBHOOK_SECRET,
   );
 
   if (!roomId || !matrixBotAccessToken) {
@@ -42,7 +42,7 @@ async function handlePOST(request, env) {
   }
 
   const matrixApiUrl = `https://matrix.org/_matrix/client/r0/rooms/${encodeURIComponent(
-    roomId
+    roomId,
   )}/send/m.room.message`;
 
   // Define the fetch options for the Matrix API request
@@ -71,7 +71,7 @@ async function handlePOST(request, env) {
   if (!matrixResponse.ok) {
     return reply(
       `Failed to send message: ${matrixResponse.status} ${matrixResponse.statusText}`,
-      500
+      500,
     );
   }
 

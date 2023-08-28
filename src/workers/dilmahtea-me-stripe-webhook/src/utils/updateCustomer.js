@@ -20,7 +20,7 @@ async function updateAccount(
   customer,
   ExistingCustomer,
   contact,
-  fetchExactAPI
+  fetchExactAPI,
 ) {
   const contactID = contact["d:ID"],
     { Name, Language } = customer;
@@ -40,7 +40,7 @@ async function updateAccount(
         Name,
         Language,
         MainContact: contactID,
-      }
+      },
     ).then(() => console.log(`Exact: Customer account updated`));
   }
 }
@@ -49,13 +49,13 @@ async function updateAddress(
   customer,
   ExistingCustomer,
   contactID,
-  fetchExactAPI
+  fetchExactAPI,
 ) {
   const { Address } = customer;
 
   const linkedAddresses = await fetchExactAPI(
     "GET",
-    `/CRM/Addresses?$filter=Account eq guid'${ExistingCustomer["d:ID"]}'&$select=ID,Main,Contact,Type,City,Country,Postcode,AddressLine1,AddressLine2,AddressLine3`
+    `/CRM/Addresses?$filter=Account eq guid'${ExistingCustomer["d:ID"]}'&$select=ID,Main,Contact,Type,City,Country,Postcode,AddressLine1,AddressLine2,AddressLine3`,
   ).then(({ feed: { entry } }) => (Array.isArray(entry) ? entry : [entry]));
 
   await Promise.all(
@@ -81,7 +81,7 @@ async function updateAddress(
             }
 
             return !isCurrentAddress;
-          })()
+          })(),
       );
 
       if (
@@ -94,7 +94,7 @@ async function updateAddress(
           {
             Main: true,
             Contact: contactID,
-          }
+          },
         );
 
         console.log("Exact: Address found, set as main");
@@ -111,14 +111,14 @@ async function updateAddress(
 
         console.log("Exact: New address created");
       }
-    })
+    }),
   );
 }
 
 export default async function updateCustomer(
   customer,
   existingCustomer,
-  fetchExactAPI
+  fetchExactAPI,
 ) {
   const ExistingCustomer = existingCustomer.feed.entry.content["m:properties"];
 
@@ -126,7 +126,7 @@ export default async function updateCustomer(
 
   const contact = await fetchExactAPI(
     "GET",
-    `/CRM/Contacts?$filter=Email eq '${customer.Email}'&select=ID,FirstName,LastName`
+    `/CRM/Contacts?$filter=Email eq '${customer.Email}'&select=ID,FirstName,LastName`,
   ).then(async ({ feed }) => {
     let contact;
 
@@ -136,11 +136,11 @@ export default async function updateCustomer(
       const matchedContact = feed.entry.find(
         ({ content: { "m:properties": props } }) =>
           [customer.FirstName, ExistingCustomer["d:FirstName"]].includes(
-            props["d:FirstName"]
+            props["d:FirstName"],
           ) &&
           [customer.LastName, ExistingCustomer["d:LastName"]].includes(
-            props["d:LastName"]
-          )
+            props["d:LastName"],
+          ),
       );
 
       if (matchedContact) {
@@ -171,7 +171,7 @@ export default async function updateCustomer(
     ...[
       updateAccount(customer, ExistingCustomer, contact, fetchExactAPI),
       updateAddress(customer, ExistingCustomer, contactID, fetchExactAPI),
-    ]
+    ],
   );
 
   await Promise.all(promises);

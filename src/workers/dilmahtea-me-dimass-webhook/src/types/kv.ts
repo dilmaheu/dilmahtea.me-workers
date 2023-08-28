@@ -1,26 +1,22 @@
 export interface ENV {
-  // KV
-  CROWDFUNDING_EMAIL: KVNamespace;
-  "__landing-workers_sites_assets_preview": KVNamespace;
-  ECOMMERCE_PAYMENTS: KVNamespace;
-  MAILS: KVNamespace;
-  BASEROW_STATS: KVNamespace;
-  ECOMMERCE_PAYMENTS_DEV: KVNamespace;
-  CROWDFUNDINGS_DEV: KVNamespace;
-  PRODUCTS: KVNamespace;
-  CROWDFUNDINGS: KVNamespace;
-  "landing-THEE": KVNamespace;
-  "landing-THEE_preview": KVNamespace;
-  TEST_STRAPI_UPDATES: KVNamespace;
+  // ENVIRONMENTAl VARIABLES
+  ENVIRONMENT: "PRODUCTION" | "DEVELOPMENT";
+  JOURNAL_CODE: "VER";
 
-  // `.env` / `.dev.vars`
+  // KV
+  EXACT_TOKENS: KVNamespace;
+  EXACT_LAYOUTS: KVNamespace;
+
+  // EXACT
+  EXACT_API_ENDPOINT: string;
+
   // DIMASS
-  DIMASS_APIKEY: string;
-  DIMASS_SECRET: string;
+  DIMASS_API_KEY: string;
+  DIMASS_API_SECRET: string;
   DIMASS_API_ENDPOINT: string;
   DIMASS_WEBHOOK_SECRET: string;
 
   // STRAPI
-  STRAPI_APIKEY: string;
+  STRAPI_ACCESS_TOKEN: string;
   STRAPI_GRAPHQL_ENDPOINT: string;
 }

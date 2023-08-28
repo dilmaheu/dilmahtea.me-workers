@@ -3,16 +3,16 @@ export default async function createGoodsDelivery(
   orderNumber,
   TrackingNumber,
   shippingMethodID,
-  fetchExactAPI
+  fetchExactAPI,
 ) {
   const [orderLines, { currentLocalTime: currentAmsterdamTime }] =
     await Promise.all([
       fetchExactAPI(
         "GET",
-        `/salesorder/SalesOrderLines?$filter=OrderNumber eq ${orderNumber}`
+        `/salesorder/SalesOrderLines?$filter=OrderNumber eq ${orderNumber}`,
       ),
       fetch(
-        "https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Amsterdam"
+        "https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Amsterdam",
       ).then(async (res) => res.json()) as Promise<Record<string, any>>,
     ]);
 

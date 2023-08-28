@@ -88,11 +88,11 @@ const query = `
 `;
 
 export async function updateMailsStore(env) {
-  const response = await fetch(env.CMS_GRAPHQL_ENDPOINT, {
+  const response = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${env.CMS_ACCESS_TOKEN}`,
+      Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
     },
     body: JSON.stringify({ query }),
   });
@@ -151,16 +151,16 @@ export async function updateMailsStore(env) {
                   style="font-style: italic;display: inline;border-bottom: 1px solid #4e878a;text-decoration: none;color: #4e878a;"
                   >${From_email}</a
                 >
-              `
+              `,
             );
 
         const { Footer_text, Company_address } = recurringElementData.find(
-          ({ attributes }) => attributes.locale === locale
+          ({ attributes }) => attributes.locale === locale,
         ).attributes;
 
         const footerText = Footer_text.replaceAll(
           "<current_year>",
-          new Date().getFullYear()
+          new Date().getFullYear(),
         );
 
         const htmlEmail = getHTMLEmail({
@@ -183,9 +183,9 @@ export async function updateMailsStore(env) {
 
       await env.MAILS.put(
         mailKey,
-        JSON.stringify(Object.fromEntries(htmlMailsEntries))
+        JSON.stringify(Object.fromEntries(htmlMailsEntries)),
       );
-    })
+    }),
   );
 
   return reply({ message: `Updated 'Mails' KV Namespace` }, 200);

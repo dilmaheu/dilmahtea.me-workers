@@ -5,7 +5,7 @@ export default async function getCustomerID(stripe, paymentData, CMSData) {
     paymentData;
 
   const countryCode = CMSData.countries.data.find(
-    ({ attributes: { name } }) => name === country
+    ({ attributes: { name } }) => name === country,
   ).attributes.code;
 
   const name = first_name + " " + last_name,

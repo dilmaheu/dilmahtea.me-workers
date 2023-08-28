@@ -75,9 +75,9 @@ export default async function sendEmail(paymentData, env) {
             </td>
           </tr>`
             .replace("${name}", name)
-            .replace("${price}", price)
+            .replace("${price}", price),
         )
-        .join("\n")
+        .join("\n"),
     );
 
   await fetch("https://api.mailchannels.net/tx/v1/send", {

@@ -63,7 +63,7 @@ export default async function createBaserowRecord(paymentIntentData, env) {
         Authorization: `Token ${env.BASEROW_TOKEN}`,
         "Content-Type": "application/json",
       },
-    }
+    },
   ).then((res) => res.json());
 
   console.log({ message: `Baserow record ${response.id} created`, response });

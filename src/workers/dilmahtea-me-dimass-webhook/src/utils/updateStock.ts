@@ -14,7 +14,7 @@ export default async function updateStock(env: ENV) {
         success: false,
         message: "The items to update aren't relevant for the CMS.",
       },
-      400
+      400,
     );
   }
 
@@ -24,7 +24,7 @@ export default async function updateStock(env: ENV) {
 
   if (strapiProductsData.length === 0) {
     throw new Error(
-      "The product(s) with the provided SKU(s) don't exist in strapi (yet)."
+      "The product(s) with the provided SKU(s) don't exist in strapi (yet).",
     );
   }
 

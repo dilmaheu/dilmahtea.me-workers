@@ -8,6 +8,6 @@ triggers = { crons = ["*/10 * * * *"]}
 kv_namespaces = [{ binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" }]
 
 # secrets
-# CLIENT_ID
-# CLIENT_SECRET
+# EXACT_OAUTH_CLIENT_ID
+# EXACT_OAUTH_CLIENT_SECRET
 # EXACT_OAUTH_TOKEN_API_ENDPOINT

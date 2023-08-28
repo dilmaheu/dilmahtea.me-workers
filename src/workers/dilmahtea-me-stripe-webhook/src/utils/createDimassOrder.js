@@ -21,13 +21,13 @@ export default async function createDimassOrder(
     countryCode,
     orderNumber,
   },
-  env
+  env,
 ) {
   const nonce = crypto.randomUUID(),
     timestamp = new Date().getTime().toString();
 
   const encodedSignature = new TextEncoder().encode(
-      nonce + timestamp + env.DIMASS_API_SECRET
+      nonce + timestamp + env.DIMASS_API_SECRET,
     ),
     signatureBuffer = await crypto.subtle.digest("SHA-1", encodedSignature),
     signature = Array.from(new Uint8Array(signatureBuffer))

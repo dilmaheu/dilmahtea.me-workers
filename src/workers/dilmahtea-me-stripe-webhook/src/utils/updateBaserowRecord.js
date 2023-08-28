@@ -4,7 +4,7 @@ export default async function updateBaserowRecord(
   rowID,
   updatedData,
   payment_type,
-  env
+  env,
 ) {
   const databaseTableID =
     payment_type === "crowdfunding"
@@ -22,7 +22,7 @@ export default async function updateBaserowRecord(
         Authorization: `Token ${env.BASEROW_TOKEN}`,
         "Content-Type": "application/json",
       },
-    }
+    },
   ).then((res) => res.json());
 
   console.log({ message: `Baserow record ${rowID} updated`, response });

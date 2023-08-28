@@ -25,7 +25,7 @@ async function handlePOST(request, env) {
     signature,
     env.STRIPE_SIGNING_SECRET_KEY,
     undefined,
-    webCrypto
+    webCrypto,
   );
 
   if (!event.data) {
@@ -66,8 +66,8 @@ async function handlePOST(request, env) {
         paymentBaserowRecordID,
         { "Payment Status": payment_status },
         payment_type,
-        env
-      )
+        env,
+      ),
     );
   }
 
@@ -82,8 +82,8 @@ async function handlePOST(request, env) {
       promises.push(
         createOrder(
           { paymentID, domain, paymentBaserowRecordID, ...paymentIntentData },
-          env
-        )
+          env,
+        ),
       );
 
       if (env.ENVIRONMENT === "PRODUCTION") {

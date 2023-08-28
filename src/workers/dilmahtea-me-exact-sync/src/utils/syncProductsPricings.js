@@ -1,15 +1,13 @@
 // @ts-check
 
-import { reply } from "../../../../utils/createModuleWorker";
-
-export default async function updateProductPrice(itemCode, itemPrice, env) {
+export default async function syncProductPrice(ItemsRecord, env) {
   const headers = new Headers({
     "Content-Type": "application/json",
-    Authorization: "Bearer " + env.CMS_ACCESS_TOKEN,
+    Authorization: "Bearer " + env.STRAPI_ACCESS_TOKEN,
   });
 
   // update pricings for all locales
-  const productEntries = await fetch(env.CMS_GRAPHQL_ENDPOINT, {
+  const productEntries = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers,
     body: JSON.stringify({
@@ -18,11 +16,14 @@ export default async function updateProductPrice(itemCode, itemPrice, env) {
           products(
             locale: "all"
             publicationState: PREVIEW
-            filters: { SKU: { eq: "${itemCode}" } }
+            filters: { SKU: { in: ${JSON.stringify(
+              Object.keys(ItemsRecord),
+            )} } }
           ) {
             data {
               id
               attributes {
+                SKU
                 Price
               }
             }
@@ -34,13 +35,8 @@ export default async function updateProductPrice(itemCode, itemPrice, env) {
     .then((res) => res.json())
     .then((response) => response.data.products.data);
 
-  if (
-    !(
-      productEntries.length > 0 &&
-      productEntries[0].attributes.Price !== itemPrice
-    )
-  ) {
-    return reply({ message: "No op!" }, 200);
+  if (!(productEntries.length > 0)) {
+    return "No op!";
   } else {
     const mutationQuery = `
       mutation(
@@ -49,7 +45,7 @@ export default async function updateProductPrice(itemCode, itemPrice, env) {
             (_, i) => `
           $id${i}: ID!
           $Price${i}: Float!
-        `
+        `,
           )
           .join("")}
       ) {
@@ -62,42 +58,41 @@ export default async function updateProductPrice(itemCode, itemPrice, env) {
                 ) {
                   data {
                     id
-                    attributes {
+                    attributes {                      
                       Price
                     }
                   }
                 }
-              `
+              `,
             )
             .join("")}
       }
     `;
 
-    // mutation variables (id and Stock_amount)
     const mutationVariables = productEntries.reduce(
       (acc, entry, i) => ({
         ...acc,
         [`id${i}`]: entry.id,
-        [`Price${i}`]: itemPrice,
+        [`Price${i}`]: ItemsRecord[entry.attributes.SKU],
       }),
-      {}
+      {},
     );
 
-    const updatedProductResponse = await fetch(env.CMS_GRAPHQL_ENDPOINT, {
+    await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
       method: "POST",
       headers,
       body: JSON.stringify({
         query: mutationQuery,
         variables: mutationVariables,
       }),
-    }).then((res) => res.json());
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.errors) {
+          throw new Error(JSON.stringify(res.errors, null, 2));
+        }
+      });
 
-    return reply(
-      {
-        message: `Product ${itemCode} price updated`,
-        response: updatedProductResponse,
-      },
-      200
-    );
+    return "Pricings synced";
   }
 }

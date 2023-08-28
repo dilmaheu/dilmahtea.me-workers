@@ -5,7 +5,7 @@ async function handlePOST(request, env) {
   const { event, model } = await request.json();
 
   if (
-    request.headers.get("Webhook-Secret") === env.WEBHOOK_SECRET &&
+    request.headers.get("Webhook-Secret") === env.STRAPI_WEBHOOK_SECRET &&
     ["trigger-test", "entry.update", "entry.publish"].includes(event)
   ) {
     if (

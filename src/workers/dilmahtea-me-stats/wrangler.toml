@@ -6,4 +6,3 @@ workers_dev = false
 routes = [
     { pattern = "*dilmahtea.me/rpcq/*", zone_name = "dilmahtea.me" }
 ]
-

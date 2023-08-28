@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "dilmahtea-me-baserow",
+  "name": "dilmahtea-me-baserow-stats",
   "version": "1.0.0",
   "description": "A template for kick starting a Cloudflare Workers project",
   "main": "src/index.js",
@@ -8,8 +8,5 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write '**/*.{js,css,json,md}'"
   },
-  "license": "MIT",
-  "devDependencies": {
-    "prettier": "^3.0.0"
-  }
+  "license": "MIT"
 }

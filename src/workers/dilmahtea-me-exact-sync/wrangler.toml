@@ -1,0 +1,19 @@
+name = "dilmahtea-me-exact-sync"
+account_id = "f0f636c746c8673c3905e9104b385251"
+compatibility_date = "2022-11-30"
+main = "./src/index.js"
+workers_dev = false
+logpush = true
+triggers = { crons = ["0 * * * *"]}
+vars = { ENVIRONMENT = "PRODUCTION" }
+kv_namespaces = [{ binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" }]
+
+[env.development]
+name = "dilmahtea-me-exact-sync-dev"
+vars = { ENVIRONMENT = "DEVELOPMENT" }
+kv_namespaces = [{ binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" }]
+
+# secrets
+# EXACT_API_ENDPOINT
+# STRAPI_ACCESS_TOKEN
+# STRAPI_GRAPHQL_ENDPOINT

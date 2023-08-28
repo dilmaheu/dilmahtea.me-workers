@@ -9,11 +9,11 @@ interface ProductInfo {
 export default async function updateStrapiProducts(
   env: ENV,
   strapiProductsData: ProductInfo[],
-  productsStockInfo: ProductsStockInfo[]
+  productsStockInfo: ProductsStockInfo[],
 ) {
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${env.STRAPI_APIKEY}`,
+    Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
   };
 
   // mutation query for all products
@@ -24,7 +24,7 @@ export default async function updateStrapiProducts(
           (_, i) => `
         $id${i}: ID!
         $Stock_amount${i}: Int!
-      `
+      `,
         )
         .join("")}
     ) {
@@ -42,7 +42,7 @@ export default async function updateStrapiProducts(
                   }
                 }
               }
-            `
+            `,
           )
           .join("")}
     }
@@ -54,10 +54,10 @@ export default async function updateStrapiProducts(
       ...acc,
       [`id${i}`]: product.id,
       [`Stock_amount${i}`]: productsStockInfo.find(
-        ({ SKU }) => SKU === product.SKU
+        ({ SKU }) => SKU === product.SKU,
       ).stockAmount,
     }),
-    {}
+    {},
   );
 
   await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {

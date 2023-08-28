@@ -7,8 +7,8 @@ export default {
         const data = {
           refresh_token,
           grant_type: "refresh_token",
-          client_id: env.CLIENT_ID,
-          client_secret: env.CLIENT_SECRET,
+          client_id: env.EXACT_OAUTH_CLIENT_ID,
+          client_secret: env.EXACT_OAUTH_CLIENT_SECRET,
         };
 
         const response = await fetch(env.EXACT_OAUTH_TOKEN_API_ENDPOINT, {
@@ -27,7 +27,7 @@ export default {
         await env.EXACT_TOKENS.put("REFRESH_TOKEN", response.refresh_token);
 
         resolve();
-      })
+      }),
     );
   },
 };
