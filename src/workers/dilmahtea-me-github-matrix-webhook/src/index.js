@@ -12,7 +12,7 @@ async function handlePOST(request, env) {
     webhookPayload,
     "SHA-256",
     request.headers.get("x-hub-signature-256").slice(7),
-    env.WEBHOOK_SECRET,
+    env.GITHUB_WEBHOOK_SECRET
   );
 
   if (!roomId || !matrixBotAccessToken) {
