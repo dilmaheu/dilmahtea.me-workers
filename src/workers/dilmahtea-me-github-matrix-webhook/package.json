@@ -5,8 +5,7 @@
   "description": "Connection between Github to sent webhook payload info as message to a Matrix bot",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "format": "prettier --write '**/*.{js,css,json,md}'"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "license": "MIT"
 }

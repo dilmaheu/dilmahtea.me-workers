@@ -23,8 +23,10 @@ export default {
           reject(response.error + " | " + response.error_description);
         }
 
-        await env.EXACT_TOKENS.put("ACCESS_TOKEN", response.access_token);
-        await env.EXACT_TOKENS.put("REFRESH_TOKEN", response.refresh_token);
+        await Promise.all([
+          env.EXACT_TOKENS.put("ACCESS_TOKEN", response.access_token),
+          env.EXACT_TOKENS.put("REFRESH_TOKEN", response.refresh_token),
+        ]);
 
         resolve();
       }),
