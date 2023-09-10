@@ -24,5 +24,6 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20230904.0"
-  }
+  },
+  "prettier": {}
 }
