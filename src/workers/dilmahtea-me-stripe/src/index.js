@@ -6,10 +6,8 @@ import createBaserowRecord from "./utils/createBaserowRecord";
 import getPaymentMethodTypes from "./utils/getPaymentMethodTypes";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
-let CMSData;
-
 const handlePOST = async (request, env, ctx) => {
-  CMSData = await getCMSData(env);
+  const CMSData = await getCMSData(env);
 
   const body = await request.formData(),
     rawPaymentData = Object.fromEntries(body),
