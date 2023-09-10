@@ -19,10 +19,10 @@
   "homepage": "https://github.com/dilmaheu/dilmahtea.me-workers#readme",
   "dependencies": {
     "fast-xml-parser": "^4.2.7",
-    "prettier": "^3.0.2",
-    "wrangler": "^3.5.1"
+    "prettier": "^3.0.3",
+    "wrangler": "^3.7.0"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20230821.0"
+    "@cloudflare/workers-types": "^4.20230904.0"
   }
 }

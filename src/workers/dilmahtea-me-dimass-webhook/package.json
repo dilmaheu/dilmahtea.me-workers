@@ -9,6 +9,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "fast-xml-parser": "^4.2.5"
+    "fast-xml-parser": "^4.2.7"
   }
 }
