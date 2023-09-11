@@ -103,7 +103,7 @@ export default async function createExactOrder(
         Quantity: quantity,
         NetPrice: !tax
           ? price
-          : Math.round((price / quantity - tax / quantity) * 100) / 100,
+          : Math.round(((price - tax) / quantity) * 100) / 100,
       }),
     ),
   });

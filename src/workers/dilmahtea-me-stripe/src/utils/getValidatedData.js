@@ -23,7 +23,6 @@ export default async function getValidatedData(paymentData, CMSData) {
 
   productsData.forEach(({ attributes }) => {
     const { SKU, Price, Stock_amount, localizations } = attributes,
-      tax = Math.round(Price * 9) / 100,
       names = {};
 
     [{ attributes }, ...localizations.data].forEach(
@@ -35,8 +34,7 @@ export default async function getValidatedData(paymentData, CMSData) {
     products[SKU] = {
       sku: SKU,
       names,
-      price: Price,
-      tax,
+      Price,
       stockAmount: Stock_amount,
     };
   });
@@ -104,12 +102,15 @@ export default async function getValidatedData(paymentData, CMSData) {
         .refine(({ names, sku, tax, price, quantity }) => {
           const product = products[sku];
 
+          const subTotal = product.Price * quantity,
+            calculatedTax = Math.round(subTotal * 9) / 100,
+            calculatedPrice =
+              Math.round((subTotal + calculatedTax) * 100) / 100;
+
           return (
             names === JSON.stringify(product.names) &&
-            tax === Math.round(product.tax * quantity * 100) / 100 &&
-            price ===
-              Math.round((product.price + product.tax) * quantity * 100) /
-                100 &&
+            tax === calculatedTax &&
+            price === calculatedPrice &&
             quantity <= product.stockAmount
           );
         }),

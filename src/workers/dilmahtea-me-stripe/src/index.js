@@ -6,10 +6,8 @@ import createBaserowRecord from "./utils/createBaserowRecord";
 import getPaymentMethodTypes from "./utils/getPaymentMethodTypes";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
-let CMSData;
-
 const handlePOST = async (request, env, ctx) => {
-  CMSData = await getCMSData(env);
+  const CMSData = await getCMSData(env);
 
   const body = await request.formData(),
     rawPaymentData = Object.fromEntries(body),
@@ -98,12 +96,12 @@ const handlePOST = async (request, env, ctx) => {
           },
         ]
     ).map(({ name, names, price, quantity }) => ({
-      quantity,
+      quantity: 1,
       price_data: {
         currency: "eur",
-        unit_amount: Math.round((price * 100) / quantity),
+        unit_amount: Math.round(price * 100),
         product_data: {
-          name: name || JSON.parse(names)[locale],
+          name: name || `${quantity}x ${JSON.parse(names)[locale]}`,
         },
       },
     })),
