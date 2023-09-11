@@ -96,12 +96,12 @@ const handlePOST = async (request, env, ctx) => {
           },
         ]
     ).map(({ name, names, price, quantity }) => ({
-      quantity,
+      quantity: 1,
       price_data: {
         currency: "eur",
-        unit_amount: Math.round((price * 100) / quantity),
+        unit_amount: Math.round(price * 100),
         product_data: {
-          name: name || JSON.parse(names)[locale],
+          name: name || `${quantity}x ${JSON.parse(names)[locale]}`,
         },
       },
     })),
