@@ -37,7 +37,7 @@ async function handlePOST(request, env) {
 
   // Send message only when old "Order Status" is "unconfirmed" and new "Order Status" is "Confirmed"
   if (
-    oldOrder["Order Status"] !== "unconfirmed" ||
+    oldOrder["Order Status"] !== "Unconfirmed" ||
     order["Order Status"] !== "Confirmed"
   ) {
     return reply("Condition not met", 200);
