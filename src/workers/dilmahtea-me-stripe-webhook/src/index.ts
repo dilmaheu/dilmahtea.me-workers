@@ -1,4 +1,4 @@
-// @ts-check
+import { ENV } from "./types";
 
 import Stripe from "stripe";
 import sendEmail from "./utils/sendEmail";
@@ -9,7 +9,7 @@ import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 const webCrypto = Stripe.createSubtleCryptoProvider();
 
-async function handlePOST(request, env) {
+async function handlePOST(request: Request, env: ENV) {
   const body = await request.text(),
     signature = request.headers.get("stripe-signature");
 
@@ -58,7 +58,7 @@ async function handlePOST(request, env) {
       break;
   }
 
-  const promises = [];
+  const promises: Promise<any>[] = [];
 
   if (paymentIntentData.payment_status !== payment_status) {
     promises.push(
@@ -66,7 +66,6 @@ async function handlePOST(request, env) {
         paymentBaserowRecordID,
         { "Payment Status": payment_status },
         payment_type,
-        env,
       ),
     );
   }
@@ -74,16 +73,18 @@ async function handlePOST(request, env) {
   // send thank you email if payment is successful
   if (paymentIntentData && payment_status === "paid") {
     payment_type === "crowdfunding" &&
-      promises.push(sendEmail(paymentIntentData, env));
+      promises.push(sendEmail(paymentIntentData));
 
     const { hostname: domain } = new URL(origin_url);
 
     if (payment_type === "ecommerce") {
       promises.push(
-        createOrder(
-          { paymentID, domain, paymentBaserowRecordID, ...paymentIntentData },
-          env,
-        ),
+        createOrder({
+          paymentID,
+          domain,
+          paymentBaserowRecordID,
+          ...paymentIntentData,
+        }),
       );
 
       if (env.ENVIRONMENT === "PRODUCTION") {

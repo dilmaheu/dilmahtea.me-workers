@@ -1,13 +1,17 @@
-// @ts-check
+import type { Country } from "../types";
 
-export default async function getCountryCode(country, env) {
+import env from "../env";
+
+export default async function getCountryCode(country) {
+  const { STRAPI_ACCESS_TOKEN, STRAPI_GRAPHQL_ENDPOINT } = env();
+
   const {
     data: { countries },
-  } = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
+  } = await fetch(STRAPI_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
+      Authorization: `Bearer ${STRAPI_ACCESS_TOKEN}`,
     },
     body: JSON.stringify({
       query: `
@@ -23,7 +27,9 @@ export default async function getCountryCode(country, env) {
         }
       `,
     }),
-  }).then((response) => response.json());
+  }).then((response) =>
+    response.json<{ data: { countries: { data: Country[] } } }>(),
+  );
 
   const countryCode = countries.data.find(
     ({ attributes: { name } }) => name === country,

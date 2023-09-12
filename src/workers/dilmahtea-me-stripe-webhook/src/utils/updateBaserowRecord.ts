@@ -1,16 +1,21 @@
-// @ts-check
+import env from "../env";
 
 export default async function updateBaserowRecord(
   rowID,
   updatedData,
   payment_type,
-  env,
 ) {
+  const {
+    BASEROW_TOKEN,
+    BASEROW_CROWDFUNDING_TABLE_ID,
+    BASEROW_PAYMENT_RECORDS_TABLE_ID,
+  } = env();
+
   const databaseTableID =
     payment_type === "crowdfunding"
-      ? env.BASEROW_CROWDFUNDING_TABLE_ID
+      ? BASEROW_CROWDFUNDING_TABLE_ID
       : payment_type === "ecommerce"
-      ? env.BASEROW_PAYMENT_RECORDS_TABLE_ID
+      ? BASEROW_PAYMENT_RECORDS_TABLE_ID
       : null;
 
   const response = await fetch(
@@ -19,7 +24,7 @@ export default async function updateBaserowRecord(
       method: "PATCH",
       body: JSON.stringify(updatedData),
       headers: {
-        Authorization: `Token ${env.BASEROW_TOKEN}`,
+        Authorization: `Token ${BASEROW_TOKEN}`,
         "Content-Type": "application/json",
       },
     },

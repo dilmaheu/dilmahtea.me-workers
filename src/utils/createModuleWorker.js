@@ -1,3 +1,5 @@
+import { setENV } from "./env";
+
 const headers = new Headers({
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "*",
@@ -27,6 +29,8 @@ const handleOPTIONS = (methods) =>
 export default function ({ pathname: endpointPathname, methods }) {
   const worker = {
     async fetch(request, env, ctx) {
+      setENV(env);
+
       let { pathname } = new URL(request.url);
 
       if (pathname === endpointPathname) {

@@ -1,6 +1,6 @@
 // @ts-check
 
-export default async function syncProductPrice(ItemsRecord, env) {
+export default async function syncProductsPricings(ItemsRecord, env) {
   const headers = new Headers({
     "Content-Type": "application/json",
     Authorization: "Bearer " + env.STRAPI_ACCESS_TOKEN,

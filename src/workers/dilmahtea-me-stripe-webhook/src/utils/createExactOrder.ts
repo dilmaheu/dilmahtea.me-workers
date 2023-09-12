@@ -1,24 +1,22 @@
-// @ts-check
+import env from "../env";
 
 import createCustomer from "./createCustomer";
 import updateCustomer from "./updateCustomer";
-import fetchExactAPIConstructor from "../../../../utils/fetchExactAPIConstructor";
 
-export default async function createExactOrder(
-  {
-    locale,
-    email: Email,
-    first_name: FirstName,
-    last_name: LastName,
-    city: City,
-    postal_code: Postcode,
-    street,
-    cart,
-    countryCode: Country,
-  },
-  env,
-) {
-  const fetchExactAPI = fetchExactAPIConstructor(env);
+import fetchExactAPI from "../../../../utils/fetchExactAPI";
+
+export default async function createExactOrder({
+  locale,
+  email: Email,
+  first_name: FirstName,
+  last_name: LastName,
+  city: City,
+  postal_code: Postcode,
+  street,
+  cart,
+  countryCode: Country,
+}) {
+  const { PAYMENT_CONDITION } = env();
 
   const Name = `${FirstName} ${LastName}`,
     Language = locale.toUpperCase();
@@ -65,9 +63,9 @@ export default async function createExactOrder(
 
     customerID = existingCustomer.feed.entry.content["m:properties"]["d:ID"];
 
-    await updateCustomer(Customer, existingCustomer, fetchExactAPI);
+    await updateCustomer(Customer, existingCustomer);
   } else {
-    customerID = await createCustomer(Customer, fetchExactAPI);
+    customerID = await createCustomer(Customer);
 
     console.log("Exact: Customer created successfully");
   }
@@ -96,7 +94,7 @@ export default async function createExactOrder(
   const salesOrder = await fetchExactAPI("POST", "/salesorder/SalesOrders", {
     OrderedBy: customerID,
     Description: `Sales to ${Name}`,
-    PaymentCondition: env.PAYMENT_CONDITION,
+    PaymentCondition: PAYMENT_CONDITION,
     SalesOrderLines: Object.values(cartWithShippingCost).map(
       ({ sku, quantity, price, tax }) => ({
         Item: items.find((props) => props["d:Code"] === sku)["d:ID"],

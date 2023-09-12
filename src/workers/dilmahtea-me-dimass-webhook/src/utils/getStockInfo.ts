@@ -1,11 +1,14 @@
-import { XMLParser as XMLParserConstructor } from "fast-xml-parser";
+import type { Item, GetDimassStockResponse } from "../types";
 
-import { ENV } from "../types";
-import { Item, GetDimassStockResponse } from "../types";
+import env from "../env";
+
+import { XMLParser as XMLParserConstructor } from "fast-xml-parser";
 
 const XMLParser = new XMLParserConstructor();
 
-export default async function (env: ENV) {
+export default async function () {
+  const { DIMASS_API_SECRET, DIMASS_API_KEY, DIMASS_API_ENDPOINT } = env();
+
   const body = `
     <soapenv:Envelope
       xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -32,7 +35,7 @@ export default async function (env: ENV) {
     timestamp = new Date().getTime().toString();
 
   const encodedSignature = new TextEncoder().encode(
-      nonce + timestamp + env.DIMASS_API_SECRET,
+      nonce + timestamp + DIMASS_API_SECRET,
     ),
     signatureBuffer = await crypto.subtle.digest("SHA-1", encodedSignature),
     signature = Array.from(new Uint8Array(signatureBuffer))
@@ -43,11 +46,11 @@ export default async function (env: ENV) {
     nonce,
     timestamp,
     signature,
-    apikey: env.DIMASS_API_KEY,
+    apikey: DIMASS_API_KEY,
   };
 
   const dimassStockResponse: GetDimassStockResponse = await fetch(
-    env.DIMASS_API_ENDPOINT,
+    DIMASS_API_ENDPOINT,
     {
       method: "POST",
       headers,

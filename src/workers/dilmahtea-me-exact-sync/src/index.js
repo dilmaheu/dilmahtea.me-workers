@@ -1,13 +1,14 @@
 // @ts-check
 
+import { setENV } from "../../../utils/env";
+import fetchExactAPI from "../../../utils/fetchExactAPI";
 import syncProductsPricings from "./utils/syncProductsPricings";
-import fetchExactAPIConstructor from "../../../utils/fetchExactAPIConstructor";
 
 export default {
   async scheduled(_, env, ctx) {
     ctx.waitUntil(
       new Promise(async (resolve) => {
-        const fetchExactAPI = fetchExactAPIConstructor(env);
+        setENV(env);
 
         const TIMESTAMP_TOKEN_KEY = "HIGHEST_TIMESTAMP_" + env.ENVIRONMENT,
           LAST_HIGHEST_TIMESTAMP = Number(

@@ -1,6 +1,6 @@
-// @ts-check
+import env from "../env";
 
-export default async function sendEmail(paymentData, env) {
+export default async function sendEmail(paymentData) {
   const {
     orderNumber,
     domain,
@@ -28,6 +28,8 @@ export default async function sendEmail(paymentData, env) {
     success_url,
   } = paymentData;
 
+  const { MAILS, DKIM_PRIVATE_KEY } = env();
+
   const name = `${first_name} ${last_name}`;
 
   const lineItems = !cart
@@ -42,7 +44,7 @@ export default async function sendEmail(paymentData, env) {
       ? "Crowdfunding Email"
       : "Ecommerce Payment Confirmation Mail";
 
-  const mailData = JSON.parse(await env.MAILS.get(mailKey));
+  const mailData = JSON.parse(await MAILS.get(mailKey));
 
   const mail = mailData[locale],
     { Subject, From_name, From_email, htmlEmail } = mail;
@@ -91,7 +93,7 @@ export default async function sendEmail(paymentData, env) {
           to: [{ email, name }],
           dkim_domain: "dilmahtea.me",
           dkim_selector: "mailchannels",
-          dkim_private_key: env.DKIM_PRIVATE_KEY,
+          dkim_private_key: DKIM_PRIVATE_KEY,
         },
       ],
       from: {

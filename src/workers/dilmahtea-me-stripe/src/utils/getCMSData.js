@@ -1,95 +1,20 @@
-const query = `
-  {
-    crowdfundingPlans {
-      data {
-        attributes {
-          Perk
-          Price_EUR_excl_VAT
-        }
-      }
-    }
+export default async function getCMSData(request, env) {
+  const origin = (() => {
+    // check if an alternative origin exists
+    if (env.ALTERNATIVE_ORIGIN) {
+      const { hostname } = new URL(request.headers.get("referer"));
 
-    i18NLocales {
-      data {
-        attributes {
-          code
-        }
+      if (hostname === "localhost") {
+        return env.ALTERNATIVE_ORIGIN;
       }
+    } else {
+      return request.headers.get("Origin");
     }
+  })();
 
-    products {
-      data {
-        attributes {
-          locale
-          SKU
-          Title
-          Price
-          Stock_amount
-          localizations {
-            data {
-              attributes {
-                locale
-                Title
-              }
-            }
-          }
-        }
-      }
-    }
+  const validationDatasetURL = origin + "/db/validation-dataset.json";
 
-    countries {
-      data {
-        attributes {
-          name
-          code
-        }
-      }
-    }
-
-    kindnessCauses {
-      data {
-        attributes {
-          cause
-        }
-      }
-    }
-
-    shippingMethods {
-      data {
-        attributes {
-          method
-          cost
-        }
-      }
-    }
-
-    paymentMethods {
-      data {
-        attributes {
-          method
-          supported_countries {
-            data {
-              attributes {
-                name
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-export default async function getCMSData(env) {
-  // process data for validation
-  const { data: CMSData } = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
-    },
-    body: JSON.stringify({ query }),
-  }).then((response) => response.json());
+  const CMSData = await fetch(validationDatasetURL).then((res) => res.json());
 
   return CMSData;
 }
