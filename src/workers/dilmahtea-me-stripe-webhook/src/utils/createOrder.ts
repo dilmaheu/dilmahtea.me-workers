@@ -1,5 +1,3 @@
-// @ts-check
-
 import sendEmail from "./sendEmail";
 import getCountryCode from "./getCountryCode";
 import createExactOrder from "./createExactOrder";
@@ -8,7 +6,7 @@ import updateBaserowRecord from "./updateBaserowRecord";
 
 import sendErrorEmail from "../../../../utils/sendErrorEmail";
 
-export default async function createOrder(paymentData, env) {
+export default async function createOrder(paymentData) {
   const {
     domain,
     paymentID,
@@ -35,40 +33,35 @@ export default async function createOrder(paymentData, env) {
     success_url,
   } = paymentData;
 
-  paymentData.countryCode = await getCountryCode(country, env);
+  paymentData.countryCode = await getCountryCode(country);
 
   try {
-    const salesOrder = await createExactOrder(paymentData, env).catch(
-      (error) => {
-        error.platform = "Exact";
+    const salesOrder = await createExactOrder(paymentData).catch((error) => {
+      error.platform = "Exact";
 
-        throw error;
-      },
-    );
+      throw error;
+    });
 
     const orderNumber =
       salesOrder.entry.content["m:properties"]["d:OrderNumber"];
 
-    await createDimassOrder({ ...paymentData, orderNumber }, env).catch(
-      (error) => {
-        error.platform = "Dimass";
+    await createDimassOrder({ ...paymentData, orderNumber }).catch((error) => {
+      error.platform = "Dimass";
 
-        throw error;
-      },
-    );
+      throw error;
+    });
 
     await Promise.all([
-      sendEmail({ orderNumber, ...paymentData }, env),
+      sendEmail({ orderNumber, ...paymentData }),
       updateBaserowRecord(
         paymentBaserowRecordID,
         { "Order Number": orderNumber, "Order Status": "Confirmed" },
         payment_type,
-        env,
       ),
     ]);
   } catch (error) {
     error.creation = "order";
 
-    await sendErrorEmail(error, { paymentID }, env);
+    await sendErrorEmail(error, { paymentID });
   }
 }

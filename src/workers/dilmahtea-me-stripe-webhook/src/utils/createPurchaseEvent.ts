@@ -1,5 +1,3 @@
-// @ts-check
-
 export default function createPurchaseEvent({
   promises,
   origin_url,
@@ -11,7 +9,7 @@ export default function createPurchaseEvent({
 
   purchaseEventRequestHeaders.set("Content-Type", "application/json");
 
-  purchasedProducts.forEach((product) => {
+  purchasedProducts.forEach((product: Record<string, any>) => {
     promises.push(
       fetch("https://plausible.io/api/event", {
         method: "POST",

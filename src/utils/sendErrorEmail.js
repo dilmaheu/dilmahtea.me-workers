@@ -1,6 +1,8 @@
 // @ts-check
 
-const sendErrorEmail = (error, { orderNumber = null, paymentID = null }, env) =>
+import env from "./env";
+
+const sendErrorEmail = (error, { orderNumber = null, paymentID = null }) =>
   fetch("https://api.mailchannels.net/tx/v1/send", {
     method: "POST",
     headers: {
@@ -12,14 +14,14 @@ const sendErrorEmail = (error, { orderNumber = null, paymentID = null }, env) =>
           to: [
             {
               email:
-                env.ENVIRONMENT === "PRODUCTION"
+                env().ENVIRONMENT === "PRODUCTION"
                   ? "hello@dilmahtea.me"
                   : "dev@dilmahtea.me",
             },
           ],
           dkim_domain: "dilmahtea.me",
           dkim_selector: "mailchannels",
-          dkim_private_key: env.DKIM_PRIVATE_KEY,
+          dkim_private_key: env().DKIM_PRIVATE_KEY,
         },
       ],
       from: {
@@ -48,6 +50,8 @@ const sendErrorEmail = (error, { orderNumber = null, paymentID = null }, env) =>
         },
       ],
     }),
+  }).then(async (res) => {
+    console.log(await res.json());
   });
 
 export default sendErrorEmail;

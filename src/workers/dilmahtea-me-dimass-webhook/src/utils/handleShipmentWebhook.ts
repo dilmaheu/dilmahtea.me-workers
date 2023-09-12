@@ -1,22 +1,20 @@
-import { ENV, Shipment } from "../types";
+import type { Shipment } from "../types";
+
+import env from "../env";
 
 import { reply } from "../../../../utils/createModuleWorker";
 
 import sendInvoice from "./sendInvoice";
 import createGoodsDelivery from "./createGoodsDelivery";
+
+import fetchExactAPI from "../../../../utils/fetchExactAPI";
 import sendErrorEmail from "../../../../utils/sendErrorEmail";
-import fetchExactAPIConstructor from "../../../../utils/fetchExactAPIConstructor";
 
-export default async function handleShipmentWebhook(
-  env: ENV,
-  shipment: Shipment,
-) {
-  const fetchExactAPI = fetchExactAPIConstructor(env);
-
+export default async function handleShipmentWebhook(shipment: Shipment) {
   const orderNumber = +shipment.order.order_number;
 
   if (
-    (env.ENVIRONMENT === "PRODUCTION" && orderNumber < 20000) ||
+    ((env().ENVIRONMENT as string) === "PRODUCTION" && orderNumber < 20000) ||
     Number.isNaN(orderNumber)
   ) {
     return reply({ success: null, message: "Irrelevant order" }, 200);
@@ -54,8 +52,6 @@ export default async function handleShipmentWebhook(
           orderNumber,
           tracking_url,
           shippingMethodID,
-          fetchExactAPI,
-          env,
         ).catch((error) => {
           error.creation = "invoice";
 
@@ -69,7 +65,6 @@ export default async function handleShipmentWebhook(
           orderNumber,
           TrackingNumber,
           shippingMethodID,
-          fetchExactAPI,
         ).catch((error) => {
           error.creation = "goods delivery";
 
@@ -84,7 +79,7 @@ export default async function handleShipmentWebhook(
     } catch (error) {
       error.platform = "Exact";
 
-      await sendErrorEmail(error, { orderNumber }, env);
+      await sendErrorEmail(error, { orderNumber });
     }
   }
 

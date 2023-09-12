@@ -22,13 +22,21 @@ async function handlePOST(request: Request, env: ENV): Promise<Response> {
   //   env.DIMASS_WEBHOOK_SECRET
   // );
 
+  // temporarily perform validation by passing a secret in the request header
+  if (
+    request.headers.get("Dimass-Temp-Webhook-Secret") !==
+    env.DIMASS_TEMP_WEBHOOK_SECRET
+  ) {
+    throw new Error("Invalid secret!");
+  }
+
   // type guard for Shipment
   const isShipment = (data: WebhookResponseData): data is Shipment =>
     "shipment_lines" in data;
 
   return await (isShipment(webhookData)
-    ? handleShipmentWebhook(env, webhookData)
-    : updateStock(env));
+    ? handleShipmentWebhook(webhookData)
+    : updateStock());
 }
 
 export default createModuleWorker({

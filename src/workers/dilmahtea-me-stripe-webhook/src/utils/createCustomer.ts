@@ -1,16 +1,19 @@
-// @ts-check
-
 import AddressTypes from "./AddressTypes";
+import fetchExactAPI from "../../../../utils/fetchExactAPI";
 
 const NonVisitAddressTypes = structuredClone(AddressTypes);
 
 // @ts-ignore
 delete NonVisitAddressTypes.Visit;
 
-export default async function createCustomer(
-  { Name, Email, FirstName, LastName, Language, Address },
-  fetchExactAPI,
-) {
+export default async function createCustomer({
+  Name,
+  Email,
+  FirstName,
+  LastName,
+  Language,
+  Address,
+}) {
   const customer = await fetchExactAPI("POST", "/CRM/Accounts", {
     Name,
     Email,

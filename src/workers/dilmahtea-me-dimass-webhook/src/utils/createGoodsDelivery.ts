@@ -1,9 +1,10 @@
+import fetchExactAPI from "../../../../utils/fetchExactAPI";
+
 export default async function createGoodsDelivery(
   orderID,
   orderNumber,
   TrackingNumber,
   shippingMethodID,
-  fetchExactAPI,
 ) {
   const [orderLines, AmsterdamTime] = await Promise.all([
     fetchExactAPI(

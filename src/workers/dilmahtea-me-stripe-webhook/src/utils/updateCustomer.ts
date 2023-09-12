@@ -1,8 +1,9 @@
 // @ts-check
 
 import AddressTypes from "./AddressTypes";
+import fetchExactAPI from "../../../../utils/fetchExactAPI";
 
-async function updateContact(customer, contact, fetchExactAPI) {
+async function updateContact(customer, contact) {
   const { FirstName, LastName } = customer;
 
   if (
@@ -16,12 +17,7 @@ async function updateContact(customer, contact, fetchExactAPI) {
   }
 }
 
-async function updateAccount(
-  customer,
-  ExistingCustomer,
-  contact,
-  fetchExactAPI,
-) {
+async function updateAccount(customer, ExistingCustomer, contact) {
   const contactID = contact["d:ID"],
     { Name, Language } = customer;
 
@@ -45,12 +41,7 @@ async function updateAccount(
   }
 }
 
-async function updateAddress(
-  customer,
-  ExistingCustomer,
-  contactID,
-  fetchExactAPI,
-) {
+async function updateAddress(customer, ExistingCustomer, contactID) {
   const { Address } = customer;
 
   const linkedAddresses = await fetchExactAPI(
@@ -115,11 +106,7 @@ async function updateAddress(
   );
 }
 
-export default async function updateCustomer(
-  customer,
-  existingCustomer,
-  fetchExactAPI,
-) {
+export default async function updateCustomer(customer, existingCustomer) {
   const ExistingCustomer = existingCustomer.feed.entry.content["m:properties"];
 
   const promises = [];
@@ -160,7 +147,7 @@ export default async function updateCustomer(
       contact = feed.entry.content["m:properties"];
     }
 
-    promises.push(updateContact(customer, contact, fetchExactAPI));
+    promises.push(updateContact(customer, contact));
 
     return contact;
   });
@@ -169,8 +156,8 @@ export default async function updateCustomer(
 
   promises.push(
     ...[
-      updateAccount(customer, ExistingCustomer, contact, fetchExactAPI),
-      updateAddress(customer, ExistingCustomer, contactID, fetchExactAPI),
+      updateAccount(customer, ExistingCustomer, contact),
+      updateAddress(customer, ExistingCustomer, contactID),
     ],
   );
 

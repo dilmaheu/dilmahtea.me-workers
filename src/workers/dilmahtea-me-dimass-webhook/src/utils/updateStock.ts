@@ -1,12 +1,11 @@
-import { ENV } from "../types";
-
 import { reply } from "../../../../utils/createModuleWorker";
+
 import getStockInfo from "./getStockInfo";
 import updateStrapiProducts from "./updateStrapiProducts";
 import getStrapiProductsData from "./getStrapiProductsData";
 
-export default async function updateStock(env: ENV) {
-  const productsStockInfo = await getStockInfo(env);
+export default async function updateStock() {
+  const productsStockInfo = await getStockInfo();
 
   if (productsStockInfo.length === 0) {
     return reply(
@@ -20,7 +19,7 @@ export default async function updateStock(env: ENV) {
 
   // array of SKU's to query Strapi
   const SKUs = productsStockInfo.map((product) => product.SKU),
-    strapiProductsData = await getStrapiProductsData(env, SKUs);
+    strapiProductsData = await getStrapiProductsData(SKUs);
 
   if (strapiProductsData.length === 0) {
     throw new Error(
@@ -28,7 +27,7 @@ export default async function updateStock(env: ENV) {
     );
   }
 
-  await updateStrapiProducts(env, strapiProductsData, productsStockInfo);
+  await updateStrapiProducts(strapiProductsData, productsStockInfo);
 
   return reply({ success: true, message: "Stock updated" }, 200);
 }

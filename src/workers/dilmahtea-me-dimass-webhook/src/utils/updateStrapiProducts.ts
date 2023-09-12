@@ -1,5 +1,6 @@
-import { ENV } from "../types";
-import { ProductsStockInfo } from "../index";
+import type { ProductsStockInfo } from "../index";
+
+import env from "../env";
 
 interface ProductInfo {
   id: number;
@@ -7,13 +8,14 @@ interface ProductInfo {
 }
 
 export default async function updateStrapiProducts(
-  env: ENV,
   strapiProductsData: ProductInfo[],
   productsStockInfo: ProductsStockInfo[],
 ) {
+  const { STRAPI_ACCESS_TOKEN, STRAPI_GRAPHQL_ENDPOINT } = env();
+
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
+    Authorization: `Bearer ${STRAPI_ACCESS_TOKEN}`,
   };
 
   // mutation query for all products
@@ -60,7 +62,7 @@ export default async function updateStrapiProducts(
     {},
   );
 
-  await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
+  await fetch(STRAPI_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers,
     body: JSON.stringify({
