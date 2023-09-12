@@ -7,10 +7,10 @@ import getPaymentMethodTypes from "./utils/getPaymentMethodTypes";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 const handlePOST = async (request, env, ctx) => {
-  const CMSData = await getCMSData(request, env);
-
   const body = await request.formData(),
-    rawPaymentData = Object.fromEntries(body),
+    rawPaymentData = Object.fromEntries(body);
+
+  const CMSData = await getCMSData(rawPaymentData.origin_url, env),
     validatedData = await getValidatedData(rawPaymentData, CMSData, env);
 
   if (validatedData.errors) {
