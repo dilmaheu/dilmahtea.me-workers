@@ -11,6 +11,8 @@ import handleShipmentWebhook from "./utils/handleShipmentWebhook";
 import validateSignature from "../../../utils/validateSignature";
 import createModuleWorker from "../../../utils/createModuleWorker";
 
+import { setupContext } from "./context";
+
 export interface ProductsStockInfo {
   SKU: string;
   stockAmount: number;
@@ -28,6 +30,10 @@ async function handlePOST(request: Request, env: ENV): Promise<Response> {
   );
 
   const webhookData = JSON.parse(payload) as WebhookResponseData;
+
+  const contextID = request.url + webhookData.id;
+
+  await setupContext(contextID);
 
   const event = request.headers.get("X-SP-Event") as AcceptedShipmentEvents;
 

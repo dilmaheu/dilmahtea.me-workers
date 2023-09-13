@@ -1,6 +1,7 @@
 import type { Shipment, AcceptedShipmentEvents } from "../types";
 
 import env from "../env";
+import context from "../context";
 
 import { reply } from "../../../../utils/createModuleWorker";
 
@@ -25,6 +26,14 @@ export default async function handleShipmentWebhook(
 
   if (!["shipment_shipped", "shipment_delivered"].includes(event)) {
     return reply({ success: false, message: "Invalid shipment event!" }, 200);
+  }
+
+  if (event === "shipment_delivered" && !context.DeliveryDate) {
+    const AmsterdamTime = (await fetch(
+      "https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Amsterdam",
+    ).then(async (res) => res.json())) as Record<string, any>;
+
+    context.DeliveryDate = AmsterdamTime.currentLocalTime;
   }
 
   const salesOrder = await fetchExactAPI(
@@ -81,5 +90,7 @@ export default async function handleShipmentWebhook(
     error.platform = "Exact";
 
     await sendErrorEmail(error, { orderNumber });
+
+    throw error;
   }
 }

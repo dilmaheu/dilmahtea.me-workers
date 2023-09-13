@@ -6,6 +6,7 @@ export interface ENV {
   // KV
   EXACT_TOKENS: KVNamespace;
   EXACT_LAYOUTS: KVNamespace;
+  WORKER_CONTEXTS: KVNamespace;
 
   // EXACT
   EXACT_API_ENDPOINT: string;

@@ -1,3 +1,4 @@
+import context from "../context";
 import fetchExactAPI from "../../../../utils/fetchExactAPI";
 
 export default async function createGoodsDelivery(
@@ -6,29 +7,30 @@ export default async function createGoodsDelivery(
   TrackingNumber,
   shippingMethodID,
 ) {
-  const [orderLines, AmsterdamTime] = await Promise.all([
-    fetchExactAPI(
-      "GET",
-      `/salesorder/SalesOrderLines?$filter=OrderNumber eq ${orderNumber}`,
-    ),
-    fetch(
-      "https://timeapi.io/api/TimeZone/zone?timeZone=Europe/Amsterdam",
-    ).then(async (res) => res.json()) as Promise<Record<string, any>>,
-  ]);
+  const { DeliveryDate } = context;
 
-  const DeliveryDate = AmsterdamTime.currentLocalTime,
-    GoodsDeliveryLines = [orderLines.feed.entry].flat().map((orderLine) => ({
+  const orderLines = await fetchExactAPI(
+    "GET",
+    `/salesorder/SalesOrderLines?$filter=OrderNumber eq ${orderNumber}`,
+  );
+
+  const GoodsDeliveryLines = [orderLines.feed.entry]
+    .flat()
+    .map((orderLine) => ({
       SalesOrderLineID: orderLine.content["m:properties"]["d:ID"],
       QuantityDelivered: orderLine.content["m:properties"]["d:Quantity"],
     }));
 
   await Promise.all([
-    fetchExactAPI("POST", "/salesorder/GoodsDeliveries", {
-      TrackingNumber,
-      ShippingMethod: shippingMethodID,
-      DeliveryDate,
-      GoodsDeliveryLines,
-    }),
+    !context.hasCreatedGoodsDelivery &&
+      fetchExactAPI("POST", "/salesorder/GoodsDeliveries", {
+        TrackingNumber,
+        ShippingMethod: shippingMethodID,
+        DeliveryDate,
+        GoodsDeliveryLines,
+      }).then(() => {
+        context.hasCreatedGoodsDelivery = true;
+      }),
     fetchExactAPI("PUT", `/salesorder/SalesOrders(guid'${orderID}')`, {
       DeliveryDate,
     }),
