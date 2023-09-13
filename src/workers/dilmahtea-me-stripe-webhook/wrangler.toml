@@ -13,7 +13,8 @@ kv_namespaces = [
     { binding = "MAILS", id = "51f5be62eaf64aa8a9c69bccb81d396e" },
     { binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" },
     { binding = "CROWDFUNDINGS", id = "c971dd86589647799fb64dde47563fac" },
-    { binding = "ECOMMERCE_PAYMENTS", id = "5086c43e26a14fa3a177ea876f514a8f" }
+    { binding = "ECOMMERCE_PAYMENTS", id = "5086c43e26a14fa3a177ea876f514a8f" },
+    { binding = "WORKER_CONTEXTS", id = "3fcd1790b1e644caa0d76d1be2fc27f7" }
 ]
 
 [env.development]
@@ -26,7 +27,8 @@ kv_namespaces = [
     { binding = "MAILS", id = "7001794de1f245c0b37792b9215c1acf" },
     { binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" },
     { binding = "CROWDFUNDINGS", id = "bce59b3e55474063abce8ef8f5d755e7" },
-    { binding = "ECOMMERCE_PAYMENTS", id = "acd54db867fe4fa18351d3b89a00c05a" }
+    { binding = "ECOMMERCE_PAYMENTS", id = "acd54db867fe4fa18351d3b89a00c05a" },
+    { binding = "WORKER_CONTEXTS", id = "710872f91ae946d987a38af244352718" }
 ]
 
 # secrets

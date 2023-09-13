@@ -7,6 +7,13 @@ import updateBaserowRecord from "./utils/updateBaserowRecord";
 import createPurchaseEvent from "./utils/createPurchaseEvent";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
+import context, { setupContext } from "./context";
+
+type MetaData = {
+  paymentID: string;
+  payment_type: "crowdfunding" | "ecommerce";
+};
+
 const webCrypto = Stripe.createSubtleCryptoProvider();
 
 async function handlePOST(request: Request, env: ENV) {
@@ -33,7 +40,11 @@ async function handlePOST(request: Request, env: ENV) {
   }
 
   // @ts-ignore
-  const { paymentID, payment_type } = event.data.object.metadata;
+  const { paymentID, payment_type } = event.data.object.metadata as MetaData;
+
+  const contextID = request.url + paymentID;
+
+  await setupContext(contextID);
 
   const PAYMENT_INTENTS =
     payment_type === "crowdfunding"
@@ -83,21 +94,30 @@ async function handlePOST(request: Request, env: ENV) {
     const { hostname: domain } = new URL(origin_url);
 
     if (payment_type === "ecommerce") {
-      promises.push(
-        createOrder({
-          paymentID,
-          domain,
-          paymentBaserowRecordID,
-          ...paymentIntentData,
-        }),
-      );
+      if (!context.hasCreatedOrder) {
+        promises.push(
+          createOrder({
+            paymentID,
+            domain,
+            paymentBaserowRecordID,
+            ...paymentIntentData,
+          }).then(() => {
+            context.hasCreatedOrder = true;
+          }),
+        );
+      }
 
       if (env.ENVIRONMENT === "PRODUCTION") {
-        createPurchaseEvent({
-          promises,
-          origin_url,
-          paymentIntentData,
-        });
+        if (!context.hasCreatedPurchaseEvent) {
+          promises.push(
+            createPurchaseEvent({
+              origin_url,
+              paymentIntentData,
+            }).then(() => {
+              context.hasCreatedPurchaseEvent = true;
+            }),
+          );
+        }
       }
     }
   }

@@ -1,4 +1,5 @@
 import { setENV } from "./env";
+import { storeContext } from "./context";
 
 const headers = new Headers({
   "Content-Type": "application/json",
@@ -49,6 +50,8 @@ export default function ({ pathname: endpointPathname, methods }) {
             }
 
             throw error;
+          } finally {
+            await storeContext();
           }
         }
       }
