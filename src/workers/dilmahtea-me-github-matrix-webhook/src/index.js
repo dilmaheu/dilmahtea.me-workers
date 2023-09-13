@@ -4,16 +4,18 @@ import validateSignature from "../../../utils/validateSignature";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 async function handlePOST(request, env) {
-  const webhookPayload = await request.json(),
+  const payload = await request.text(),
     roomId = env.ROOM_ID,
     matrixBotAccessToken = env.MATRIX_BOT_ACCESS_TOKEN;
 
   await validateSignature(
-    webhookPayload,
+    payload,
     "SHA-256",
     request.headers.get("x-hub-signature-256").slice(7),
     env.GITHUB_WEBHOOK_SECRET,
   );
+
+  const webhookData = JSON.parse(payload);
 
   if (!roomId || !matrixBotAccessToken) {
     return new Response("Missing environment variables", { status: 500 });
@@ -23,19 +25,19 @@ async function handlePOST(request, env) {
 
   if (
     // Check if the PR was merged
-    webhookPayload.pull_request?.state === "closed" &&
-    webhookPayload.pull_request?.merged === true
+    webhookData.pull_request?.state === "closed" &&
+    webhookData.pull_request?.merged === true
   ) {
     const { number: pullRequestNumber, html_url: pullRequestUrl } =
-      webhookPayload.pull_request;
+      webhookData.pull_request;
 
     message = `PR Merge #${pullRequestNumber} done. ${pullRequestUrl}`;
   } else if (
     // Check if the build failed on the main branch
-    webhookPayload.check_run?.conclusion === "failure" &&
-    webhookPayload.check_run?.check_suite?.head_branch === "main"
+    webhookData.check_run?.conclusion === "failure" &&
+    webhookData.check_run?.check_suite?.head_branch === "main"
   ) {
-    message = `Build failure. Please check in detail by ${webhookPayload.check_run.html_url}. Please add 👍 or reply to this message when you have taken action so the team is aware.`;
+    message = `Build failure. Please check in detail by ${webhookData.check_run.html_url}. Please add 👍 or reply to this message when you have taken action so the team is aware.`;
   } else {
     // Return a 200 status for other cases
     return reply("No action required", 200);
