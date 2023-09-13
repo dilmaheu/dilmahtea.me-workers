@@ -36,7 +36,7 @@ async function handlePOST(request: Request, env: ENV): Promise<Response> {
 
   return await (isShipment(webhookData)
     ? handleShipmentWebhook(webhookData)
-    : updateStock());
+    : updateStock(webhookData.order_date));
 }
 
 export default createModuleWorker({

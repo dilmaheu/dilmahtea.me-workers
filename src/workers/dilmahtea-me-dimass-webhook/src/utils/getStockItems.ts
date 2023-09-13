@@ -1,4 +1,4 @@
-import type { Item, GetDimassStockResponse } from "../types";
+import type { GetDimassStockResponse } from "../types";
 
 import env from "../env";
 
@@ -6,7 +6,7 @@ import { XMLParser as XMLParserConstructor } from "fast-xml-parser";
 
 const XMLParser = new XMLParserConstructor();
 
-export default async function () {
+export default async function getStockItems(order_date: string) {
   const body = `
     <soapenv:Envelope
       xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -16,6 +16,7 @@ export default async function () {
       <soapenv:Body>
         <stoc:getStock>
           <filter>
+            <since>${order_date}</since>
             <stockTypes>
               <item>free</item>
               <item>available</item>
@@ -79,13 +80,5 @@ export default async function () {
       "ns1:getStockResponse"
     ].return;
 
-  const productsStockInfo = ((Array.isArray ? item : [item]) as Item[]).map(
-    (item) => ({
-      stockAmount: item.availableStock,
-      /** SKU value without Dimass's 'DILM' prefix. */
-      SKU: item.code.split(" ").pop() as string,
-    }),
-  );
-
-  return productsStockInfo;
+  return item;
 }
