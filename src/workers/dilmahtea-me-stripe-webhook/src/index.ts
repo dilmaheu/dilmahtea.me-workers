@@ -66,6 +66,11 @@ async function handlePOST(request: Request, env: ENV) {
         paymentBaserowRecordID,
         { "Payment Status": payment_status },
         payment_type,
+      ).then(() =>
+        PAYMENT_INTENTS.put(
+          paymentID,
+          JSON.stringify({ ...paymentIntentData, payment_status }),
+        ),
       ),
     );
   }
