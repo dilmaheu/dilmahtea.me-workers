@@ -1,4 +1,9 @@
-import { ENV, Shipment, WebhookResponseData } from "./types";
+import type {
+  ENV,
+  Shipment,
+  AcceptedShipmentEvents,
+  WebhookResponseData,
+} from "./types";
 
 import updateStock from "./utils/updateStock";
 import handleShipmentWebhook from "./utils/handleShipmentWebhook";
@@ -24,12 +29,14 @@ async function handlePOST(request: Request, env: ENV): Promise<Response> {
 
   const webhookData = JSON.parse(payload) as WebhookResponseData;
 
+  const event = request.headers.get("X-SP-Event") as AcceptedShipmentEvents;
+
   // type guard for Shipment
   const isShipment = (data: WebhookResponseData): data is Shipment =>
-    "shipment_lines" in data;
+    event.startsWith("shipment_");
 
   return await (isShipment(webhookData)
-    ? handleShipmentWebhook(webhookData)
+    ? handleShipmentWebhook(event, webhookData)
     : updateStock(webhookData.order_date));
 }
 

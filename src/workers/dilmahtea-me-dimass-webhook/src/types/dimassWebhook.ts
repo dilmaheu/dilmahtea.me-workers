@@ -32,7 +32,7 @@ declare interface Partner {
   name: string;
 }
 
-declare interface Order {
+export interface Order {
   id: number;
   delivery_address: DeliveryAddress;
   email: string;
@@ -67,6 +67,8 @@ export interface Shipment {
 }
 
 export type WebhookResponseData = Order | Shipment;
+
+export type AcceptedShipmentEvents = "shipment_shipped" | "shipment_delivered";
 
 // /**
 //  * Dimass webhook event types
