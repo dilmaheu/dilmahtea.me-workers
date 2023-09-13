@@ -5,17 +5,11 @@ export default async function updateBaserowRecord(
   updatedData,
   payment_type,
 ) {
-  const {
-    BASEROW_TOKEN,
-    BASEROW_CROWDFUNDING_TABLE_ID,
-    BASEROW_PAYMENT_RECORDS_TABLE_ID,
-  } = env();
-
   const databaseTableID =
     payment_type === "crowdfunding"
-      ? BASEROW_CROWDFUNDING_TABLE_ID
+      ? env.BASEROW_CROWDFUNDING_TABLE_ID
       : payment_type === "ecommerce"
-      ? BASEROW_PAYMENT_RECORDS_TABLE_ID
+      ? env.BASEROW_PAYMENT_RECORDS_TABLE_ID
       : null;
 
   const response = await fetch(
@@ -24,7 +18,7 @@ export default async function updateBaserowRecord(
       method: "PATCH",
       body: JSON.stringify(updatedData),
       headers: {
-        Authorization: `Token ${BASEROW_TOKEN}`,
+        Authorization: `Token ${env.BASEROW_TOKEN}`,
         "Content-Type": "application/json",
       },
     },

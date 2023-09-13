@@ -14,7 +14,7 @@ export default async function handleShipmentWebhook(shipment: Shipment) {
   const orderNumber = +shipment.order.order_number;
 
   if (
-    ((env().ENVIRONMENT as string) === "PRODUCTION" && orderNumber < 20000) ||
+    ((env.ENVIRONMENT as string) === "PRODUCTION" && orderNumber < 20000) ||
     Number.isNaN(orderNumber)
   ) {
     return reply({ success: null, message: "Irrelevant order" }, 200);

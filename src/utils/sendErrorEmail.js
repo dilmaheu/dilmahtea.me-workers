@@ -14,14 +14,14 @@ const sendErrorEmail = (error, { orderNumber = null, paymentID = null }) =>
           to: [
             {
               email:
-                env().ENVIRONMENT === "PRODUCTION"
+                env.ENVIRONMENT === "PRODUCTION"
                   ? "hello@dilmahtea.me"
                   : "dev@dilmahtea.me",
             },
           ],
           dkim_domain: "dilmahtea.me",
           dkim_selector: "mailchannels",
-          dkim_private_key: env().DKIM_PRIVATE_KEY,
+          dkim_private_key: env.DKIM_PRIVATE_KEY,
         },
       ],
       from: {

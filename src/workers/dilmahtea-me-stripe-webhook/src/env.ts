@@ -1,7 +1,5 @@
 import type { ENV } from "./types";
 
-import environment from "../../../utils/env";
+import env from "../../../utils/env";
 
-export default function env(): ENV {
-  return environment<ENV>();
-}
+export default env as unknown as ENV;

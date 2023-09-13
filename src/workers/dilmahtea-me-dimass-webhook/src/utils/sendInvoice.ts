@@ -7,8 +7,6 @@ export default async function sendInvoice(
   tracking_url,
   shippingMethodID,
 ) {
-  const { EXACT_LAYOUTS, JOURNAL_CODE } = env();
-
   const OrderedBy = await fetchExactAPI(
     "GET",
     `/salesorder/SalesOrders?$filter=OrderNumber eq ${orderNumber}`,
@@ -20,14 +18,14 @@ export default async function sendInvoice(
   ).then(({ entry }) => entry.content["m:properties"]["d:Language"]);
 
   const [EmailLayout, DocumentLayout] = await Promise.all([
-    EXACT_LAYOUTS.get(`EMAIL_${Language}`),
-    EXACT_LAYOUTS.get(`INVOICE_${Language}`),
+    env.EXACT_LAYOUTS.get(`EMAIL_${Language}`),
+    env.EXACT_LAYOUTS.get(`INVOICE_${Language}`),
   ]);
 
   await fetchExactAPI("POST", "/salesinvoice/InvoiceSalesOrders", {
     CreateMode: 1,
     InvoiceMode: 1,
-    JournalCode: JOURNAL_CODE,
+    JournalCode: env.JOURNAL_CODE,
     SalesOrderIDs: [{ ID: orderID }],
   });
 
