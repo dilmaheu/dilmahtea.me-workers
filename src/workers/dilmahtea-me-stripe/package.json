@@ -6,10 +6,5 @@
   "type": "module",
   "main": "src/index.js",
   "author": "Cris Shaki <cmshaki@gmail.com>",
-  "license": "MIT",
-  "dependencies": {
-    "stripe": "^12.18.0",
-    "zod": "^3.22.2",
-    "zod-validation-error": "^1.5.0"
-  }
+  "license": "MIT"
 }
