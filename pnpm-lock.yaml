@@ -22,7 +22,14 @@ importers:
         specifier: ^4.20230904.0
         version: 4.20230904.0
 
-  src/workers/dilmahtea-me-baserow: {}
+  src/workers/dilmahtea-me-baserow:
+    dependencies:
+      zod:
+        specifier: ^3.22.2
+        version: 3.22.2
+      zod-validation-error:
+        specifier: ^1.5.0
+        version: 1.5.0(zod@3.22.2)
 
   src/workers/dilmahtea-me-baserow-matrix-webhook: {}
 
