@@ -3,9 +3,11 @@ import type { ENV } from "./types";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 
+import getValidationDataset from "../../../utils/getValidationDataset";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 const PaymentCupOfKindnessSchema = z.object({
+  origin: z.string().url(),
   paymentID: z.string().uuid(),
   "Cup of Kindness": z.string(),
 });
@@ -29,8 +31,27 @@ async function updateCupOfKindness(request: Request, env: ENV) {
     );
   }
 
-  const { paymentID, "Cup of Kindness": cupOfKindness } =
-    paymentCupOfKindnessData;
+  const {
+    origin,
+    paymentID,
+    "Cup of Kindness": cupOfKindness,
+  } = paymentCupOfKindnessData;
+
+  const validationDataset = await getValidationDataset(origin, env);
+
+  const kindnessCauses = validationDataset.kindnessCauses.data.map(
+    ({ attributes: { cause } }) => cause,
+  );
+
+  if (!kindnessCauses.includes(cupOfKindness)) {
+    return reply(
+      {
+        message: "Validation error!",
+        error: "Invalid 'Cup of Kindness' value",
+      },
+      400,
+    );
+  }
 
   const PAYMENT_INTENTS = env.ECOMMERCE_PAYMENTS;
 

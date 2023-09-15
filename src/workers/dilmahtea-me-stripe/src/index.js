@@ -1,16 +1,18 @@
 import Stripe from "stripe";
-import getCMSData from "./utils/getCMSData";
+
 import getCustomerID from "./utils/getCustomerID";
 import getValidatedData from "./utils/getValidatedData";
 import createBaserowRecord from "./utils/createBaserowRecord";
 import getPaymentMethodTypes from "./utils/getPaymentMethodTypes";
+
+import getValidationDataset from "../../../utils/getValidationDataset";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 const handlePOST = async (request, env, ctx) => {
   const body = await request.formData(),
     rawPaymentData = Object.fromEntries(body);
 
-  const CMSData = await getCMSData(rawPaymentData.origin_url, env),
+  const CMSData = await getValidationDataset(rawPaymentData.origin_url, env),
     validatedData = await getValidatedData(rawPaymentData, CMSData, env);
 
   if (validatedData.errors) {

@@ -2,11 +2,15 @@
 
 import { z } from "zod";
 
-export default async function getCMSData(origin_url, env) {
+export default async function getValidationDataset(origin_url, env) {
+  const isDevelopment = !!env.CF_PAGES_DOMAIN;
+
   const originURL = new URL(origin_url);
 
   const origin =
-    originURL.hostname === "localhost" ? env.ORIGIN : originURL.origin;
+    isDevelopment && originURL.hostname === "localhost"
+      ? env.ORIGIN
+      : originURL.origin;
 
   const OriginSchema = z
     .string()
@@ -22,7 +26,7 @@ export default async function getCMSData(origin_url, env) {
 
   const validationDatasetURL = origin + "/db/validation-dataset.json";
 
-  const CMSData = await fetch(validationDatasetURL).then((res) => res.json());
+  const dataset = await fetch(validationDatasetURL).then((res) => res.json());
 
-  return CMSData;
+  return dataset;
 }

@@ -5,6 +5,7 @@ main = "./src/index.ts"
 workers_dev = false
 logpush = true
 placement = { mode = "smart" }
+vars = { ORIGIN = "https://dilmahtea.me" }
 routes = [
     { pattern = "baserow.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
@@ -15,6 +16,7 @@ kv_namespaces = [
 
 [env.development]
 name = "dilmahtea-me-baserow-dev"
+vars = { ORIGIN = "https://dev.dilmahtea-me.pages.dev", CF_PAGES_DOMAIN = "https://*.dilmahtea-me.pages.dev" }
 routes = [
     { pattern = "dev.baserow.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
