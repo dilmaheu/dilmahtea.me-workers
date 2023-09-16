@@ -9,7 +9,7 @@ import sendInvoice from "./sendInvoice";
 import createGoodsDelivery from "./createGoodsDelivery";
 
 import fetchExactAPI from "../../../../utils/fetchExactAPI";
-import sendErrorEmail from "../../../../utils/sendErrorEmail";
+import throwExtendedError from "../../../../utils/throwExtendedError";
 
 export default async function handleShipmentWebhook(
   event: AcceptedShipmentEvents,
@@ -58,39 +58,39 @@ export default async function handleShipmentWebhook(
   const shippingMethodID =
     shippingMethod.feed.entry.content["m:properties"]["d:ID"];
 
-  try {
-    if (event === "shipment_shipped") {
-      await sendInvoice(
-        orderID,
-        orderNumber,
-        tracking_url,
-        shippingMethodID,
-      ).catch((error) => {
-        error.creation = "invoice";
-
-        throw error;
+  if (event === "shipment_shipped") {
+    await sendInvoice(
+      orderID,
+      orderNumber,
+      tracking_url,
+      shippingMethodID,
+    ).catch(async (error) => {
+      await throwExtendedError({
+        error,
+        requestData: { OrderNumber: orderNumber },
+        subject: "Exact: Error sending invoice",
+        bodyText:
+          "An error was thrown while sending invoice. Please manually send the invoice.",
       });
+    });
 
-      return reply({ success: true, message: "Sales invoice sent" }, 200);
-    } else {
-      await createGoodsDelivery(
-        orderID,
-        orderNumber,
-        TrackingNumber,
-        shippingMethodID,
-      ).catch((error) => {
-        error.creation = "goods delivery";
-
-        throw error;
+    return reply({ success: true, message: "Sales invoice sent" }, 200);
+  } else {
+    await createGoodsDelivery(
+      orderID,
+      orderNumber,
+      TrackingNumber,
+      shippingMethodID,
+    ).catch(async (error) => {
+      await throwExtendedError({
+        error,
+        requestData: { OrderNumber: orderNumber },
+        subject: "Exact: Error creating goods delivery",
+        bodyText:
+          "An error was thrown while creating goods delivery. Please manually create the goods delivery.",
       });
+    });
 
-      return reply({ success: true, message: "Delivery status updated" }, 200);
-    }
-  } catch (error) {
-    error.platform = "Exact";
-
-    await sendErrorEmail(error, { orderNumber });
-
-    throw error;
+    return reply({ success: true, message: "Delivery status updated" }, 200);
   }
 }

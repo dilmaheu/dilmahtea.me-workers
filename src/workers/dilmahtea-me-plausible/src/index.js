@@ -1,5 +1,6 @@
 // @ts-check
 
+import throwExtendedError from "../../../utils/throwExtendedError";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 async function getAddToCartEventProps({ SKU, Quantity }, env) {
@@ -77,7 +78,7 @@ async function handlePOST(request, env) {
 
       const eventProps = await getAddToCartEventProps(props, env);
 
-      return await fetch("https://plausible.io/api/event", {
+      const response = await fetch("https://plausible.io/api/event", {
         method: "POST",
         headers: responseHeaders,
         body: JSON.stringify({
@@ -86,14 +87,26 @@ async function handlePOST(request, env) {
           domain: "dilmahtea.me",
           props: eventProps,
         }),
-      })
-        .then(async (res) => reply(await res.text(), res.ok ? 200 : res.status))
-        .catch((error) => reply(error.message, 500));
+      });
+
+      if (!response.ok) {
+        await throwExtendedError({
+          response,
+          requestData: props,
+          subject: "Plausible: Failed to register Add to Cart event",
+          bodyText:
+            "Failed to register Add to Cart event. Please look into the issue.",
+        });
+      }
+
+      return reply("Add to Cart event registered", 200);
 
     default:
       return reply(JSON.stringify({ error: `Invalid event` }), 400);
   }
 }
+
+handlePOST.retry = true;
 
 export default createModuleWorker({
   pathname: "/",

@@ -46,6 +46,8 @@ async function handlePOST(request: Request, env: ENV): Promise<Response> {
     : updateStock(webhookData.order_date));
 }
 
+handlePOST.retry = true;
+
 export default createModuleWorker({
   pathname: "/",
   methods: { POST: handlePOST },

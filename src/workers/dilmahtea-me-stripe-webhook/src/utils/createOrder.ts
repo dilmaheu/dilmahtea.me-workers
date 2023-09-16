@@ -5,7 +5,7 @@ import createDimassOrder from "./createDimassOrder";
 import updateBaserowRecord from "./updateBaserowRecord";
 
 import rethrow from "../../../../utils/rethrow";
-import sendErrorEmail from "../../../../utils/sendErrorEmail";
+import throwExtendedError from "../../../../utils/throwExtendedError";
 
 import context from "../context";
 
@@ -78,10 +78,11 @@ export default async function createOrder(paymentData) {
 
     await Promise.all(promises);
   } catch (error) {
-    error.creation = "order";
-
-    await sendErrorEmail(error, { paymentID });
-
-    throw error;
+    await throwExtendedError({
+      error,
+      requestData: { PaymentID: paymentID },
+      subject: `${error.platform}: Error creating order`,
+      bodyText: `An error was thrown while creating order in ${error.platform}. Please manually confirm the order.`,
+    });
   }
 }

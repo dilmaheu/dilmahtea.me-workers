@@ -127,6 +127,8 @@ async function handlePOST(request: Request, env: ENV) {
   return reply({ received: true }, 200);
 }
 
+handlePOST.retry = true;
+
 export default createModuleWorker({
   pathname: "/",
   methods: { POST: handlePOST },

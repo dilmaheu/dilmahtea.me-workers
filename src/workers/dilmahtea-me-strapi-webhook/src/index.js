@@ -1,4 +1,8 @@
+// @ts-check
+
 import { updateMailsStore } from "./utils/updateMailsStore";
+
+import throwExtendedError from "../../../utils/throwExtendedError";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 async function handlePOST(request, env) {
@@ -16,7 +20,15 @@ async function handlePOST(request, env) {
         "ecommerce-payment-confirmation-mail",
       ].includes(model)
     ) {
-      return await updateMailsStore(env);
+      try {
+        return await updateMailsStore(env);
+      } catch (error) {
+        await throwExtendedError({
+          error,
+          subject: "Strapi: Error updating MAILS store",
+          bodyText: "Error updating MAILS store. Please look into the issue.",
+        });
+      }
     }
 
     return reply({ message: "No op" }, 200);
@@ -24,6 +36,8 @@ async function handlePOST(request, env) {
 
   return reply({ error: "Bad Request" }, 400);
 }
+
+handlePOST.retry = true;
 
 export default createModuleWorker({
   pathname: "/",

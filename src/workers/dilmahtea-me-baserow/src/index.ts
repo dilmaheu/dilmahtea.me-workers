@@ -3,6 +3,7 @@ import type { ENV } from "./types";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 
+import throwExtendedError from "../../../utils/throwExtendedError";
 import getValidationDataset from "../../../utils/getValidationDataset";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
@@ -60,7 +61,7 @@ async function updateCupOfKindness(request: Request, env: ENV) {
 
   const databaseTableID = env.BASEROW_PAYMENT_RECORDS_TABLE_ID;
 
-  await fetch(
+  const response = await fetch(
     `https://api.baserow.io/api/database/rows/table/${databaseTableID}/${rowID}/?user_field_names=true`,
     {
       method: "PATCH",
@@ -72,10 +73,22 @@ async function updateCupOfKindness(request: Request, env: ENV) {
         "Content-Type": "application/json",
       },
     },
-  ).then((res) => res.json<any>());
+  );
+
+  if (!response.ok) {
+    await throwExtendedError({
+      response,
+      requestData: paymentCupOfKindnessData,
+      subject: "Baserow: Failed to update Cup of Kindness",
+      bodyText:
+        "Failed to update Cup of Kindness. Please manually update the record in Baserow.",
+    });
+  }
 
   return reply({ success: true }, 200);
 }
+
+updateCupOfKindness.retry = true;
 
 export default createModuleWorker({
   pathname: "/order/cup-of-kindness",
