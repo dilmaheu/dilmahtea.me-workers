@@ -1,3 +1,5 @@
+// @ts-check
+
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 
@@ -71,6 +73,7 @@ export default async function getValidatedData(paymentData, CMSData) {
     payment_type: z.literal("crowdfunding"),
     country: z.literal("Netherlands"),
     favorite_tea: z.string(),
+    // @ts-ignore
     perk: z.enum(Object.keys(crowdfundingPerks)),
     product_desc: z
       .string()
@@ -83,6 +86,7 @@ export default async function getValidatedData(paymentData, CMSData) {
   const EcommercePaymentIntentSchema = BasePaymentIntentSchema.extend({
     payment_type: z.literal("ecommerce"),
     country: z.enum(countries),
+    // @ts-ignore
     shipping_method: z.enum(Object.keys(shippingMethods)),
     shipping_cost: z
       .number()
@@ -90,6 +94,7 @@ export default async function getValidatedData(paymentData, CMSData) {
         (value) => value === shippingMethods[paymentData.shipping_method],
       ),
     cart: z.record(
+      // @ts-ignore
       z.enum(Object.keys(products)),
       z
         .object({
@@ -155,10 +160,10 @@ export default async function getValidatedData(paymentData, CMSData) {
       ),
   });
 
-  const PaymentIntentSchema = z.union([
-    CrowdfundingPaymentIntentSchema,
-    EcommercePaymentIntentSchema,
-  ]);
+  const PaymentIntentSchema =
+    paymentData.payment_type === "crowdfunding"
+      ? CrowdfundingPaymentIntentSchema
+      : EcommercePaymentIntentSchema;
 
   try {
     return PaymentIntentSchema.parse(paymentData);
