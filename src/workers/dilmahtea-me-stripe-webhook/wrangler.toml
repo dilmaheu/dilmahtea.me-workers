@@ -16,6 +16,7 @@ kv_namespaces = [
     { binding = "ECOMMERCE_PAYMENTS", id = "5086c43e26a14fa3a177ea876f514a8f" },
     { binding = "WORKER_CONTEXTS", id = "3fcd1790b1e644caa0d76d1be2fc27f7" }
 ]
+services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
 [env.development]
 name = "dilmahtea-me-stripe-webhook-dev"
@@ -30,6 +31,7 @@ kv_namespaces = [
     { binding = "ECOMMERCE_PAYMENTS", id = "acd54db867fe4fa18351d3b89a00c05a" },
     { binding = "WORKER_CONTEXTS", id = "710872f91ae946d987a38af244352718" }
 ]
+services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
 # secrets
 # BASEROW_TOKEN

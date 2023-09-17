@@ -67,6 +67,7 @@ export default async function handleShipmentWebhook(
     ).catch(async (error) => {
       await throwExtendedError({
         error,
+        notifySales: true,
         requestData: { OrderNumber: orderNumber },
         subject: "Exact: Error sending invoice",
         bodyText:
@@ -84,6 +85,7 @@ export default async function handleShipmentWebhook(
     ).catch(async (error) => {
       await throwExtendedError({
         error,
+        notifySales: true,
         requestData: { OrderNumber: orderNumber },
         subject: "Exact: Error creating goods delivery",
         bodyText:

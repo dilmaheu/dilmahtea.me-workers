@@ -14,6 +14,7 @@ kv_namespaces = [
     { binding = "EXACT_LAYOUTS", id = "b75eb1bee9d7488fa33b8be89caab307" },
     { binding = "WORKER_CONTEXTS", id = "3fcd1790b1e644caa0d76d1be2fc27f7" }
 ]
+services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
 [env.development]
 name = "dilmahtea-me-dimass-webhook-dev"
@@ -26,6 +27,7 @@ kv_namespaces = [
     { binding = "EXACT_LAYOUTS", id = "f767fadbe91d459893e903cc9a01d40a" },
     { binding = "WORKER_CONTEXTS", id = "710872f91ae946d987a38af244352718" }
 ]
+services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
 # secrets
 # DIMASS_API_KEY

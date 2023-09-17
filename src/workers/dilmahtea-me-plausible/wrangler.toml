@@ -7,6 +7,7 @@ logpush = true
 routes = [
     { pattern = "analytics.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
+services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
 # secrets
 # STRAPI_ACCESS_TOKEN

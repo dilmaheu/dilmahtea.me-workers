@@ -80,6 +80,7 @@ export default async function createOrder(paymentData) {
   } catch (error) {
     await throwExtendedError({
       error,
+      notifySales: true,
       requestData: { PaymentID: paymentID },
       subject: `${error.platform}: Error creating order`,
       bodyText: `An error was thrown while creating order in ${error.platform}. Please manually confirm the order.`,
