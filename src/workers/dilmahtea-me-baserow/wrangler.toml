@@ -1,10 +1,11 @@
 name = "dilmahtea-me-baserow"
 account_id = "f0f636c746c8673c3905e9104b385251"
 compatibility_date = "2022-11-30"
-main = "./src/index.js"
+main = "./src/index.ts"
 workers_dev = false
 logpush = true
 placement = { mode = "smart" }
+vars = { ORIGIN = "https://dilmahtea.me" }
 routes = [
     { pattern = "baserow.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
@@ -12,9 +13,11 @@ kv_namespaces = [
     { binding = "CROWDFUNDINGS", id = "c971dd86589647799fb64dde47563fac" },
     { binding = "ECOMMERCE_PAYMENTS", id = "5086c43e26a14fa3a177ea876f514a8f" }
 ]
+services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
 [env.development]
 name = "dilmahtea-me-baserow-dev"
+vars = { ORIGIN = "https://dev.dilmahtea-me.pages.dev", CF_PAGES_DOMAIN = "https://*.dilmahtea-me.pages.dev" }
 routes = [
     { pattern = "dev.baserow.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
@@ -22,6 +25,7 @@ kv_namespaces = [
     { binding = "CROWDFUNDINGS", id = "bce59b3e55474063abce8ef8f5d755e7" },
     { binding = "ECOMMERCE_PAYMENTS", id = "acd54db867fe4fa18351d3b89a00c05a" }
 ]
+services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
 # secrets
 # BASEROW_TOKEN

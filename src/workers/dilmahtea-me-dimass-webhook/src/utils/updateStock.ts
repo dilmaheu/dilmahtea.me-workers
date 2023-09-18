@@ -1,11 +1,31 @@
+import type { Item } from "../types";
+
 import { reply } from "../../../../utils/createModuleWorker";
 
-import getStockInfo from "./getStockInfo";
+import getStockItems from "./getStockItems";
 import updateStrapiProducts from "./updateStrapiProducts";
 import getStrapiProductsData from "./getStrapiProductsData";
 
-export default async function updateStock() {
-  const productsStockInfo = await getStockInfo();
+export default async function updateStock(order_date: string) {
+  const item = await getStockItems(order_date);
+
+  if (!item) {
+    return reply(
+      {
+        success: false,
+        message: "No items to update.",
+      },
+      200,
+    );
+  }
+
+  const productsStockInfo = ((Array.isArray ? item : [item]) as Item[]).map(
+    (item) => ({
+      stockAmount: item.availableStock,
+      /** SKU value without Dimass's 'DILM' prefix. */
+      SKU: item.code.split(" ").pop() as string,
+    }),
+  );
 
   if (productsStockInfo.length === 0) {
     return reply(
@@ -13,7 +33,7 @@ export default async function updateStock() {
         success: false,
         message: "The items to update aren't relevant for the CMS.",
       },
-      400,
+      200,
     );
   }
 

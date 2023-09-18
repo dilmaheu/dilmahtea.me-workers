@@ -5,11 +5,9 @@ import env from "../env";
 type SKU = string;
 
 export default async function getStrapiProductsData(SKUs: SKU[]) {
-  const { STRAPI_ACCESS_TOKEN, STRAPI_GRAPHQL_ENDPOINT } = env();
-
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${STRAPI_ACCESS_TOKEN}`,
+    Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
   };
 
   const query = `
@@ -30,7 +28,7 @@ export default async function getStrapiProductsData(SKUs: SKU[]) {
   `;
 
   /** get the `id`'s from the products that need to be updated from Strapi */
-  const response = await fetch(STRAPI_GRAPHQL_ENDPOINT, {
+  const response = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers,
     body: JSON.stringify({ query }),

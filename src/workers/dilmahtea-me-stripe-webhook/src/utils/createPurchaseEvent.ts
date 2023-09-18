@@ -1,16 +1,12 @@
-export default function createPurchaseEvent({
-  promises,
-  origin_url,
-  paymentIntentData,
-}) {
+export default function createPurchaseEvent({ origin_url, paymentIntentData }) {
   const { cart, request_headers } = paymentIntentData,
     purchasedProducts = Object.values(cart),
     purchaseEventRequestHeaders = new Headers(request_headers);
 
   purchaseEventRequestHeaders.set("Content-Type", "application/json");
 
-  purchasedProducts.forEach((product: Record<string, any>) => {
-    promises.push(
+  return Promise.all(
+    purchasedProducts.map((product: Record<string, any>) =>
       fetch("https://plausible.io/api/event", {
         method: "POST",
         headers: Object.fromEntries(purchaseEventRequestHeaders),
@@ -28,6 +24,6 @@ export default function createPurchaseEvent({
           },
         }),
       }),
-    );
-  });
+    ),
+  );
 }

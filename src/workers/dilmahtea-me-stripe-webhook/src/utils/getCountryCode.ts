@@ -3,15 +3,13 @@ import type { Country } from "../types";
 import env from "../env";
 
 export default async function getCountryCode(country) {
-  const { STRAPI_ACCESS_TOKEN, STRAPI_GRAPHQL_ENDPOINT } = env();
-
   const {
     data: { countries },
-  } = await fetch(STRAPI_GRAPHQL_ENDPOINT, {
+  } = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${STRAPI_ACCESS_TOKEN}`,
+      Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
     },
     body: JSON.stringify({
       query: `

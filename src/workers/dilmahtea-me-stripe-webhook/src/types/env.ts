@@ -8,6 +8,7 @@ export interface ENV {
   EXACT_TOKENS: KVNamespace;
   CROWDFUNDINGS: KVNamespace;
   ECOMMERCE_PAYMENTS: KVNamespace;
+  WORKER_CONTEXTS: KVNamespace;
 
   // BASEROW
   BASEROW_TOKEN: string;

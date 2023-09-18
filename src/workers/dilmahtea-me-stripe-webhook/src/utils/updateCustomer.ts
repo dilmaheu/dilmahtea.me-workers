@@ -58,14 +58,14 @@ async function updateAddress(customer, ExistingCustomer, contactID) {
           props["d:Type"] !== Type ||
           (() => {
             const isCurrentAddress =
-              Type === props["d:Type"] &&
-              Address.AddressLine1 === props["d:AddressLine1"] &&
-              // handle empty string address lines
-              Address.AddressLine2 === (props["d:AddressLine2"] || undefined) &&
-              Address.AddressLine3 === (props["d:AddressLine3"] || undefined) &&
-              Address.City === props["d:City"] &&
-              Address.Country === props["d:Country"] &&
-              Address.Postcode === props["d:Postcode"];
+              // === check requires stringifying all props
+              Type == props["d:Type"] &&
+              Address.AddressLine1 == props["d:AddressLine1"] &&
+              Address.AddressLine2 == (props["d:AddressLine2"] || undefined) &&
+              Address.AddressLine3 == (props["d:AddressLine3"] || undefined) &&
+              Address.City == props["d:City"] &&
+              Address.Country == props["d:Country"] &&
+              Address.Postcode == props["d:Postcode"];
 
             if (isCurrentAddress) {
               matchedAddress = props;
@@ -115,12 +115,10 @@ export default async function updateCustomer(customer, existingCustomer) {
     "GET",
     `/CRM/Contacts?$filter=Email eq '${customer.Email}'&select=ID,FirstName,LastName`,
   ).then(async ({ feed }) => {
-    let contact;
-
-    // check if there are multiple existing contacts with the same email
-    if (Array.isArray(feed.entry)) {
-      // check if there is an exact match
-      const matchedContact = feed.entry.find(
+    const matchedContact = [feed.entry]
+      .flat()
+      .filter(Boolean)
+      .find(
         ({ content: { "m:properties": props } }) =>
           [customer.FirstName, ExistingCustomer["d:FirstName"]].includes(
             props["d:FirstName"],
@@ -128,28 +126,23 @@ export default async function updateCustomer(customer, existingCustomer) {
           [customer.LastName, ExistingCustomer["d:LastName"]].includes(
             props["d:LastName"],
           ),
-      );
+      )?.content["m:properties"];
 
-      if (matchedContact) {
-        contact = matchedContact.content["m:properties"];
-      } else {
-        // create a new contact if there is no exact match
-        const newContact = await fetchExactAPI("POST", "/CRM/Contacts", {
-          Account: ExistingCustomer["d:ID"],
-          FirstName: customer.FirstName,
-          LastName: customer.LastName,
-          Email: customer.Email,
-        });
+    if (matchedContact) {
+      promises.push(updateContact(customer, matchedContact));
 
-        return newContact.entry.content["m:properties"];
-      }
+      return matchedContact;
     } else {
-      contact = feed.entry.content["m:properties"];
+      // create a new contact if there is no contact or exact match
+      const newContact = await fetchExactAPI("POST", "/CRM/Contacts", {
+        Account: ExistingCustomer["d:ID"],
+        FirstName: customer.FirstName,
+        LastName: customer.LastName,
+        Email: customer.Email,
+      });
+
+      return newContact.entry.content["m:properties"];
     }
-
-    promises.push(updateContact(customer, contact));
-
-    return contact;
   });
 
   const contactID = contact["d:ID"];

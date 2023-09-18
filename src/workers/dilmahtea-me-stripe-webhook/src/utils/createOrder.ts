@@ -4,7 +4,10 @@ import createExactOrder from "./createExactOrder";
 import createDimassOrder from "./createDimassOrder";
 import updateBaserowRecord from "./updateBaserowRecord";
 
-import sendErrorEmail from "../../../../utils/sendErrorEmail";
+import rethrow from "../../../../utils/rethrow";
+import throwExtendedError from "../../../../utils/throwExtendedError";
+
+import context from "../context";
 
 export default async function createOrder(paymentData) {
   const {
@@ -36,32 +39,51 @@ export default async function createOrder(paymentData) {
   paymentData.countryCode = await getCountryCode(country);
 
   try {
-    const salesOrder = await createExactOrder(paymentData).catch((error) => {
-      error.platform = "Exact";
-
-      throw error;
-    });
+    context.salesOrder = await createExactOrder(paymentData).catch((error) =>
+      rethrow(error, "Exact"),
+    );
 
     const orderNumber =
-      salesOrder.entry.content["m:properties"]["d:OrderNumber"];
+      context.salesOrder.entry.content["m:properties"]["d:OrderNumber"];
 
-    await createDimassOrder({ ...paymentData, orderNumber }).catch((error) => {
-      error.platform = "Dimass";
+    if (!context.hasCreatedDimassOrder) {
+      await createDimassOrder({ ...paymentData, orderNumber }).catch((error) =>
+        rethrow(error, "Dimass"),
+      );
 
-      throw error;
-    });
+      context.hasCreatedDimassOrder = true;
+    }
 
-    await Promise.all([
-      sendEmail({ orderNumber, ...paymentData }),
-      updateBaserowRecord(
-        paymentBaserowRecordID,
-        { "Order Number": orderNumber, "Order Status": "Confirmed" },
-        payment_type,
-      ),
-    ]);
+    const promises = [];
+
+    if (!context.hasSentEmail) {
+      promises.push(
+        sendEmail({ orderNumber, ...paymentData }).then(() => {
+          context.hasSentEmail = true;
+        }),
+      );
+    }
+
+    if (!context.hasConfirmedOrderStatus) {
+      promises.push(
+        updateBaserowRecord(
+          paymentBaserowRecordID,
+          { "Order Number": orderNumber, "Order Status": "Confirmed" },
+          payment_type,
+        ).then(() => {
+          context.hasConfirmedOrderStatus = true;
+        }),
+      );
+    }
+
+    await Promise.all(promises);
   } catch (error) {
-    error.creation = "order";
-
-    await sendErrorEmail(error, { paymentID });
+    await throwExtendedError({
+      error,
+      notifySales: true,
+      requestData: { PaymentID: paymentID },
+      subject: `${error.platform}: Error creating order`,
+      bodyText: `An error was thrown while creating order in ${error.platform}. Please manually confirm the order.`,
+    });
   }
 }

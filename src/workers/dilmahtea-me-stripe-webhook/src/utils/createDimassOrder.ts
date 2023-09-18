@@ -20,13 +20,11 @@ export default async function createDimassOrder({
   countryCode,
   orderNumber,
 }) {
-  const { DIMASS_API_URL, DIMASS_API_KEY, DIMASS_API_SECRET } = env();
-
   const nonce = crypto.randomUUID(),
     timestamp = new Date().getTime().toString();
 
   const encodedSignature = new TextEncoder().encode(
-      nonce + timestamp + DIMASS_API_SECRET,
+      nonce + timestamp + env.DIMASS_API_SECRET,
     ),
     signatureBuffer = await crypto.subtle.digest("SHA-1", encodedSignature),
     signature = Array.from(new Uint8Array(signatureBuffer))
@@ -69,13 +67,13 @@ export default async function createDimassOrder({
     },
   };
 
-  const response = await fetch(DIMASS_API_URL, {
+  const response = await fetch(env.DIMASS_API_URL, {
     method: "POST",
     headers: {
       nonce,
       timestamp,
       signature,
-      apikey: DIMASS_API_KEY,
+      apikey: env.DIMASS_API_KEY,
     },
     body: `
       <soapenv:Envelope

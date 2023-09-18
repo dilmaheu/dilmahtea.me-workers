@@ -1,5 +1,5 @@
 export default async function validateSignature(
-  body: any,
+  payload: any,
   hashFunction: string,
   incomingSignature: string,
   webhookSecret: string,
@@ -13,12 +13,11 @@ export default async function validateSignature(
       ["sign"],
     );
 
-  const payload = JSON.stringify(body),
-    signatureBuffer = await crypto.subtle.sign(
-      "HMAC",
-      key,
-      encoder.encode(payload),
-    );
+  const signatureBuffer = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    encoder.encode(payload),
+  );
 
   const signature = Array.from(new Uint8Array(signatureBuffer))
     .map((byte) => byte.toString(16).padStart(2, "0"))

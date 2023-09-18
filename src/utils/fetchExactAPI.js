@@ -6,11 +6,11 @@ import { XMLParser as XMLParserConstructor } from "fast-xml-parser";
 const XMLParser = new XMLParserConstructor();
 
 const fetchExactAPI = async (method, url, data) =>
-  fetch(url.startsWith("https://") ? url : env().EXACT_API_ENDPOINT + url, {
+  fetch(url.startsWith("https://") ? url : env.EXACT_API_ENDPOINT + url, {
     method,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${await env().EXACT_TOKENS.get("ACCESS_TOKEN")}`,
+      Authorization: `Bearer ${await env.EXACT_TOKENS.get("ACCESS_TOKEN")}`,
     },
     body: JSON.stringify(data),
   })

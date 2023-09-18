@@ -14,9 +14,18 @@ importers:
       prettier:
         specifier: ^3.0.3
         version: 3.0.3
+      stripe:
+        specifier: ^12.18.0
+        version: 12.18.0
       wrangler:
         specifier: ^3.7.0
         version: 3.7.0
+      zod:
+        specifier: ^3.22.2
+        version: 3.22.2
+      zod-validation-error:
+        specifier: ^1.5.0
+        version: 1.5.0(zod@3.22.2)
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20230904.0
@@ -28,11 +37,7 @@ importers:
 
   src/workers/dilmahtea-me-baserow-stats: {}
 
-  src/workers/dilmahtea-me-dimass-webhook:
-    dependencies:
-      fast-xml-parser:
-        specifier: ^4.2.7
-        version: 4.2.7
+  src/workers/dilmahtea-me-dimass-webhook: {}
 
   src/workers/dilmahtea-me-exact-auth: {}
 
@@ -48,26 +53,9 @@ importers:
 
   src/workers/dilmahtea-me-strapi-webhook: {}
 
-  src/workers/dilmahtea-me-stripe:
-    dependencies:
-      stripe:
-        specifier: ^12.18.0
-        version: 12.18.0
-      zod:
-        specifier: ^3.22.2
-        version: 3.22.2
-      zod-validation-error:
-        specifier: ^1.5.0
-        version: 1.5.0(zod@3.22.2)
+  src/workers/dilmahtea-me-stripe: {}
 
-  src/workers/dilmahtea-me-stripe-webhook:
-    dependencies:
-      fast-xml-parser:
-        specifier: ^4.2.7
-        version: 4.2.7
-      stripe:
-        specifier: ^12.18.0
-        version: 12.18.0
+  src/workers/dilmahtea-me-stripe-webhook: {}
 
 packages:
 

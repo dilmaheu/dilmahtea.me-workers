@@ -16,8 +16,6 @@ export default async function createExactOrder({
   cart,
   countryCode: Country,
 }) {
-  const { PAYMENT_CONDITION } = env();
-
   const Name = `${FirstName} ${LastName}`,
     Language = locale.toUpperCase();
 
@@ -94,7 +92,7 @@ export default async function createExactOrder({
   const salesOrder = await fetchExactAPI("POST", "/salesorder/SalesOrders", {
     OrderedBy: customerID,
     Description: `Sales to ${Name}`,
-    PaymentCondition: PAYMENT_CONDITION,
+    PaymentCondition: env.PAYMENT_CONDITION,
     SalesOrderLines: Object.values(cartWithShippingCost).map(
       ({ sku, quantity, price, tax }) => ({
         Item: items.find((props) => props["d:Code"] === sku)["d:ID"],

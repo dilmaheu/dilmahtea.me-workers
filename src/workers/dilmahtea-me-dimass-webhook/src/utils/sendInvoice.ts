@@ -1,4 +1,5 @@
 import env from "../env";
+import context from "../context";
 import fetchExactAPI from "../../../../utils/fetchExactAPI";
 
 export default async function sendInvoice(
@@ -7,8 +8,6 @@ export default async function sendInvoice(
   tracking_url,
   shippingMethodID,
 ) {
-  const { EXACT_LAYOUTS, JOURNAL_CODE } = env();
-
   const OrderedBy = await fetchExactAPI(
     "GET",
     `/salesorder/SalesOrders?$filter=OrderNumber eq ${orderNumber}`,
@@ -20,18 +19,22 @@ export default async function sendInvoice(
   ).then(({ entry }) => entry.content["m:properties"]["d:Language"]);
 
   const [EmailLayout, DocumentLayout] = await Promise.all([
-    EXACT_LAYOUTS.get(`EMAIL_${Language}`),
-    EXACT_LAYOUTS.get(`INVOICE_${Language}`),
+    env.EXACT_LAYOUTS.get(`EMAIL_${Language}`),
+    env.EXACT_LAYOUTS.get(`INVOICE_${Language}`),
   ]);
 
-  await fetchExactAPI("POST", "/salesinvoice/InvoiceSalesOrders", {
-    CreateMode: 1,
-    InvoiceMode: 1,
-    JournalCode: JOURNAL_CODE,
-    SalesOrderIDs: [{ ID: orderID }],
-  });
+  if (!context.hasInvoicedSalesOrder) {
+    await fetchExactAPI("POST", "/salesinvoice/InvoiceSalesOrders", {
+      CreateMode: 1,
+      InvoiceMode: 1,
+      JournalCode: env.JOURNAL_CODE,
+      SalesOrderIDs: [{ ID: orderID }],
+    });
 
-  console.log("Exact: Sales invoice created successfully");
+    console.log("Exact: Sales invoice created successfully");
+
+    context.hasInvoicedSalesOrder = true;
+  }
 
   const invoice = await fetchExactAPI(
     "GET",
@@ -42,17 +45,20 @@ export default async function sendInvoice(
     invoice.feed.entry.content["m:properties"];
 
   await Promise.all([
-    fetchExactAPI("PUT", `/salesinvoice/SalesInvoices(guid'${InvoiceID}')`, {
-      Description: tracking_url,
-      ShippingMethod: shippingMethodID,
-    }).then(() =>
-      fetchExactAPI("POST", "/salesinvoice/PrintedSalesInvoices", {
-        InvoiceID,
-        EmailLayout,
-        DocumentLayout,
-        SendEmailToCustomer: true,
+    !context.hasSentInvoice &&
+      fetchExactAPI("PUT", `/salesinvoice/SalesInvoices(guid'${InvoiceID}')`, {
+        Description: tracking_url,
+        ShippingMethod: shippingMethodID,
+      }).then(async () => {
+        await fetchExactAPI("POST", "/salesinvoice/PrintedSalesInvoices", {
+          InvoiceID,
+          EmailLayout,
+          DocumentLayout,
+          SendEmailToCustomer: true,
+        });
+
+        context.hasSentInvoice = true;
       }),
-    ),
     fetchExactAPI("PUT", `/salesorder/SalesOrders(guid'${orderID}')`, {
       ShippingMethod: shippingMethodID,
     }),

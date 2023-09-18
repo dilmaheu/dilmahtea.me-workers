@@ -6,9 +6,5 @@
   "type": "module",
   "main": "src/index.js",
   "author": "Cris Shaki <cmshaki@gmail.com>",
-  "license": "MIT",
-  "dependencies": {
-    "fast-xml-parser": "^4.2.7",
-    "stripe": "^12.18.0"
-  }
+  "license": "MIT"
 }

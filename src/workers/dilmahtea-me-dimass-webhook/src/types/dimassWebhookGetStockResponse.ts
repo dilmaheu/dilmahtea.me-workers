@@ -19,7 +19,7 @@ declare interface Ns1GetStockResponse {
 
 declare interface Return {
   // can also be just one Item.
-  item: Item[] | Item;
+  item: Item[] | Item | null;
 }
 
 export interface Item {

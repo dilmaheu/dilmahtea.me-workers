@@ -1,4 +1,9 @@
-import { ENV, Shipment, WebhookResponseData } from "./types";
+import type {
+  ENV,
+  Shipment,
+  AcceptedShipmentEvents,
+  WebhookResponseData,
+} from "./types";
 
 import updateStock from "./utils/updateStock";
 import handleShipmentWebhook from "./utils/handleShipmentWebhook";
@@ -6,38 +11,42 @@ import handleShipmentWebhook from "./utils/handleShipmentWebhook";
 import validateSignature from "../../../utils/validateSignature";
 import createModuleWorker from "../../../utils/createModuleWorker";
 
+import { setupContext } from "./context";
+
 export interface ProductsStockInfo {
   SKU: string;
   stockAmount: number;
 }
 
 async function handlePOST(request: Request, env: ENV): Promise<Response> {
-  const webhookData = await request.json<WebhookResponseData>();
+  const payload = await request.text();
 
   // disable signature validation temporarily till Dimass fixes incorrect signature issue
-  // await validateSignature(
-  //   webhookData,
-  //   "SHA-1",
-  //   request.headers.get("X-SP-Signature"),
-  //   env.DIMASS_WEBHOOK_SECRET
-  // );
+  await validateSignature(
+    payload,
+    "SHA-1",
+    request.headers.get("X-SP-Signature"),
+    env.DIMASS_WEBHOOK_SECRET,
+  );
 
-  // temporarily perform validation by passing a secret in the request header
-  if (
-    request.headers.get("Dimass-Temp-Webhook-Secret") !==
-    env.DIMASS_TEMP_WEBHOOK_SECRET
-  ) {
-    throw new Error("Invalid secret!");
-  }
+  const webhookData = JSON.parse(payload) as WebhookResponseData;
+
+  const contextID = request.url + webhookData.id;
+
+  await setupContext(contextID);
+
+  const event = request.headers.get("X-SP-Event") as AcceptedShipmentEvents;
 
   // type guard for Shipment
   const isShipment = (data: WebhookResponseData): data is Shipment =>
-    "shipment_lines" in data;
+    event.startsWith("shipment_");
 
   return await (isShipment(webhookData)
-    ? handleShipmentWebhook(webhookData)
-    : updateStock());
+    ? handleShipmentWebhook(event, webhookData)
+    : updateStock(webhookData.order_date));
 }
+
+handlePOST.retry = true;
 
 export default createModuleWorker({
   pathname: "/",

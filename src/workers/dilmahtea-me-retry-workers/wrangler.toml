@@ -1,0 +1,19 @@
+name = "dilmahtea-me-retry-workers"
+account_id = "f0f636c746c8673c3905e9104b385251"
+compatibility_date = "2022-11-30"
+main = "./src/index.ts"
+workers_dev = false
+logpush = true
+triggers = { crons = ["*/1 * * * *"]}
+kv_namespaces = [{ binding = "WORKER_REQUESTS", id = "49c94598e0654db8a2064d4f1874ff26" }]
+
+[vars]
+FROM_NAME = "Dilmah Europe"
+FROM_EMAIL = "hello@dilmahtea.me"
+DEV_EMAIL = "dev@dilmahtea.me"
+SALES_EMAIL = "hello@dilmahtea.me"
+
+# secrets
+# DKIM_PRIVATE_KEY
+# MATRIX_ROOM_ID
+# MATRIX_BOT_ACCESS_TOKEN

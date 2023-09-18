@@ -1,11 +1,14 @@
 type ENV = Record<string, string | KVNamespace>;
 
-let environment;
+let env: ENV = {};
 
-export function setENV(env: ENV): void {
-  environment = env;
+export function setENV(environment: ENV): void {
+  env = environment;
 }
 
-export default function env<T = ENV>(): T {
-  return environment as T;
-}
+export default new Proxy(
+  {},
+  {
+    get: (_, prop: string) => env[prop],
+  },
+) as ENV;

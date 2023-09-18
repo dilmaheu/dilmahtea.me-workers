@@ -11,11 +11,9 @@ export default async function updateStrapiProducts(
   strapiProductsData: ProductInfo[],
   productsStockInfo: ProductsStockInfo[],
 ) {
-  const { STRAPI_ACCESS_TOKEN, STRAPI_GRAPHQL_ENDPOINT } = env();
-
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${STRAPI_ACCESS_TOKEN}`,
+    Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
   };
 
   // mutation query for all products
@@ -62,7 +60,7 @@ export default async function updateStrapiProducts(
     {},
   );
 
-  await fetch(STRAPI_GRAPHQL_ENDPOINT, {
+  await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
     method: "POST",
     headers,
     body: JSON.stringify({
