@@ -64,10 +64,10 @@ export default {
 
         await sendErrorEmail(error, requestID, env);
 
-        const currentMinute = Math.ceil(Date.now() / (60 * 1000));
+        let currentMinute = Math.ceil(Date.now() / (60 * 1000));
 
         const nextMinutes = Array.from({ length: 8 }).map(
-          (_, i) => currentMinute + 2 ** i,
+          (_, i) => (currentMinute += 2 ** i),
         );
 
         await Promise.all(
