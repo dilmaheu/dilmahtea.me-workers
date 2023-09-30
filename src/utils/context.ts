@@ -1,4 +1,5 @@
 import env from "./env";
+import hash from "./hash";
 
 type Context = Record<string, any>;
 
@@ -18,12 +19,7 @@ export default new Proxy(
 ) as Context;
 
 export async function setupContext(id: string) {
-  const encodedID = new TextEncoder().encode(id),
-    keyBuffer = await crypto.subtle.digest("SHA-1", encodedID);
-
-  key = Array.from(new Uint8Array(keyBuffer))
-    .map((byte) => byte.toString(16).padStart(2, "0"))
-    .join("");
+  key = await hash(id, "SHA-256");
 
   const storedContext = await (env.WORKER_CONTEXTS as KVNamespace).get(key);
 

@@ -1,5 +1,7 @@
 import env from "../env";
 
+import hash from "../../../../utils/hash";
+
 import {
   XMLParser as XMLParserConstructor,
   XMLBuilder as XMLBuilderConstructor,
@@ -23,13 +25,10 @@ export default async function createDimassOrder({
   const nonce = crypto.randomUUID(),
     timestamp = new Date().getTime().toString();
 
-  const encodedSignature = new TextEncoder().encode(
-      nonce + timestamp + env.DIMASS_API_SECRET,
-    ),
-    signatureBuffer = await crypto.subtle.digest("SHA-1", encodedSignature),
-    signature = Array.from(new Uint8Array(signatureBuffer))
-      .map((byte) => byte.toString(16).padStart(2, "0"))
-      .join("");
+  const signature = await hash(
+    nonce + timestamp + env.DIMASS_API_SECRET,
+    "SHA-1",
+  );
 
   const order = {
     orderLines: {

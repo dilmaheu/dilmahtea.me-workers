@@ -2,6 +2,8 @@ import type { GetDimassStockResponse } from "../types";
 
 import env from "../env";
 
+import hash from "../../../../utils/hash";
+
 import { XMLParser as XMLParserConstructor } from "fast-xml-parser";
 
 const XMLParser = new XMLParserConstructor();
@@ -33,13 +35,10 @@ export default async function getStockItems(order_date: string) {
   const nonce = crypto.randomUUID(),
     timestamp = new Date().getTime().toString();
 
-  const encodedSignature = new TextEncoder().encode(
-      nonce + timestamp + env.DIMASS_API_SECRET,
-    ),
-    signatureBuffer = await crypto.subtle.digest("SHA-1", encodedSignature),
-    signature = Array.from(new Uint8Array(signatureBuffer))
-      .map((byte) => byte.toString(16).padStart(2, "0"))
-      .join("");
+  const signature = await hash(
+    nonce + timestamp + env.DIMASS_API_SECRET,
+    "SHA-1",
+  );
 
   const headers = {
     nonce,
