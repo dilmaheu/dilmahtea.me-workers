@@ -67,7 +67,7 @@ const getHTMLEmail = ({
             "
           >
             <!-- Preheader Text -->
-            <div style="display: block; margin: 0 auto; max-width: 490px">
+            <div style="display: block; margin: 0 auto; max-width: 490px;">
               <h1
                 style="
                   max-width: 490px;
@@ -86,7 +86,7 @@ const getHTMLEmail = ({
             </div>
   
             <!-- Text content -->
-            <div style="display: block; margin: 0 auto; max-width: 490px">
+            <div style="display: block; margin: 0 auto; max-width: 490px;">
               <div
                 style="
                   font-family: Roboto;
@@ -120,7 +120,7 @@ const getHTMLEmail = ({
                     color: #2b4b50;
                   "
                 >
-                  <h2 style="font-weight: 600; line-height: 140%">
+                  <h2 style="font-weight: 600; line-height: 140%;">
                     ${Overview}
                   </h2>
 
@@ -133,7 +133,7 @@ const getHTMLEmail = ({
                           ? ""
                           : `<tr>
                               <td
-                                style="vertical-align: middle; padding-top: 15px"
+                                style="vertical-align: middle; padding-top: 15px;"
                               >
                                 ${Shipping}
                               </td>
@@ -153,19 +153,44 @@ const getHTMLEmail = ({
                     style="
                       display: block;
                       margin-top: 40px;
+                      margin-bottom: 40px;
                       border: 1px solid rgba(43, 75, 80, 0.3);
                     "
                   ></div>
 
-                  <p style="padding-top: 15px; font-size: 28px; font-weight: 600;">
-                    <span style="float: left">${Total}</span>
-                    <span style="float: right; padding-left: 10px;">&euro;\${price}</span>
-                  </p>
+                  <table width="100%">
+                    <tbody>
+                      <tr style="font-size: 28px; font-weight: 600;">
+                        <td
+                          style="vertical-align: middle;"
+                        >
+                          ${Total}
+                        </td>
+                        
+                        <td
+                          align="right"
+                          style="vertical-align: middle; padding-left: 10px;"
+                        >
+                          &euro;\${price}
+                        </td>
+                      </tr>
 
-                  <p style="padding-top: 20px;">
-                    <span style="float: left">${VAT}</span>
-                    <span style="float: right; padding-left: 10px;">&euro;\${tax}</span>
-                  </p>
+                      <tr>
+                        <td
+                          style="vertical-align: middle; padding-top: 20px;"
+                        >
+                          ${VAT}
+                        </td>
+                      
+                        <td
+                          align="right"
+                          style="vertical-align: middle; padding-top: 20px; padding-left: 10px;"
+                        >
+                          &euro;\${tax}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>                
                 </div>
   
                 <div
@@ -177,7 +202,7 @@ const getHTMLEmail = ({
                     color: #2b4b50;
                   "
                 >
-                  <h3 style="font-weight: 600; line-height: 120%">
+                  <h3 style="font-weight: 600; line-height: 120%;">
                     ${Invoice}
                   </h3>
 
@@ -197,7 +222,7 @@ const getHTMLEmail = ({
         </div>
   
         <!-- Footer Section -->
-        <div style="display: block; background-color: #2b4b50">
+        <div style="display: block; background-color: #2b4b50;">
           <div
             style="
               display: block;
@@ -213,10 +238,10 @@ const getHTMLEmail = ({
             "
             role="contentinfo"
           >
-            <div style="margin-top: 15px">
+            <div style="margin-top: 15px;">
               ${Company_address}
             </div>
-            <div style="margin-top: 15px">
+            <div style="margin-top: 15px;">
               ${footerText}
             </div>
           </div>
