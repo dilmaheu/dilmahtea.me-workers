@@ -1,7 +1,7 @@
 import hash from "./hash";
 
 export default async function validateSignature(
-  payload: any,
+  payload: string,
   hashFunction: string,
   incomingSignature: string,
   webhookSecret: string,
