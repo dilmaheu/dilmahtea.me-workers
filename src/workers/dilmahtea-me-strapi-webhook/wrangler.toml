@@ -10,6 +10,7 @@ routes = [
     { pattern = "cms-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 kv_namespaces = [{ binding = "MAILS", id = "51f5be62eaf64aa8a9c69bccb81d396e" }]
+services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
 [env.development]
 name = "dilmahtea-me-strapi-webhook-dev"
