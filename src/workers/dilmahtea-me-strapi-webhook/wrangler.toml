@@ -5,7 +5,6 @@ main = "./src/index.js"
 workers_dev = false
 logpush = true
 placement = { mode = "smart" }
-vars = { RETRY_WORKER_ENDPOINT = "https://scripts.dilmahtea.me/retry-worker" }
 routes = [
     { pattern = "cms-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
@@ -14,7 +13,6 @@ services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" 
 
 [env.development]
 name = "dilmahtea-me-strapi-webhook-dev"
-vars = { RETRY_WORKER_ENDPOINT = "https://scripts.dilmahtea.me/retry-worker" }
 routes = [
     { pattern = "dev.cms-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
