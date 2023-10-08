@@ -1,0 +1,11 @@
+{
+  "private": true,
+  "name": "dilmahtea-me-exact-webhook",
+  "version": "1.0.0",
+  "description": "A template for kick starting a Cloudflare Workers project",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "license": "MIT"
+}

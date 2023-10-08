@@ -1,13 +1,19 @@
 // @ts-check
 
-export default async function syncProductsPricings(ItemsRecord, env) {
+import env from "./env";
+
+export default async function updateProductsSingleField(
+  ItemsRecord: Record<string, number>,
+  Field: string,
+  FieldType: string,
+): Promise<string> {
   const headers = new Headers({
     "Content-Type": "application/json",
-    Authorization: "Bearer " + env.STRAPI_ACCESS_TOKEN,
+    Authorization: ("Bearer " + env.STRAPI_ACCESS_TOKEN) as string,
   });
 
-  // update pricings for all locales
-  const productEntries = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
+  // update data for all locales
+  const productEntries = await fetch(env.STRAPI_GRAPHQL_ENDPOINT as string, {
     method: "POST",
     headers,
     body: JSON.stringify({
@@ -24,7 +30,7 @@ export default async function syncProductsPricings(ItemsRecord, env) {
               id
               attributes {
                 SKU
-                Price
+                ${Field}
               }
             }
           }
@@ -32,8 +38,14 @@ export default async function syncProductsPricings(ItemsRecord, env) {
       `,
     }),
   })
-    .then((res) => res.json())
-    .then((response) => response.data.products.data);
+    .then((res) => res.json<any>())
+    .then((response) => response.data.products.data)
+    .then((entries) =>
+      entries.filter(
+        (entry) =>
+          ItemsRecord[entry.attributes.SKU] !== entry.attributes[Field],
+      ),
+    );
 
   if (!(productEntries.length > 0)) {
     return "No op!";
@@ -44,7 +56,7 @@ export default async function syncProductsPricings(ItemsRecord, env) {
           .map(
             (_, i) => `
           $id${i}: ID!
-          $Price${i}: Float!
+          $${Field}${i}: ${FieldType}!
         `,
           )
           .join("")}
@@ -54,12 +66,12 @@ export default async function syncProductsPricings(ItemsRecord, env) {
               (_, i) => `
                 updateProduct${i}: updateProduct(
                   id: $id${i}
-                  data: { Price: $Price${i} }
+                  data: { ${Field}: $${Field}${i} }
                 ) {
                   data {
                     id
                     attributes {                      
-                      Price
+                      ${Field}
                     }
                   }
                 }
@@ -73,12 +85,12 @@ export default async function syncProductsPricings(ItemsRecord, env) {
       (acc, entry, i) => ({
         ...acc,
         [`id${i}`]: entry.id,
-        [`Price${i}`]: ItemsRecord[entry.attributes.SKU],
+        [`${Field}${i}`]: ItemsRecord[entry.attributes.SKU],
       }),
       {},
     );
 
-    await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
+    await fetch(env.STRAPI_GRAPHQL_ENDPOINT as string, {
       method: "POST",
       headers,
       body: JSON.stringify({
@@ -86,13 +98,13 @@ export default async function syncProductsPricings(ItemsRecord, env) {
         variables: mutationVariables,
       }),
     })
-      .then((res) => res.json())
+      .then((res) => res.json<any>())
       .then((res) => {
         if (res.errors) {
           throw new Error(JSON.stringify(res.errors, null, 2));
         }
       });
 
-    return "Pricings synced";
+    return "Products updated";
   }
 }
