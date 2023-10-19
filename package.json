@@ -22,7 +22,7 @@
     "prettier": "^3.0.3",
     "stripe": "^12.18.0",
     "wrangler": "^3.7.0",
-    "zod": "^3.22.2",
+    "zod": "^3.22.3",
     "zod-validation-error": "^1.5.0"
   },
   "devDependencies": {

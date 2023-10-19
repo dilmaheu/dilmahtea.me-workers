@@ -21,11 +21,11 @@ importers:
         specifier: ^3.7.0
         version: 3.7.0
       zod:
-        specifier: ^3.22.2
-        version: 3.22.2
+        specifier: ^3.22.3
+        version: 3.22.3
       zod-validation-error:
         specifier: ^1.5.0
-        version: 1.5.0(zod@3.22.2)
+        version: 1.5.0(zod@3.22.3)
     devDependencies:
       '@cloudflare/workers-types':
         specifier: ^4.20230904.0
@@ -42,6 +42,8 @@ importers:
   src/workers/dilmahtea-me-exact-auth: {}
 
   src/workers/dilmahtea-me-exact-sync: {}
+
+  src/workers/dilmahtea-me-exact-webhook: {}
 
   src/workers/dilmahtea-me-github-matrix-webhook: {}
 
@@ -716,7 +718,7 @@ packages:
       workerd: 1.20230904.0
       ws: 8.14.1
       youch: 3.3.1
-      zod: 3.22.2
+      zod: 3.22.3
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -1096,15 +1098,15 @@ packages:
       stacktracey: 2.1.8
     dev: false
 
-  /zod-validation-error@1.5.0(zod@3.22.2):
+  /zod-validation-error@1.5.0(zod@3.22.3):
     resolution: {integrity: sha512-/7eFkAI4qV0tcxMBB/3+d2c1P6jzzZYdYSlBuAklzMuCrJu5bzJfHS0yVAS87dRHVlhftd6RFJDIvv03JgkSbw==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       zod: ^3.18.0
     dependencies:
-      zod: 3.22.2
+      zod: 3.22.3
     dev: false
 
-  /zod@3.22.2:
-    resolution: {integrity: sha512-wvWkphh5WQsJbVk1tbx1l1Ly4yg+XecD+Mq280uBGt9wa5BKSWf4Mhp6GmrkPixhMxmabYY7RbzlwVP32pbGCg==}
+  /zod@3.22.3:
+    resolution: {integrity: sha512-EjIevzuJRiRPbVH4mGc8nApb/lVLKVpmUhAaR5R5doKGfAnGJ6Gr3CViAVjP+4FWSxCsybeWQdcgCtbX+7oZug==}
     dev: false
