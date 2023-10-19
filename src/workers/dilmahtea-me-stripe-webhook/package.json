@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "A template for kick starting a Cloudflare Workers project",
   "type": "module",
-  "main": "src/index.js",
+  "main": "src/index.ts",
   "author": "Cris Shaki <cmshaki@gmail.com>",
   "license": "MIT"
 }

@@ -8,6 +8,10 @@ export interface ENV {
   // KV
   WORKER_REQUESTS: KVNamespace;
 
+  // STRIPE
+  STRIPE_DEV_SIGNING_SECRET_KEY: string;
+  STRIPE_PROD_SIGNING_SECRET_KEY: string;
+
   // DKIM
   DKIM_PRIVATE_KEY: string;
   MATRIX_ROOM_ID: string;

@@ -1,5 +1,6 @@
 import type { ENV, ExtendedError } from "./types";
 
+import hash from "../../../utils/hash";
 import { reply } from "../../../utils/createModuleWorker";
 
 import sendErrorEmail from "./utils/sendErrorEmail";
@@ -31,6 +32,24 @@ export default {
 
                   retryAttemptURL.searchParams.set("attempt", attempt);
                   retryAttemptURL.searchParams.set("requestID", requestID);
+
+                  if (headers["stripe-signature"]) {
+                    const newTimestamp = Math.floor(Date.now() / 1000),
+                      newSignature = await hash(
+                        newTimestamp + "." + body,
+                        "SHA-256",
+                        retryAttemptURL.hostname.startsWith("dev.")
+                          ? env.STRIPE_DEV_SIGNING_SECRET_KEY
+                          : env.STRIPE_PROD_SIGNING_SECRET_KEY,
+                      );
+
+                    headers["stripe-signature"] = headers[
+                      "stripe-signature"
+                    ].replace(
+                      /^t=\d+,v1=[a-z0-9]+/,
+                      `t=${Math.floor(Date.now() / 1000)},v1=${newSignature}`,
+                    );
+                  }
 
                   return fetch(retryAttemptURL.toString(), {
                     method,
@@ -64,10 +83,10 @@ export default {
 
         await sendErrorEmail(error, requestID, env);
 
-        const currentMinute = Math.ceil(Date.now() / (60 * 1000));
+        let currentMinute = Math.ceil(Date.now() / (60 * 1000));
 
         const nextMinutes = Array.from({ length: 8 }).map(
-          (_, i) => currentMinute + 2 ** i,
+          (_, i) => (currentMinute += 2 ** i),
         );
 
         await Promise.all(

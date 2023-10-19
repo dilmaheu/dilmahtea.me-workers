@@ -21,7 +21,6 @@ export interface ProductsStockInfo {
 async function handlePOST(request: Request, env: ENV): Promise<Response> {
   const payload = await request.text();
 
-  // disable signature validation temporarily till Dimass fixes incorrect signature issue
   await validateSignature(
     payload,
     "SHA-1",

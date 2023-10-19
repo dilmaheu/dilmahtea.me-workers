@@ -15,7 +15,11 @@ const PaymentCupOfKindnessSchema = z.object({
 
 type PaymentCupOfKindness = z.infer<typeof PaymentCupOfKindnessSchema>;
 
-async function updateCupOfKindness(request: Request, env: ENV) {
+async function updateCupOfKindness(
+  request: Request,
+  env: ENV,
+  ctx: ExecutionContext,
+) {
   let paymentCupOfKindnessData;
 
   try {
@@ -61,29 +65,45 @@ async function updateCupOfKindness(request: Request, env: ENV) {
 
   const databaseTableID = env.BASEROW_PAYMENT_RECORDS_TABLE_ID;
 
-  const response = await fetch(
-    `https://api.baserow.io/api/database/rows/table/${databaseTableID}/${rowID}/?user_field_names=true`,
-    {
-      method: "PATCH",
-      body: JSON.stringify({
-        "Cup of Kindness": cupOfKindness,
-      }),
-      headers: {
-        Authorization: `Token ${env.BASEROW_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-    },
-  );
+  // const response = await fetch(
+  //   `https://api.baserow.io/api/database/rows/table/${databaseTableID}/${rowID}/?user_field_names=true`,
+  //   {
+  //     method: "PATCH",
+  //     body: JSON.stringify({
+  //       "Cup of Kindness": cupOfKindness,
+  //     }),
+  //     headers: {
+  //       Authorization: `Token ${env.BASEROW_TOKEN}`,
+  //       "Content-Type": "application/json",
+  //     },
+  //   },
+  // );
 
-  if (!response.ok) {
-    await throwExtendedError({
-      response,
-      requestData: paymentCupOfKindnessData,
-      subject: "Baserow: Failed to update Cup of Kindness",
-      bodyText:
-        "Failed to update Cup of Kindness. Please manually update the record in Baserow.",
-    });
-  }
+  // if (!response.ok) {
+  //   await throwExtendedError({
+  //     response,
+  //     requestData: paymentCupOfKindnessData,
+  //     subject: "Baserow: Failed to update Cup of Kindness",
+  //     bodyText:
+  //       "Failed to update Cup of Kindness. Please manually update the record in Baserow.",
+  //   });
+  // }
+
+  ctx.waitUntil(
+    fetch(
+      `https://api.baserow.io/api/database/rows/table/${databaseTableID}/${rowID}/?user_field_names=true`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          "Cup of Kindness": cupOfKindness,
+        }),
+        headers: {
+          Authorization: `Token ${env.BASEROW_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      },
+    ),
+  );
 
   return reply({ success: true }, 200);
 }

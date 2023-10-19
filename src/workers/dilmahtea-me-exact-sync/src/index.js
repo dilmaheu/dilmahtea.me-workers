@@ -2,7 +2,7 @@
 
 import { setENV } from "../../../utils/env";
 import fetchExactAPI from "../../../utils/fetchExactAPI";
-import syncProductsPricings from "./utils/syncProductsPricings";
+import updateProductsSingleField from "../../../utils/updateProductsSingleField";
 
 export default {
   async scheduled(_, env, ctx) {
@@ -35,12 +35,13 @@ export default {
           SalesItemPrices.map((Item) => [Item["d:ItemCode"], Item["d:Price"]]),
         );
 
-        const syncedProductPricingsResponseMessage = await syncProductsPricings(
+        const response = await updateProductsSingleField(
           ItemsRecord,
-          env,
+          "Price",
+          "Float",
         );
 
-        if (syncedProductPricingsResponseMessage === "Pricings synced") {
+        if (response === "Products updated") {
           const HIGHEST_TIMESTAMP = Math.max(
             ...SalesItemPrices.map((Item) => Item["d:Timestamp"]),
           );
@@ -48,7 +49,7 @@ export default {
           await env.EXACT_TOKENS.put(TIMESTAMP_TOKEN_KEY, HIGHEST_TIMESTAMP);
         }
 
-        resolve(syncedProductPricingsResponseMessage);
+        resolve(response);
       }),
     );
   },

@@ -5,15 +5,14 @@ main = "./src/index.js"
 workers_dev = false
 logpush = true
 placement = { mode = "smart" }
-vars = { RETRY_WORKER_ENDPOINT = "https://scripts.dilmahtea.me/retry-worker" }
 routes = [
     { pattern = "cms-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 kv_namespaces = [{ binding = "MAILS", id = "51f5be62eaf64aa8a9c69bccb81d396e" }]
+services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
 [env.development]
 name = "dilmahtea-me-strapi-webhook-dev"
-vars = { RETRY_WORKER_ENDPOINT = "https://scripts.dilmahtea.me/retry-worker" }
 routes = [
     { pattern = "dev.cms-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]

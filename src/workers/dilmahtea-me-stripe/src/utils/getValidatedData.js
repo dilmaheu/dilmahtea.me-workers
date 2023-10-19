@@ -24,19 +24,12 @@ export default async function getValidatedData(paymentData, CMSData) {
   const products = [];
 
   productsData.forEach(({ attributes }) => {
-    const { SKU, Price, Stock_amount, localizations } = attributes,
-      names = {};
-
-    [{ attributes }, ...localizations.data].forEach(
-      ({ attributes: { locale, Title } }) => {
-        names[locale.substring(0, 2)] = Title;
-      },
-    );
+    const { SKU, Price, VatPercentage, Stock_amount } = attributes;
 
     products[SKU] = {
       sku: SKU,
-      names,
       Price,
+      VatPercentage,
       stockAmount: Stock_amount,
     };
   });
@@ -104,16 +97,15 @@ export default async function getValidatedData(paymentData, CMSData) {
           price: z.number(),
           quantity: z.number().min(1).int(),
         })
-        .refine(({ names, sku, tax, price, quantity }) => {
+        .refine(({ sku, tax, price, quantity }) => {
           const product = products[sku];
 
           const subTotal = product.Price * quantity,
-            calculatedTax = Math.round(subTotal * 9) / 100,
+            calculatedTax = Math.round(subTotal * product.VatPercentage) / 100,
             calculatedPrice =
               Math.round((subTotal + calculatedTax) * 100) / 100;
 
           return (
-            names === JSON.stringify(product.names) &&
             tax === calculatedTax &&
             price === calculatedPrice &&
             quantity <= product.stockAmount
