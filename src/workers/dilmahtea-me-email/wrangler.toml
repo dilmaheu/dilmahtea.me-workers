@@ -1,0 +1,12 @@
+name = "dilmahtea-me-email"
+account_id = "f0f636c746c8673c3905e9104b385251"
+compatibility_date = "2022-11-30"
+main = "./src/index.ts"
+workers_dev = false
+logpush = true
+placement = { mode = "smart" }
+vars = { FROM_NAME = "Dilmah Europe", FROM_EMAIL = "hello@dilmahtea.me"  }
+services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
+
+# secrets
+# DKIM_PRIVATE_KEY
