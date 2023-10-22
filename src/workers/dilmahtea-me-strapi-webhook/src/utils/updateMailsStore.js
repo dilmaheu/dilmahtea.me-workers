@@ -185,7 +185,13 @@ export async function updateMailsStore(env) {
           Company_address,
         });
 
-        const mailData = { Subject, From_name, From_email, htmlEmail };
+        const mailData = {
+          Subject,
+          From_name,
+          From_email,
+          htmlEmail,
+          SMS: mailKey === "Magic Link Email" ? Body : undefined,
+        };
 
         return [locale.substring(0, 2), mailData];
       });
