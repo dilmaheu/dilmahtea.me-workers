@@ -4,65 +4,41 @@ import getHTMLEmail from "./getHTMLEmail.js";
 import { reply } from "../../../../utils/createModuleWorker.js";
 
 const query = `
-  fragment EcommercePaymentConfirmationMailAttributes on EcommercePaymentConfirmationMail {
+  fragment EmailAttributes on EMail {
     locale
-    From_name
-    From_email
+    Type
     Subject
     Preview_text
     Preheader_text
     Body
-    Overview
-    Total
-    Invoice
     VAT
-    Shipping
-  }
-
-  fragment CrowdfundingEmailAttributes on CrowdfundingEmail {
-    locale
-    From_name
-    From_email
-    Subject
-    Preview_text
-    Preheader_text
-    Body
-    Overview
-    Total
-    Invoice
-    VAT
+    Overview_Title
+    Billing_Details_Title
   }
 
   fragment RecurringElementAttributes on RecurringElement {
     locale
     Footer_text
+    From_name
+    Company_email
     Company_address
   }
 
-  {
-    ecommercePaymentConfirmationMail {
-      data {
-        attributes {
-          ...EcommercePaymentConfirmationMailAttributes
-          localizations {
-            data {
-              attributes {
-                ...EcommercePaymentConfirmationMailAttributes
-              }
-            }
-          }
-        }
-      }
-    }
+  fragment CheckoutRecurringElementAttributes on CheckoutRecurringElement {
+    locale
+    text_total
+    text_shipping
+  }
 
-    crowdfundingEmail {
+  {
+    eMails {
       data {
         attributes {
-          ...CrowdfundingEmailAttributes
+          ...EmailAttributes
           localizations {
             data {
               attributes {
-                ...CrowdfundingEmailAttributes
+                ...EmailAttributes
               }
             }
           }
@@ -84,6 +60,21 @@ const query = `
         }
       }
     }
+
+    checkoutRecurringElement {
+      data {
+        attributes {
+          ...CheckoutRecurringElementAttributes
+          localizations {
+            data {
+              attributes {
+                ...CheckoutRecurringElementAttributes
+              }
+            }
+          }
+        }
+      }
+    }
   }
 `;
 
@@ -98,26 +89,42 @@ export async function updateMailsStore(env) {
   });
 
   const {
-    data: {
-      ecommercePaymentConfirmationMail,
-      crowdfundingEmail,
-      recurringElement,
-    },
+    data: { eMails, recurringElement, checkoutRecurringElement },
   } = await response.json();
 
-  const recurringElementData = [
-    recurringElement.data,
-    ...recurringElement.data.attributes.localizations.data,
-  ];
+  const recurringElementData = Object.fromEntries(
+      [
+        recurringElement.data,
+        ...recurringElement.data.attributes.localizations.data,
+      ].map(({ attributes }) => [attributes.locale, attributes]),
+    ),
+    checkoutRecurringElementData = Object.fromEntries(
+      [
+        checkoutRecurringElement.data,
+        ...checkoutRecurringElement.data.attributes.localizations.data,
+      ].map(({ attributes }) => [attributes.locale, attributes]),
+    );
+
+  const {
+    crowdfunding_payment_confirmation_email,
+    ecommerce_payment_confirmation_email,
+    magic_link_email,
+  } = Object.fromEntries(
+    eMails.data.map((data) => [data.attributes.Type, data]),
+  );
 
   const mails = {
     "Crowdfunding Email": [
-      crowdfundingEmail.data,
-      ...crowdfundingEmail.data.attributes.localizations.data,
+      crowdfunding_payment_confirmation_email,
+      ...crowdfunding_payment_confirmation_email.attributes.localizations.data,
     ].map(({ attributes }) => attributes),
     "Ecommerce Payment Confirmation Mail": [
-      ecommercePaymentConfirmationMail.data,
-      ...ecommercePaymentConfirmationMail.data.attributes.localizations.data,
+      ecommerce_payment_confirmation_email,
+      ...ecommerce_payment_confirmation_email.attributes.localizations.data,
+    ].map(({ attributes }) => attributes),
+    "Magic Link Email": [
+      magic_link_email,
+      ...magic_link_email.attributes.localizations.data,
     ].map(({ attributes }) => attributes),
   };
 
@@ -126,18 +133,24 @@ export async function updateMailsStore(env) {
       const htmlMailsEntries = mails[mailKey].map((mail) => {
         const {
           locale,
-          From_name,
-          From_email,
           Subject,
           Preview_text,
           Preheader_text,
           Body,
-          Overview,
-          Total,
-          Invoice,
           VAT,
-          Shipping,
+          Overview_Title,
+          Billing_Details_Title,
         } = mail;
+
+        const {
+          From_name,
+          Company_email: From_email,
+          Footer_text,
+          Company_address,
+        } = recurringElementData[locale];
+
+        const { text_total: Total, text_shipping: Shipping } =
+          checkoutRecurringElementData[locale];
 
         const previewText = Preview_text + "&nbsp;".repeat(100),
           preheaderText = Preheader_text.replaceAll("\n", "<br />"),
@@ -154,26 +167,22 @@ export async function updateMailsStore(env) {
               `,
             );
 
-        const { Footer_text, Company_address } = recurringElementData.find(
-          ({ attributes }) => attributes.locale === locale,
-        ).attributes;
-
         const footerText = Footer_text.replaceAll(
           "<current_year>",
           new Date().getFullYear(),
         );
 
         const htmlEmail = getHTMLEmail({
-          Overview,
-          Total,
-          Invoice,
-          Shipping,
-          VAT,
-          Company_address,
           previewText,
           preheaderText,
           bodyText,
           footerText,
+          VAT,
+          Overview_Title,
+          Billing_Details_Title,
+          Total,
+          Shipping,
+          Company_address,
         });
 
         const mailData = { Subject, From_name, From_email, htmlEmail };
