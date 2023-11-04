@@ -161,7 +161,7 @@ export async function updateMailsStore(env) {
               `
                 <a
                   href="mailto:${From_email}"
-                  style="font-style: italic;display: inline;border-bottom: 1px solid #4e878a;text-decoration: none;color: #4e878a;"
+                  style="font-style: italic;"
                   >${From_email}</a
                 >
               `,

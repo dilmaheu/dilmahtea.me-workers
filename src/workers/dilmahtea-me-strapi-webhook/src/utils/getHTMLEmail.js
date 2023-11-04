@@ -28,6 +28,19 @@ const getHTMLEmail = ({
           href="https://fonts.googleapis.com/css2?family=Alice&family=Roboto&display=swap"
           rel="stylesheet"
         />
+
+        <style>
+          .preheader-text, .preheader-text a {
+            color: #e2dfde;
+          }
+
+          .body-text a {
+            display: inline;
+            color: #4e878a;
+            text-decoration: none;
+            border-bottom: 1px solid #4e878a;
+          }
+        </style>
       </head>
       
       <body style="padding: 0; margin: 0; background-color: #2b4b50;">
@@ -69,6 +82,7 @@ const getHTMLEmail = ({
             <!-- Preheader Text -->
             <div style="display: block; margin: 0 auto; max-width: 490px;">
               <h1
+                class="preheader-text"
                 style="
                   max-width: 490px;
                   padding: 45px 0;
@@ -78,7 +92,6 @@ const getHTMLEmail = ({
                   font-weight: 400;
                   line-height: 120%;
                   text-align: center;
-                  color: #e3dfde;
                 "
               >
                 ${preheaderText}
@@ -98,8 +111,9 @@ const getHTMLEmail = ({
                 "
               >
                 <div
+                  class="body-text"
                   style="
-                    background: #e3dfde;
+                    background: #e2dfde;
                     border-radius: 15px;
                     max-width: 100%;
                     padding: 28px 24px;
@@ -116,7 +130,7 @@ const getHTMLEmail = ({
                     : `
                       <div
                         style="
-                          background: #e3dfde;
+                          background: #e2dfde;
                           border-radius: 15px;
                           max-width: 100%;
                           margin-bottom: 40px;
@@ -200,7 +214,7 @@ const getHTMLEmail = ({
                     : `
                       <div
                         style="
-                          background: #e3dfde;
+                          background: #e2dfde;
                           border-radius: 15px;
                           max-width: 100%;
                           padding: 28px 24px;
@@ -242,7 +256,7 @@ const getHTMLEmail = ({
               font-weight: 500;
               line-height: 162%;
               text-align: center;
-              color: #e3dfde;
+              color: #e2dfde;
             "
             role="contentinfo"
           >
