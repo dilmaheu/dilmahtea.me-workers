@@ -14,7 +14,7 @@ kv_namespaces = [
     { binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" },
     { binding = "CROWDFUNDINGS", id = "c971dd86589647799fb64dde47563fac" },
     { binding = "ECOMMERCE_PAYMENTS", id = "5086c43e26a14fa3a177ea876f514a8f" },
-    { binding = "WORKER_CONTEXTS", id = "3fcd1790b1e644caa0d76d1be2fc27f7" }
+    { binding = "WORKER_CONTEXTS", id = "bf39422efbc34bd58d3c3e064660474f" }
 ]
 services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
