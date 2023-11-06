@@ -80,9 +80,8 @@ const handlePOST = async (request, env, ctx) => {
     payment_method_types,
     cancel_url,
     success_url:
-      success_url + payment_type === "ecommerce"
-        ? "&paymentID=" + paymentID
-        : "",
+      success_url +
+      (payment_type === "ecommerce" ? "&paymentID=" + paymentID : ""),
     payment_intent_data: { metadata: { paymentID, payment_type } },
     line_items: (payment_type === "ecommerce"
       ? [
