@@ -55,14 +55,11 @@ export default async function getStockItems(order_date: string) {
       body,
     },
   )
-    .then(async (res) => {
-      const xml = await res.text();
+    .then((response) => response.text())
+    .then((xml) => {
+      const response = XMLParser.parse(xml);
 
-      if (!res.ok) {
-        throw new Error(res.statusText);
-      }
-
-      JSON.stringify(xml, (_, value) => {
+      JSON.stringify(response, (_, value) => {
         const fault = value && value["SOAP-ENV:Fault"];
 
         if (fault) throw new Error(fault.faultstring);
@@ -70,9 +67,8 @@ export default async function getStockItems(order_date: string) {
         return value;
       });
 
-      return xml;
-    })
-    .then((xml) => XMLParser.parse(xml));
+      return response;
+    });
 
   const { item } =
     dimassStockResponse["SOAP-ENV:Envelope"]["SOAP-ENV:Body"][

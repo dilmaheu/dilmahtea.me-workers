@@ -36,7 +36,7 @@ export default function ({ pathname: endpointPathname, methods }) {
 
       let { pathname, hostname, origin, searchParams } = new URL(request.url);
 
-      if (pathname === endpointPathname) {
+      if (endpointPathname === "*" || pathname === endpointPathname) {
         const { method } = request;
 
         methods.OPTIONS = () => handleOPTIONS(methods);

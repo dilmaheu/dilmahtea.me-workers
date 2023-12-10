@@ -1,16 +1,16 @@
 // @ts-check
 
 const getHTMLEmail = ({
-  Overview,
-  Total,
-  Invoice,
-  Shipping,
-  VAT,
-  Company_address,
   previewText,
   preheaderText,
   bodyText,
   footerText,
+  VAT,
+  Overview_Title,
+  Billing_Details_Title,
+  Total,
+  Shipping,
+  Company_address,
 }) => `
     <!DOCTYPE html>
     <html lang="en">
@@ -28,6 +28,19 @@ const getHTMLEmail = ({
           href="https://fonts.googleapis.com/css2?family=Alice&family=Roboto&display=swap"
           rel="stylesheet"
         />
+
+        <style>
+          .preheader-text, .preheader-text a {
+            color: #e2dfde;
+          }
+
+          .body-text a {
+            display: inline;
+            color: #4e878a;
+            text-decoration: none;
+            border-bottom: 1px solid #4e878a;
+          }
+        </style>
       </head>
       
       <body style="padding: 0; margin: 0; background-color: #2b4b50;">
@@ -69,6 +82,7 @@ const getHTMLEmail = ({
             <!-- Preheader Text -->
             <div style="display: block; margin: 0 auto; max-width: 490px;">
               <h1
+                class="preheader-text"
                 style="
                   max-width: 490px;
                   padding: 45px 0;
@@ -78,7 +92,6 @@ const getHTMLEmail = ({
                   font-weight: 400;
                   line-height: 120%;
                   text-align: center;
-                  color: #e3dfde;
                 "
               >
                 ${preheaderText}
@@ -98,8 +111,9 @@ const getHTMLEmail = ({
                 "
               >
                 <div
+                  class="body-text"
                   style="
-                    background: #e3dfde;
+                    background: #e2dfde;
                     border-radius: 15px;
                     max-width: 100%;
                     padding: 28px 24px;
@@ -110,28 +124,31 @@ const getHTMLEmail = ({
                   ${bodyText}
                 </div>
   
-                <div
-                  style="
-                    background: #e3dfde;
-                    border-radius: 15px;
-                    max-width: 100%;
-                    margin-bottom: 40px;
-                    padding: 28px 24px;
-                    color: #2b4b50;
-                  "
-                >
-                  <h2 style="font-weight: 600; line-height: 140%;">
-                    ${Overview}
-                  </h2>
+                ${
+                  !Overview_Title
+                    ? ""
+                    : `
+                      <div
+                        style="
+                          background: #e2dfde;
+                          border-radius: 15px;
+                          max-width: 100%;
+                          margin-bottom: 40px;
+                          padding: 28px 24px;
+                          color: #2b4b50;
+                        "
+                      >
+                        <h2 style="font-weight: 600; line-height: 140%;">
+                          ${Overview_Title}
+                        </h2>
 
-                  <table width="100%" style="padding-top: 15px;">
-                    <tbody>
-                      \${line_items}
-
-                      ${
-                        !Shipping
-                          ? ""
-                          : `<tr>
+                        <table width="100%" style="padding-top: 15px;">
+                          <tbody>
+                            \${line_items}
+                            ${
+                              !Shipping
+                                ? ""
+                                : `<tr>
                               <td
                                 style="vertical-align: middle; padding-top: 15px;"
                               >
@@ -145,77 +162,82 @@ const getHTMLEmail = ({
                                 &euro;\${shipping_cost}
                               </td>
                             </tr>`
-                      }
-                    </tbody>
-                  </table>
+                            }
+                          </tbody>
+                        </table>
 
-                  <div
-                    style="
-                      display: block;
-                      margin-top: 40px;
-                      margin-bottom: 40px;
-                      border: 1px solid rgba(43, 75, 80, 0.3);
-                    "
-                  ></div>
+                        <div
+                          style="
+                            display: block;
+                            margin-top: 40px;
+                            margin-bottom: 40px;
+                            border: 1px solid rgba(43, 75, 80, 0.3);
+                          "
+                        ></div>
 
-                  <table width="100%">
-                    <tbody>
-                      <tr style="font-size: 28px; font-weight: 600;">
-                        <td
-                          style="vertical-align: middle;"
-                        >
-                          ${Total}
-                        </td>
-                        
-                        <td
-                          align="right"
-                          style="vertical-align: middle; padding-left: 10px;"
-                        >
-                          &euro;\${price}
-                        </td>
-                      </tr>
+                        <table width="100%">
+                          <tbody>
+                            <tr style="font-size: 28px; font-weight: 600;">
+                              <td style="vertical-align: middle;">${Total}</td>
 
-                      <tr>
-                        <td
-                          style="vertical-align: middle; padding-top: 20px;"
-                        >
-                          ${VAT}
-                        </td>
-                      
-                        <td
-                          align="right"
-                          style="vertical-align: middle; padding-top: 20px; padding-left: 10px;"
-                        >
-                          &euro;\${tax}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>                
-                </div>
+                              <td
+                                align="right"
+                                style="vertical-align: middle; padding-left: 10px;"
+                              >
+                                &euro;\${price}
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td
+                                style="vertical-align: middle; padding-top: 20px;"
+                              >
+                                ${VAT}
+                              </td>
+
+                              <td
+                                align="right"
+                                style="vertical-align: middle; padding-top: 20px; padding-left: 10px;"
+                              >
+                                &euro;\${tax}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    `
+                }
   
-                <div
-                  style="
-                    background: #e3dfde;
-                    border-radius: 15px;
-                    max-width: 100%;
-                    padding: 28px 24px;
-                    color: #2b4b50;
-                  "
-                >
-                  <h3 style="font-weight: 600; line-height: 120%;">
-                    ${Invoice}
-                  </h3>
+                ${
+                  !Billing_Details_Title
+                    ? ""
+                    : `
+                      <div
+                        style="
+                          background: #e2dfde;
+                          border-radius: 15px;
+                          max-width: 100%;
+                          padding: 28px 24px;
+                          color: #2b4b50;
+                        "
+                      >
+                        <h3 style="font-weight: 600; line-height: 120%;">
+                          ${Billing_Details_Title}
+                        </h3>
 
-                  <address
-                    style="
-                      font-style: normal;
-                      line-height: 120%;  
-                      padding-top: 20px;                
-                    "
-                  >
-                    \${name}<br>\${street}<br>\${postal_code} \${city}<br>\${country}
-                  </address>
-                </div>
+                        <address
+                          style="
+                            font-style: normal;
+                            line-height: 120%;  
+                            padding-top: 20px;                
+                          "
+                        >
+                          \${name}<br />\${street}<br />\${postal_code}
+                          \${city}<br />\${country}
+                        </address>
+                      </div>
+                    `
+                }
               </div>
             </div>
           </div>
@@ -234,7 +256,7 @@ const getHTMLEmail = ({
               font-weight: 500;
               line-height: 162%;
               text-align: center;
-              color: #e3dfde;
+              color: #e2dfde;
             "
             role="contentinfo"
           >

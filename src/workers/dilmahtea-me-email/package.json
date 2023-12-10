@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "dilmahtea-me-baserow",
+  "name": "dilmahtea-me-email",
   "version": "1.0.0",
   "description": "A template for kick starting a Cloudflare Workers project",
   "main": "src/index.ts",

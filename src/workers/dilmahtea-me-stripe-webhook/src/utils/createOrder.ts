@@ -39,7 +39,7 @@ export default async function createOrder(paymentData) {
   paymentData.countryCode = await getCountryCode(country);
 
   try {
-    context.salesOrder = await createExactOrder(paymentData).catch((error) =>
+    context.salesOrder ||= await createExactOrder(paymentData).catch((error) =>
       rethrow(error, "Exact"),
     );
 

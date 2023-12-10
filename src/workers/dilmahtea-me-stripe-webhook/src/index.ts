@@ -42,9 +42,7 @@ async function handlePOST(request: Request, env: ENV) {
   // @ts-ignore
   const { paymentID, payment_type } = event.data.object.metadata as MetaData;
 
-  const contextID = request.url + paymentID;
-
-  await setupContext(contextID);
+  await setupContext(request, paymentID);
 
   const PAYMENT_INTENTS =
     payment_type === "crowdfunding"

@@ -30,9 +30,7 @@ async function handlePOST(request: Request, env: ENV): Promise<Response> {
 
   const webhookData = JSON.parse(payload) as WebhookResponseData;
 
-  const contextID = request.url + webhookData.id;
-
-  await setupContext(contextID);
+  await setupContext(request, webhookData.id);
 
   const event = request.headers.get("X-SP-Event") as AcceptedShipmentEvents;
 

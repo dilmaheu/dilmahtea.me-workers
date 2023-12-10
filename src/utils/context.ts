@@ -18,8 +18,16 @@ export default new Proxy(
   },
 ) as Context;
 
-export async function setupContext(id: string) {
-  key = await hash(id, "SHA-256");
+export async function setupContext(request: Request, id: string | number) {
+  // remove retry attempt params from URL
+  const requestURL = new URL(request.url);
+
+  requestURL.searchParams.delete("attempt");
+  requestURL.searchParams.delete("requestID");
+
+  const contextID = requestURL.toString() + id;
+
+  key = await hash(contextID, "SHA-256");
 
   const storedContext = await (env.WORKER_CONTEXTS as KVNamespace).get(key);
 
