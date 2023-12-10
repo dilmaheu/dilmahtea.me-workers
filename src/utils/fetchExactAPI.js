@@ -15,6 +15,8 @@ const fetchExactAPI = async (method, url, data) =>
     body: JSON.stringify(data),
   })
     .then((res) => {
+      if (!res.ok) throw new Error(res.status + " " + res.statusText);
+
       console.log(
         `RateLimit-Remaining: ${res.headers.get("x-ratelimit-remaining")}`,
       );
