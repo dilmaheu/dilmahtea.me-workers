@@ -59,9 +59,12 @@ export default async function sendInvoice(
 
         context.hasSentInvoice = true;
       }),
-    fetchExactAPI("PUT", `/salesorder/SalesOrders(guid'${orderID}')`, {
-      ShippingMethod: shippingMethodID,
-    }),
+    !context.hasUpdatedShippingMethod &&
+      fetchExactAPI("PUT", `/salesorder/SalesOrders(guid'${orderID}')`, {
+        ShippingMethod: shippingMethodID,
+      }).then(() => {
+        context.hasUpdatedShippingMethod = true;
+      }),
   ]);
 
   console.log("Exact: Sales invoice sent successfully");
