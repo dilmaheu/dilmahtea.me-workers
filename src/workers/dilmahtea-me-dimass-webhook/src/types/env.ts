@@ -8,6 +8,9 @@ export interface ENV {
   EXACT_LAYOUTS: KVNamespace;
   WORKER_CONTEXTS: KVNamespace;
 
+  // D1
+  USERS: D1Database;
+
   // EXACT
   EXACT_API_ENDPOINT: string;
 
