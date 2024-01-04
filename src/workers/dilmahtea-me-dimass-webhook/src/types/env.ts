@@ -19,7 +19,6 @@ export interface ENV {
   DIMASS_API_SECRET: string;
   DIMASS_API_ENDPOINT: string;
   DIMASS_WEBHOOK_SECRET: string;
-  DIMASS_TEMP_WEBHOOK_SECRET: string;
 
   // STRAPI
   STRAPI_ACCESS_TOKEN: string;
