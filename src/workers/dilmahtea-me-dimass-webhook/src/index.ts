@@ -40,7 +40,7 @@ async function handlePOST(request: Request, env: ENV): Promise<Response> {
 
   return await (isShipment(webhookData)
     ? handleShipmentWebhook(event, webhookData)
-    : updateStock(webhookData.order_date));
+    : updateStock(webhookData.order_date || webhookData.created_at));
 }
 
 handlePOST.retry = true;

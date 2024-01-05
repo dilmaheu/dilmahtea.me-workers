@@ -8,7 +8,7 @@ import { XMLParser as XMLParserConstructor } from "fast-xml-parser";
 
 const XMLParser = new XMLParserConstructor();
 
-export default async function getStockItems(order_date: string) {
+export default async function getStockItems(since: string) {
   const body = `
     <soapenv:Envelope
       xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -18,7 +18,7 @@ export default async function getStockItems(order_date: string) {
       <soapenv:Body>
         <stoc:getStock>
           <filter>
-            <since>${order_date}</since>
+            <since>${since}</since>
             <stockTypes>
               <item>free</item>
               <item>available</item>
