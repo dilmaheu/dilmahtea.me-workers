@@ -1,3 +1,4 @@
+import env from "../env";
 import context from "../context";
 import fetchExactAPI from "../../../../utils/fetchExactAPI";
 
@@ -8,6 +9,12 @@ export default async function createGoodsDelivery(
   shippingMethodID,
 ) {
   const { DeliveryDate } = context;
+
+  await env.USERS.prepare(
+    "UPDATE orders SET status = ?, delivery_date = ? WHERE id = ?",
+  )
+    .bind("delivered", DeliveryDate.slice(0, 10), orderNumber)
+    .run();
 
   const orderLines = await fetchExactAPI(
     "GET",

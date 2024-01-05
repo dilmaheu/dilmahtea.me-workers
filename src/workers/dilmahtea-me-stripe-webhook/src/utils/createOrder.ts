@@ -1,5 +1,6 @@
 import sendEmail from "./sendEmail";
 import getCountryCode from "./getCountryCode";
+import createD1Record from "./createD1Record";
 import createExactOrder from "./createExactOrder";
 import createDimassOrder from "./createDimassOrder";
 import updateBaserowRecord from "./updateBaserowRecord";
@@ -43,8 +44,14 @@ export default async function createOrder(paymentData) {
       rethrow(error, "Exact"),
     );
 
-    const orderNumber =
-      context.salesOrder.entry.content["m:properties"]["d:OrderNumber"];
+    const { "d:OrderNumber": orderNumber, "d:Created": order_date } =
+      context.salesOrder.entry.content["m:properties"];
+
+    if (!context.hasCreatedD1Record) {
+      await createD1Record(email, cart, orderNumber, order_date);
+
+      context.hasCreatedD1Record = true;
+    }
 
     if (!context.hasCreatedDimassOrder) {
       await createDimassOrder({ ...paymentData, orderNumber }).catch((error) =>

@@ -16,6 +16,9 @@ kv_namespaces = [
     { binding = "ECOMMERCE_PAYMENTS", id = "5086c43e26a14fa3a177ea876f514a8f" },
     { binding = "WORKER_CONTEXTS", id = "bf39422efbc34bd58d3c3e064660474f" }
 ]
+d1_databases = [
+    { binding = "USERS", database_name = "users", database_id = "74a1dc02-0705-44fb-b009-fb2fe974e098" }
+]
 services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
 [env.development]
@@ -30,6 +33,9 @@ kv_namespaces = [
     { binding = "CROWDFUNDINGS", id = "bce59b3e55474063abce8ef8f5d755e7" },
     { binding = "ECOMMERCE_PAYMENTS", id = "acd54db867fe4fa18351d3b89a00c05a" },
     { binding = "WORKER_CONTEXTS", id = "710872f91ae946d987a38af244352718" }
+]
+d1_databases = [
+    { binding = "USERS", database_name = "users_dev", database_id = "076751ed-7610-4965-b72d-e9d619227957" }
 ]
 services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 

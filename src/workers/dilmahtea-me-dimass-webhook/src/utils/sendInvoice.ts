@@ -44,6 +44,12 @@ export default async function sendInvoice(
   const { "d:InvoiceID": InvoiceID } =
     invoice.feed.entry.content["m:properties"];
 
+  await env.USERS.prepare(
+    "UPDATE orders SET status = ?, tracking_url = ? WHERE id = ?",
+  )
+    .bind("shipped", tracking_url, orderNumber)
+    .run();
+
   await Promise.all([
     !context.hasSentInvoice &&
       fetchExactAPI("PUT", `/salesinvoice/SalesInvoices(guid'${InvoiceID}')`, {
