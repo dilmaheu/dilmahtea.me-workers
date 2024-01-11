@@ -5,7 +5,7 @@ export interface ENV {
 
   // KV
   EXACT_TOKENS: KVNamespace;
-  EXACT_LAYOUTS: KVNamespace;
+  EXACT_GUID_COLLECTION: KVNamespace;
   WORKER_CONTEXTS: KVNamespace;
 
   // D1

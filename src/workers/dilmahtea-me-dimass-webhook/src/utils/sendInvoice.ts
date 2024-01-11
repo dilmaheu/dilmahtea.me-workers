@@ -19,8 +19,8 @@ export default async function sendInvoice(
   ).then(({ entry }) => entry.content["m:properties"]["d:Language"]);
 
   const [EmailLayout, DocumentLayout] = await Promise.all([
-    env.EXACT_LAYOUTS.get(`EMAIL_${Language}`),
-    env.EXACT_LAYOUTS.get(`INVOICE_${Language}`),
+    env.EXACT_GUID_COLLECTION.get(`EMAIL_LAYOUT_${Language}`),
+    env.EXACT_GUID_COLLECTION.get(`INVOICE_LAYOUT_${Language}`),
   ]);
 
   if (!context.hasInvoicedSalesOrder) {

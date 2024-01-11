@@ -113,20 +113,16 @@ export default async function updateCustomer(customer, existingCustomer) {
 
   const contact = await fetchExactAPI(
     "GET",
-    `/CRM/Contacts?$filter=Email eq '${customer.Email}'&select=ID,FirstName,LastName`,
+    `/CRM/Contacts?$filter=Account eq guid'${ExistingCustomer["d:ID"]}' and Email eq '${customer.Email}'&select=ID,FirstName,LastName`,
   ).then(async ({ feed }) => {
     const matchedContact = [feed.entry]
       .flat()
       .filter(Boolean)
-      .find(
-        ({ content: { "m:properties": props } }) =>
-          [customer.FirstName, ExistingCustomer["d:FirstName"]].includes(
-            props["d:FirstName"],
-          ) &&
-          [customer.LastName, ExistingCustomer["d:LastName"]].includes(
-            props["d:LastName"],
-          ),
-      )?.content["m:properties"];
+      .find(({ content: { "m:properties": props } }) => {
+        return [customer.Name, ExistingCustomer["d:Name"]].includes(
+          props["d:FirstName"] + " " + props["d:LastName"],
+        );
+      })?.content["m:properties"];
 
     if (matchedContact) {
       promises.push(updateContact(customer, matchedContact));

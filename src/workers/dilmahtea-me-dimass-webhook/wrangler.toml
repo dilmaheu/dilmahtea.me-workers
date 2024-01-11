@@ -11,7 +11,7 @@ routes = [
 ]
 kv_namespaces = [
     { binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" },
-    { binding = "EXACT_LAYOUTS", id = "b75eb1bee9d7488fa33b8be89caab307" },
+    { binding = "EXACT_GUID_COLLECTION", id = "b75eb1bee9d7488fa33b8be89caab307" },
     { binding = "WORKER_CONTEXTS", id = "bf39422efbc34bd58d3c3e064660474f" }
 ]
 d1_databases = [
@@ -27,7 +27,7 @@ routes = [
 ]
 kv_namespaces = [
     { binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" },
-    { binding = "EXACT_LAYOUTS", id = "f767fadbe91d459893e903cc9a01d40a" },
+    { binding = "EXACT_GUID_COLLECTION", id = "f767fadbe91d459893e903cc9a01d40a" },
     { binding = "WORKER_CONTEXTS", id = "710872f91ae946d987a38af244352718" }
 ]
 d1_databases = [
