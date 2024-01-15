@@ -1,10 +1,12 @@
 import { ENV } from "./types";
 
+import updateCustomer from "./utils/updateCustomer";
+import createCustomer from "./utils/createCustomer";
+
+import { initializeLucia } from "../../../utils/auth";
 import fetchExactAPI from "../../../utils/fetchExactAPI";
 import getCustomerFilter from "../../../utils/getCustomerFilter";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
-import updateCustomer from "./utils/updateCustomer";
-import createCustomer from "./utils/createCustomer";
 
 declare interface Body {
   userId?: string;
@@ -48,14 +50,22 @@ async function handlePOST(request: Request, env: ENV) {
     )}&$select=ID,Name,Language,Email,Phone,Country,LeadSource,Classification1`,
   ).feed.entry;
 
+  const auth = await initializeLucia(env.USERS);
+
   if (Customer) {
     console.log("Exact: Customer exists");
 
-    await updateCustomer(CustomerData, Customer, CustomerFilter, userId);
+    await updateCustomer(auth, CustomerData, Customer, CustomerFilter, userId);
   } else {
     Customer = await createCustomer(CustomerData);
 
     console.log("Exact: Customer created successfully");
+  }
+
+  if (userId) {
+    await auth.updateUserAttributes(userId, {
+      exact_account_guid: Customer["d:ID"],
+    });
   }
 
   return reply({ success: true, Customer }, 200);

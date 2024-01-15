@@ -115,6 +115,7 @@ async function updateAddress(Customer, ExistingCustomer, ContactID) {
 }
 
 export default async function updateCustomer(
+  auth,
   Customer,
   existingCustomer,
   CustomerFilter,
@@ -140,8 +141,6 @@ export default async function updateCustomer(
       " or " + getCustomerFilter(alternateContact, !contactIsEmail);
 
     if (userId) {
-      const auth = await initializeLucia(env.USERS);
-
       const alternateProviderId = contactIsEmail ? "email" : "phone";
 
       await auth.createKey({
