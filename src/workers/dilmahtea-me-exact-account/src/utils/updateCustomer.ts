@@ -139,17 +139,15 @@ export default async function updateCustomer(
       " or " + getCustomerFilter(alternateContact, !contactIsEmail);
 
     if (userId) {
-      const alternateProviderId = contactIsEmail ? "email" : "phone";
-
       await auth.createKey({
         userId,
-        providerId: alternateProviderId,
+        providerId: alternateContactType,
         providerUserId: alternateContact,
         password: null,
       });
 
       await auth.updateUserAttributes(userId, {
-        [alternateProviderId]: alternateContact,
+        [alternateContactType]: alternateContact,
       });
     }
   }
