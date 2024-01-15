@@ -40,26 +40,38 @@ async function handlePOST(request: Request, env: ENV) {
       Address,
     };
 
-  const CustomerFilter = getCustomerFilter(Email || Phone, !!Email);
-
-  let Customer = await fetchExactAPI(
-    "GET",
-    `/CRM/Accounts?$filter=${getCustomerFilter(
-      Email || Phone,
-      !!Email,
-    )}&$select=ID,Name,Language,Email,Phone,Country,LeadSource,Classification1`,
-  ).feed.entry;
-
   const auth = await initializeLucia(env.USERS);
 
-  if (Customer) {
-    console.log("Exact: Customer exists");
+  const CustomerFilter = getCustomerFilter(Email || Phone, !!Email);
 
-    await updateCustomer(auth, CustomerData, Customer, CustomerFilter, userId);
-  } else {
-    Customer = await createCustomer(CustomerData);
+  try {
+    var Customer = await fetchExactAPI(
+      "GET",
+      `/CRM/Accounts?$filter=${getCustomerFilter(
+        Email || Phone,
+        !!Email,
+      )}&$select=ID,Name,Language,Email,Phone,Country,LeadSource,Classification1`,
+    ).feed.entry;
 
-    console.log("Exact: Customer created successfully");
+    if (Customer) {
+      console.log("Exact: Customer exists");
+
+      await updateCustomer(
+        auth,
+        CustomerData,
+        Customer,
+        CustomerFilter,
+        userId,
+      );
+    } else {
+      Customer = await createCustomer(CustomerData);
+
+      console.log("Exact: Customer created successfully");
+    }
+  } catch (error) {
+    if (userId) throw error;
+
+    return reply({ success: false, error: error.message }, 500);
   }
 
   if (userId) {
