@@ -41,7 +41,6 @@ async function updateAccount(Customer, ExistingCustomer) {
     await fetchExactAPI(
       "PUT",
       `/crm/Accounts(guid'${ExistingCustomer["d:ID"]}')`,
-      env,
       UpdatedUserAttributes,
     );
 
@@ -182,7 +181,7 @@ export default async function updateCustomer(
             matchContact(alternateContact, !contactIsEmail)))
       ) {
         promises.push(
-          fetchExactAPI("PUT", `/CRM/Contacts(guid'${ContactID}')`, env, {
+          fetchExactAPI("PUT", `/CRM/Contacts(guid'${ContactID}')`, {
             FirstName,
             LastName,
             ...(!alternateContact
