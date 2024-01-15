@@ -17,24 +17,26 @@ export default async function createCustomer({
   Address = {},
 }) {
   const contact = Email || Phone,
-    contactType = Email ? "email" : "phone";
+    ContactType = Email ? "Email" : "Phone";
 
-  const Customer = await fetchExactAPI("POST", "/CRM/Accounts", {
-    [contactType]: contact,
-    Name,
-    Language,
-    Status: "C",
-    ...Address,
-    LeadSource: await env.EXACT_GUID_COLLECTION.get("WEBSHOP_LEAD_SOURCE"),
-    Classification1: await env.EXACT_GUID_COLLECTION.get(
-      "B2C_CUSTOMER_SEGMENT",
-    ),
-  }).entry.content["m:properties"];
+  const Customer = (
+    await fetchExactAPI("POST", "/CRM/Accounts", {
+      [ContactType]: contact,
+      Name,
+      Language,
+      Status: "C",
+      ...Address,
+      LeadSource: await env.EXACT_GUID_COLLECTION.get("WEBSHOP_LEAD_SOURCE"),
+      Classification1: await env.EXACT_GUID_COLLECTION.get(
+        "B2C_CUSTOMER_SEGMENT",
+      ),
+    })
+  ).entry.content["m:properties"];
 
   const CustomerID = Customer["d:ID"];
 
   const Contact = await fetchExactAPI("POST", "/CRM/Contacts", {
-    [contactType]: contact,
+    [ContactType]: contact,
     Account: CustomerID,
     FirstName,
     LastName,

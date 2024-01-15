@@ -45,15 +45,19 @@ async function handlePOST(request: Request, env: ENV) {
   const CustomerFilter = getCustomerFilter(Email || Phone, !!Email);
 
   try {
-    var Customer = (
-      await fetchExactAPI(
-        "GET",
-        `/CRM/Accounts?$filter=${getCustomerFilter(
-          Email || Phone,
-          !!Email,
-        )}&$select=ID,Name,Language,Email,Phone,Country,LeadSource,Classification1`,
-      )
-    )?.feed.entry.content["m:properties"];
+    var Customer = await fetchExactAPI(
+      "GET",
+      `/CRM/Accounts?$filter=${getCustomerFilter(
+        Email || Phone,
+        !!Email,
+      )}&$select=ID,Name,Language,Email,Phone,Country,LeadSource,Classification1`,
+    ).then((Customer) => {
+      console.log({
+        ExistingCustomer: Customer,
+      });
+
+      return Customer.feed.entry?.content["m:properties"];
+    });
 
     if (Customer) {
       console.log("Exact: Customer exists");
