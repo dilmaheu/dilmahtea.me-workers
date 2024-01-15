@@ -28,6 +28,11 @@ async function handlePOST(request: Request, env: ENV) {
   const { userId, Email, Phone, FirstName, LastName, Language, Address } =
     await request.json<Body>();
 
+  if (!userId) {
+    handlePOST.retry = false;
+    handlePOST.catchError = true;
+  }
+
   const Name = `${FirstName} ${LastName}`,
     CustomerData = {
       userId,
@@ -44,40 +49,28 @@ async function handlePOST(request: Request, env: ENV) {
 
   const CustomerFilter = getCustomerFilter(Email || Phone, !!Email);
 
-  try {
-    var Customer = await fetchExactAPI(
-      "GET",
-      `/CRM/Accounts?$filter=${getCustomerFilter(
-        Email || Phone,
-        !!Email,
-      )}&$select=ID,Name,Language,Email,Phone,Country,LeadSource,Classification1`,
-    ).then((Customer) => {
-      console.log({
-        ExistingCustomer: Customer,
-      });
-
-      return Customer.feed.entry?.content["m:properties"];
+  let Customer = await fetchExactAPI(
+    "GET",
+    `/CRM/Accounts?$filter=${getCustomerFilter(
+      Email || Phone,
+      !!Email,
+    )}&$select=ID,Name,Language,Email,Phone,Country,LeadSource,Classification1`,
+  ).then((Customer) => {
+    console.log({
+      ExistingCustomer: Customer,
     });
 
-    if (Customer) {
-      console.log("Exact: Customer exists");
+    return Customer.feed.entry?.content["m:properties"];
+  });
 
-      await updateCustomer(
-        auth,
-        CustomerData,
-        Customer,
-        CustomerFilter,
-        userId,
-      );
-    } else {
-      Customer = await createCustomer(CustomerData);
+  if (Customer) {
+    console.log("Exact: Customer exists");
 
-      console.log("Exact: Customer created successfully");
-    }
-  } catch (error) {
-    if (userId) throw error;
+    await updateCustomer(auth, CustomerData, Customer, CustomerFilter, userId);
+  } else {
+    Customer = await createCustomer(CustomerData);
 
-    return reply({ success: false, error: error.message }, 500);
+    console.log("Exact: Customer created successfully");
   }
 
   if (userId) {
