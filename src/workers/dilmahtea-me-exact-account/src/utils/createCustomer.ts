@@ -71,5 +71,7 @@ export default async function createCustomer({
     );
   }
 
+  Customer.ContactID = ContactID;
+
   return Customer;
 }
