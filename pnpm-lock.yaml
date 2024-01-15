@@ -8,9 +8,18 @@ importers:
 
   .:
     dependencies:
+      '@lucia-auth/adapter-sqlite':
+        specifier: ^2.0.1
+        version: 2.0.1(lucia@2.7.6)
       fast-xml-parser:
         specifier: ^4.2.7
         version: 4.2.7
+      google-libphonenumber:
+        specifier: ^3.2.34
+        version: 3.2.34
+      lucia:
+        specifier: ^2.7.6
+        version: 2.7.6
       prettier:
         specifier: ^3.0.3
         version: 3.0.3
@@ -39,9 +48,15 @@ importers:
 
   src/workers/dilmahtea-me-dimass-webhook: {}
 
+  src/workers/dilmahtea-me-email: {}
+
   src/workers/dilmahtea-me-exact-auth: {}
 
+  src/workers/dilmahtea-me-exact-signup: {}
+
   src/workers/dilmahtea-me-exact-sync: {}
+
+  src/workers/dilmahtea-me-exact-webhook: {}
 
   src/workers/dilmahtea-me-github-matrix-webhook: {}
 
@@ -330,6 +345,21 @@ packages:
     dev: false
     optional: true
 
+  /@lucia-auth/adapter-sqlite@2.0.1(lucia@2.7.6):
+    resolution: {integrity: sha512-yc7XQ4X3sWG1gyUGHqaXipJIkmvB4MOgJypnSMWy7Vjhn3AOCM2xw51xTs+dGpLOQIn2Laomg9xpmDM2/9tgqQ==}
+    peerDependencies:
+      '@libsql/client': ^0.3.0
+      better-sqlite3: 8.x - 9.x
+      lucia: ^2.0.0
+    peerDependenciesMeta:
+      '@libsql/client':
+        optional: true
+      better-sqlite3:
+        optional: true
+    dependencies:
+      lucia: 2.7.6
+    dev: false
+
   /@types/node@20.6.0:
     resolution: {integrity: sha512-najjVq5KN2vsH2U/xyh2opaSEz6cZMR2SetLIlxlj08nOcmPOemJmUK2o4kUzfLqfrWE0PIrNeE16XhYDd3nqg==}
     dev: false
@@ -612,6 +642,11 @@ packages:
     resolution: {integrity: sha512-lkX1HJXwyMcprw/5YUZc2s7DrpAiHB21/V+E1rHUrVNokkvB6bqMzT0VfV6/86ZNabt1k14YOIaT7nDvOX3Iiw==}
     dev: false
 
+  /google-libphonenumber@3.2.34:
+    resolution: {integrity: sha512-CLwkp0lZvMywh6dCh0T3Fm8XsfJhLAupc8AECwYkJNQBPW8wQPrv/tV0oFKCs8FMw+pTQyNPZoycgBzYjqtTZQ==}
+    engines: {node: '>=0.10'}
+    dev: false
+
   /has-proto@1.0.1:
     resolution: {integrity: sha512-7qE+iP+O+bgF9clE5+UoBFzE65mlBiVj3tKCrlNQ0Ogwm0BjpT/gK4SlLYDMybDh5I3TCTKnPPa0oMG7JDYrhg==}
     engines: {node: '>= 0.4'}
@@ -679,6 +714,10 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       yallist: 4.0.0
+    dev: false
+
+  /lucia@2.7.6:
+    resolution: {integrity: sha512-xyRkNtevf0DUM4nGC6F2nCFFNphZ1qqBrfWwAgPa9zkpQsVJ/hN32I8zAY+pm+ZKWPPS/C/Sqqmo2LreSCzg7w==}
     dev: false
 
   /magic-string@0.25.9:

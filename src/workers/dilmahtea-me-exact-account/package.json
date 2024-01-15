@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "name": "dilmahtea-me-exact-account",
+  "version": "1.0.0",
+  "description": "A template for kick starting a Cloudflare Workers project",
+  "type": "module",
+  "main": "src/index.ts",
+  "license": "MIT"
+}
