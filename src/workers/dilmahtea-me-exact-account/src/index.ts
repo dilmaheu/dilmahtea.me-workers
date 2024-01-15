@@ -53,7 +53,7 @@ async function handlePOST(request: Request, env: ENV) {
           !!Email,
         )}&$select=ID,Name,Language,Email,Phone,Country,LeadSource,Classification1`,
       )
-    ).feed.entry.content["m:properties"];
+    )?.feed.entry.content["m:properties"];
 
     if (Customer) {
       console.log("Exact: Customer exists");
