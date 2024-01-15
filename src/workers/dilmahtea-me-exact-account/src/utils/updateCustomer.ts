@@ -209,10 +209,14 @@ export default async function updateCustomer(
     }
   });
 
+  const ContactID = Contact["d:ID"];
+
+  ExistingCustomer.ContactID = ContactID;
+
   promises.push(
     ...[
       updateAccount(Customer, ExistingCustomer),
-      Address && updateAddress(Customer, ExistingCustomer, Contact["d:ID"]),
+      Address && updateAddress(Customer, ExistingCustomer, ContactID),
     ],
   );
 

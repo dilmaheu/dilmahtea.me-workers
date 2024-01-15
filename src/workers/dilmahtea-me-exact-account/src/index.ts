@@ -76,6 +76,7 @@ async function handlePOST(request: Request, env: ENV) {
   if (userId) {
     await auth.updateUserAttributes(userId, {
       exact_account_guid: Customer["d:ID"],
+      exact_contact_guid: Customer.ContactID,
     });
   }
 
