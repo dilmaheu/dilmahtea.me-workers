@@ -125,8 +125,9 @@ export default async function updateCustomer(
   const contact = Email || Phone,
     contactIsEmail = !!Email;
 
-  const contactType = contactIsEmail ? "email" : "phone",
-    alternateContactType = contactIsEmail ? "phone" : "email";
+  const ContactType = contactIsEmail ? "Email" : "Phone",
+    alternateContactType = contactIsEmail ? "phone" : "email",
+    AlternateContactType = contactIsEmail ? "Phone" : "Email";
 
   const alternateContact = contactIsEmail
     ? ExistingCustomer["d:Phone"] &&
@@ -187,8 +188,8 @@ export default async function updateCustomer(
             ...(!alternateContact
               ? {}
               : {
-                  [contactType]: contact,
-                  [alternateContactType]: alternateContact,
+                  [ContactType]: contact,
+                  [AlternateContactType]: alternateContact,
                 }),
           }).then(() => console.log(`Exact: Contact updated`)),
         );
@@ -201,7 +202,7 @@ export default async function updateCustomer(
         Account: ExistingCustomer["d:ID"],
         FirstName,
         LastName,
-        [contactType]: contact,
+        [ContactType]: contact,
       });
 
       return NewContact.entry.content["m:properties"];
