@@ -1,21 +1,21 @@
 import env from "../env";
 
-import createCustomer from "./createCustomer";
-import updateCustomer from "./updateCustomer";
-
 import fetchExactAPI from "../../../../utils/fetchExactAPI";
 
-export default async function createExactOrder({
-  locale,
-  email: Email,
-  first_name: FirstName,
-  last_name: LastName,
-  city: City,
-  postal_code: Postcode,
-  street,
-  cart,
-  countryCode: Country,
-}) {
+export default async function createExactOrder(
+  {
+    locale,
+    email: Email,
+    first_name: FirstName,
+    last_name: LastName,
+    city: City,
+    postal_code: Postcode,
+    street,
+    cart,
+    countryCode: Country,
+  },
+  request,
+) {
   const Name = `${FirstName} ${LastName}`,
     Language = locale.toUpperCase();
 
@@ -45,27 +45,21 @@ export default async function createExactOrder({
     Postcode,
   };
 
-  const Customer = { Name, Email, FirstName, LastName, Language, Address };
+  const CustomerData = { Name, Email, FirstName, LastName, Language, Address };
 
-  let customerID;
+  const { success, error, Customer } = await env.EXACT_ACCOUNT.fetch(
+    request.url,
+    {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(CustomerData),
+    },
+  ).then((res) => res.json<any>());
 
-  const existingCustomer = await fetchExactAPI(
-    "GET",
-    `/CRM/Accounts?$filter=Email eq '${Email}'&$select=ID,Name,Language,MainContact`,
-  );
-
-  const customerExists = !!existingCustomer.feed.entry;
-
-  if (customerExists) {
-    console.log("Exact: Customer exists");
-
-    customerID = existingCustomer.feed.entry.content["m:properties"]["d:ID"];
-
-    await updateCustomer(Customer, existingCustomer);
-  } else {
-    customerID = await createCustomer(Customer);
-
-    console.log("Exact: Customer created successfully");
+  if (!success) {
+    throw new Error(error);
   }
 
   // add shipping cost to cart
@@ -90,7 +84,7 @@ export default async function createExactOrder({
   );
 
   const salesOrder = await fetchExactAPI("POST", "/salesorder/SalesOrders", {
-    OrderedBy: customerID,
+    OrderedBy: Customer["d:ID"],
     Description: `Sales to ${Name}`,
     PaymentCondition: env.PAYMENT_CONDITION,
     SalesOrderLines: Object.values(cartWithShippingCost).map(

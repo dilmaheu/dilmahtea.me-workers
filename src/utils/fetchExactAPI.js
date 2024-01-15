@@ -3,7 +3,7 @@
 import env from "./env";
 import { XMLParser as XMLParserConstructor } from "fast-xml-parser";
 
-const XMLParser = new XMLParserConstructor();
+const XMLParser = new XMLParserConstructor({ parseTagValue: false });
 
 const fetchExactAPI = async (method, url, data) =>
   fetch(url.startsWith("https://") ? url : env.EXACT_API_ENDPOINT + url, {
