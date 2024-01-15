@@ -117,12 +117,10 @@ async function updateAddress(Customer, ExistingCustomer, ContactID) {
 export default async function updateCustomer(
   auth,
   Customer,
-  existingCustomer,
+  ExistingCustomer,
   CustomerFilter,
   userId,
 ) {
-  const ExistingCustomer = existingCustomer.feed.entry.content["m:properties"];
-
   const { Email, Phone, Name, FirstName, LastName, Address } = Customer;
 
   const contact = Email || Phone,
