@@ -63,6 +63,7 @@ export default function ({ pathname: endpointPathname, methods }) {
               });
 
               stringifiedRequest = JSON.stringify({
+                SECURE_WORKER_ID: methodHandler.SECURE_WORKER_ID,
                 url,
                 method,
                 headers,

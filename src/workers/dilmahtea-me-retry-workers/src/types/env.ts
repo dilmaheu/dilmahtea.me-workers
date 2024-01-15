@@ -16,4 +16,8 @@ export interface ENV {
   DKIM_PRIVATE_KEY: string;
   MATRIX_ROOM_ID: string;
   MATRIX_BOT_ACCESS_TOKEN: string;
+
+  // SERVICES
+  EMAIL: Fetcher;
+  EXACT_ACCOUNT: Fetcher;
 }

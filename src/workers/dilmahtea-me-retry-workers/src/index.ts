@@ -26,7 +26,8 @@ export default {
                 );
 
                 if (storedRequest) {
-                  const { url, method, headers, body } = storedRequest;
+                  const { SECURE_WORKER_ID, url, method, headers, body } =
+                    storedRequest;
 
                   const retryAttemptURL = new URL(url);
 
@@ -51,7 +52,9 @@ export default {
                     );
                   }
 
-                  return fetch(retryAttemptURL.toString(), {
+                  return (
+                    SECURE_WORKER_ID ? env[SECURE_WORKER_ID].fetch : fetch
+                  )(retryAttemptURL.toString(), {
                     method,
                     headers,
                     body,
