@@ -6,4 +6,7 @@ export interface ENV {
 
   // KV NAMESPACES
   MAILS: KVNamespace;
+
+  // SECRETS
+  EMAIL_WORKER_SECRET: string;
 }

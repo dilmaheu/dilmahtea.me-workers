@@ -9,6 +9,10 @@ declare interface Body {
 }
 
 async function handlePOST(request: Request, env: ENV) {
+  if (request.headers.get("x-secret") !== env.EMAIL_WORKER_SECRET) {
+    return reply({ success: false, error: "Unauthorized" }, 401);
+  }
+
   const { to, subject, content } = await request.json<Body>();
 
   const response = await fetch("https://api.mailchannels.net/tx/v1/send", {
