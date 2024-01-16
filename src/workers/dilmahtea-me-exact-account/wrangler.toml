@@ -34,3 +34,4 @@ services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" 
 # secrets
 # DKIM_PRIVATE_KEY
 # EXACT_API_ENDPOINT
+# EXACT_ACCOUNT_WORKER_SECRET
