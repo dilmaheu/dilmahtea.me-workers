@@ -9,14 +9,14 @@ declare interface Body {
 }
 
 async function handlePOST(request: Request, env: ENV) {
+  const { to, subject, content } = await request.json<Body>();
+
   if (
     request.headers.get("x-cf-secure-worker-token") !==
     env.CF_SECURE_WORKER_TOKEN
   ) {
     return reply({ success: false, error: "Unauthorized" }, 401);
   }
-
-  const { to, subject, content } = await request.json<Body>();
 
   const response = await fetch("https://api.mailchannels.net/tx/v1/send", {
     method: "POST",
