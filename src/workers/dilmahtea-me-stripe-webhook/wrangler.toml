@@ -20,8 +20,7 @@ d1_databases = [
     { binding = "USERS", database_name = "users", database_id = "74a1dc02-0705-44fb-b009-fb2fe974e098" }
 ]
 services = [
-    { binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" },
-    { binding = "EXACT_ACCOUNT", service = "dilmahtea-me-exact-account" }
+    { binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }
 ]
 
 [env.development]
@@ -41,8 +40,7 @@ d1_databases = [
     { binding = "USERS", database_name = "users_dev", database_id = "076751ed-7610-4965-b72d-e9d619227957" }
 ]
 services = [
-    { binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" },
-    { binding = "EXACT_ACCOUNT", service = "dilmahtea-me-exact-account-dev" }
+    { binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }
 ]
 
 # secrets
