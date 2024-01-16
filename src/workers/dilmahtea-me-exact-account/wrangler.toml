@@ -5,7 +5,6 @@ main = "./src/index.ts"
 workers_dev = false
 logpush = true
 placement = { mode = "smart" }
-vars = { ENVIRONMENT = "PRODUCTION", PAYMENT_CONDITION = "VB" }
 routes = [
     { pattern = "exact-account.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
@@ -20,7 +19,6 @@ services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" 
 
 [env.development]
 name = "dilmahtea-me-exact-account-dev"
-vars = { ENVIRONMENT = "DEVELOPMENT", PAYMENT_CONDITION = "VB" }
 routes = [
     { pattern = "dev.exact-account.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
 ]
