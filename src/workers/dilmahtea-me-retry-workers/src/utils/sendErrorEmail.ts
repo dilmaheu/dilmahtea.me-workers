@@ -32,36 +32,26 @@ export default function sendErrorEmail(
     body = "Request #" + requestID + " retry completed successfully.";
   }
 
-  return fetch("https://api.mailchannels.net/tx/v1/send", {
+  return fetch(env.EMAIL_WORKER_URL, {
     method: "POST",
     headers: {
       "content-type": "application/json",
+      "x-cf-secure-worker-token": env.CF_SECURE_WORKER_TOKEN,
     },
     body: JSON.stringify({
-      personalizations: [
-        {
-          to: [
-            { email: env.DEV_EMAIL },
-            notifySales && { email: env.SALES_EMAIL },
-          ].filter(Boolean),
-          dkim_domain: "dilmahtea.me",
-          dkim_selector: "mailchannels",
-          dkim_private_key: env.DKIM_PRIVATE_KEY,
-        },
-      ],
-      from: {
-        name: env.FROM_NAME,
-        email: env.FROM_EMAIL,
-      },
+      to: [
+        { email: env.DEV_EMAIL },
+        notifySales && { email: env.SALES_EMAIL },
+      ].filter(Boolean),
       subject,
-      content: [
-        {
-          type: "text/plain",
-          value: body,
-        },
-      ],
+      content: [{ type: "text/plain", value: body }],
     }),
-  }).then(async (res) => {
-    console.log(await res.json());
-  });
+  })
+    .then(async (res) => res.json<any>())
+    .then((response) => {
+      console.log({
+        message: response.success ? "Email sent" : "Email not sent",
+        response,
+      });
+    });
 }

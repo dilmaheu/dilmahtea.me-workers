@@ -2,6 +2,7 @@ export interface ENV {
   // ENVIRONMENTAl VARIABLES
   ENVIRONMENT: "PRODUCTION" | "DEVELOPMENT";
   PAYMENT_CONDITION: "VB";
+  EMAIL_WORKER_URL: string;
   EXACT_ACCOUNT_WORKER_URL: string;
 
   // KV
@@ -41,6 +42,6 @@ export interface ENV {
   // EXACT
   EXACT_API_ENDPOINT: string;
 
-  // EXACT ACCOUNT WORKER
+  // SECURE WORKERS
   CF_SECURE_WORKER_TOKEN: string;
 }

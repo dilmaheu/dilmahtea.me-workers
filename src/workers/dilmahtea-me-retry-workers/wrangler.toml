@@ -12,8 +12,10 @@ FROM_NAME = "Dilmah Europe"
 FROM_EMAIL = "hello@dilmahtea.me"
 DEV_EMAIL = "dev@dilmahtea.me"
 SALES_EMAIL = "hello@dilmahtea.me"
+EMAIL_WORKER_URL = "https://email.scripts.dilmahtea.me"
 
 # secrets
 # DKIM_PRIVATE_KEY
 # MATRIX_ROOM_ID
 # MATRIX_BOT_ACCESS_TOKEN
+# CF_SECURE_WORKER_TOKEN

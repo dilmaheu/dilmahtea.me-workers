@@ -80,30 +80,23 @@ export default async function sendEmail(paymentData) {
         .join("\n"),
     );
 
-  await fetch("https://api.mailchannels.net/tx/v1/send", {
+  await fetch(env.EMAIL_WORKER_URL, {
     method: "POST",
     headers: {
       "content-type": "application/json",
+      "x-cf-secure-worker-token": env.CF_SECURE_WORKER_TOKEN,
     },
     body: JSON.stringify({
-      personalizations: [
-        {
-          to: [{ email, name }],
-          dkim_domain: "dilmahtea.me",
-          dkim_selector: "mailchannels",
-          dkim_private_key: env.DKIM_PRIVATE_KEY,
-        },
-      ],
-      from: {
-        email: From_email,
-        name: From_name,
-      },
+      to: [{ email, name }],
       subject: finalSubject,
       content: [{ type: "text/html", value: finalHTMLEmail }],
     }),
   })
-    .then((res) => res.json())
+    .then((res) => res.json<any>())
     .then((response) => {
-      console.log({ message: "Email sent", response });
+      console.log({
+        message: response.success ? "Email sent" : "Email not sent",
+        response,
+      });
     });
 }

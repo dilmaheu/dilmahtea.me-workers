@@ -4,6 +4,7 @@ export interface ENV {
   FROM_NAME: string;
   DEV_EMAIL: string;
   SALES_EMAIL: string;
+  EMAIL_WORKER_URL: string;
 
   // KV
   WORKER_REQUESTS: KVNamespace;
@@ -16,4 +17,7 @@ export interface ENV {
   DKIM_PRIVATE_KEY: string;
   MATRIX_ROOM_ID: string;
   MATRIX_BOT_ACCESS_TOKEN: string;
+
+  // SECURE WORKERS
+  CF_SECURE_WORKER_TOKEN: string;
 }
