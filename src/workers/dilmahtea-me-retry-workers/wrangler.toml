@@ -6,11 +6,6 @@ workers_dev = false
 logpush = true
 triggers = { crons = ["*/1 * * * *"]}
 kv_namespaces = [{ binding = "WORKER_REQUESTS", id = "49c94598e0654db8a2064d4f1874ff26" }]
-services = [
-    { binding = "EMAIL", service = "dilmahtea-me-email" },
-    { binding = "EXACT_ACCOUNT", service = "dilmahtea-me-exact-account" },
-    { binding = "EXACT_ACCOUNT_DEV", service = "dilmahtea-me-exact-account-dev" }
-]
 
 [vars]
 FROM_NAME = "Dilmah Europe"
