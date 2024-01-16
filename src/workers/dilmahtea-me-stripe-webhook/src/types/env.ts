@@ -37,6 +37,7 @@ export interface ENV {
   STRIPE_SIGNING_SECRET_KEY: string;
 
   // SERVICES
+  EMAIL: Fetcher;
   EXACT_ACCOUNT: Fetcher;
 
   // EXACT

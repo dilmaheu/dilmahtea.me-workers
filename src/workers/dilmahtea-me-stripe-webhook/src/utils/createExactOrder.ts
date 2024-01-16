@@ -47,7 +47,7 @@ export default async function createExactOrder(
 
   const CustomerData = { Name, Email, FirstName, LastName, Language, Address };
 
-  const { success, error, Customer } = await fetch(
+  const { success, error, Customer } = await env.EXACT_ACCOUNT.fetch(
     env.EXACT_ACCOUNT_WORKER_URL,
     {
       method: "POST",

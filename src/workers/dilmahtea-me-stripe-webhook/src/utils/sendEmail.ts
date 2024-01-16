@@ -80,7 +80,7 @@ export default async function sendEmail(paymentData) {
         .join("\n"),
     );
 
-  await fetch(env.EMAIL_WORKER_URL, {
+  await env.EMAIL.fetch(env.EMAIL_WORKER_URL, {
     method: "POST",
     headers: {
       "content-type": "application/json",
