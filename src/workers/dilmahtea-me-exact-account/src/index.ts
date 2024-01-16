@@ -25,7 +25,10 @@ declare interface Body {
 }
 
 async function handlePOST(request: Request, env: ENV) {
-  if (request.headers.get("x-secret") !== env.EXACT_ACCOUNT_WORKER_SECRET) {
+  if (
+    request.headers.get("x-cf-secure-worker-token") !==
+    env.CF_SECURE_WORKER_TOKEN
+  ) {
     return reply({ success: false, error: "Unauthorized" }, 401);
   }
 

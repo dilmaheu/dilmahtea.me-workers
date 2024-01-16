@@ -13,5 +13,5 @@ export interface ENV {
   EXACT_API_ENDPOINT: string;
 
   // EXACT ACCOUNT WORKER
-  EXACT_ACCOUNT_WORKER_SECRET: string;
+  CF_SECURE_WORKER_TOKEN: string;
 }

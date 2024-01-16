@@ -8,5 +8,5 @@ export interface ENV {
   MAILS: KVNamespace;
 
   // SECRETS
-  EMAIL_WORKER_SECRET: string;
+  CF_SECURE_WORKER_TOKEN: string;
 }

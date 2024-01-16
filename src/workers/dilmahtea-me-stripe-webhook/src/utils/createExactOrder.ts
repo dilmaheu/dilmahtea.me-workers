@@ -53,7 +53,7 @@ export default async function createExactOrder(
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-secret": env.EXACT_ACCOUNT_WORKER_SECRET,
+        "x-cf-secure-worker-token": env.CF_SECURE_WORKER_TOKEN,
       },
       body: JSON.stringify(CustomerData),
     },
