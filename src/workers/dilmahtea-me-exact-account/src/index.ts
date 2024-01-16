@@ -25,6 +25,10 @@ declare interface Body {
 }
 
 async function handlePOST(request: Request, env: ENV) {
+  if (request.headers.get("x-secret") !== env.EXACT_ACCOUNT_WORKER_SECRET) {
+    return reply({ success: false, error: "Unauthorized" }, 401);
+  }
+
   const { userId, Email, Phone, FirstName, LastName, Language, Address } =
     await request.json<Body>();
 

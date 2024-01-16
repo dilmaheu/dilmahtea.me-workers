@@ -2,6 +2,7 @@ export interface ENV {
   // ENVIRONMENTAl VARIABLES
   ENVIRONMENT: "PRODUCTION" | "DEVELOPMENT";
   PAYMENT_CONDITION: "VB";
+  EXACT_ACCOUNT_WORKER_URL: string;
 
   // KV
   MAILS: KVNamespace;
@@ -30,13 +31,16 @@ export interface ENV {
   DIMASS_API_URL: string;
   DIMASS_API_SECRET: string;
 
-  // EXACT
-  EXACT_API_ENDPOINT: string;
-
   // STRIPE
   STRIPE_SECRET_KEY: string;
   STRIPE_SIGNING_SECRET_KEY: string;
 
   // SERVICES
   EXACT_ACCOUNT: Fetcher;
+
+  // EXACT
+  EXACT_API_ENDPOINT: string;
+
+  // EXACT ACCOUNT WORKER
+  EXACT_ACCOUNT_WORKER_SECRET: string;
 }

@@ -5,7 +5,7 @@ main = "./src/index.ts"
 workers_dev = false
 logpush = true
 placement = { mode = "smart" }
-vars = { ENVIRONMENT = "PRODUCTION", PAYMENT_CONDITION = "VB" }
+vars = { ENVIRONMENT = "PRODUCTION", PAYMENT_CONDITION = "VB", EXACT_ACCOUNT_WORKER_URL = "https://exact-account.scripts.dilmahtea.me" }
 routes = [
     { pattern = "pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
@@ -26,7 +26,7 @@ services = [
 
 [env.development]
 name = "dilmahtea-me-stripe-webhook-dev"
-vars = { ENVIRONMENT = "DEVELOPMENT", PAYMENT_CONDITION = "VB" }
+vars = { ENVIRONMENT = "DEVELOPMENT", PAYMENT_CONDITION = "VB", EXACT_ACCOUNT_WORKER_URL = "https://dev.exact-account.scripts.dilmahtea.me" }
 routes = [
     { pattern = "dev.pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
