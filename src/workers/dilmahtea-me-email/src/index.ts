@@ -39,9 +39,11 @@ async function handlePOST(request: Request, env: ENV) {
       subject,
       content,
     }),
-  }).then((res) => res.json());
+  }).then((res) => res.json<null | { errors: string[] }>());
 
-  console.log(response);
+  if (response?.errors) {
+    throw new Error(response.errors.join("; "));
+  }
 
   return reply({ success: true }, 200);
 }
