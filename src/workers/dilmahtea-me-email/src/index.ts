@@ -11,6 +11,13 @@ declare interface Body {
 async function handlePOST(request: Request, env: ENV) {
   const { to, subject, content } = await request.json<Body>();
 
+  if (
+    request.headers.get("x-cf-secure-worker-token") !==
+    env.CF_SECURE_WORKER_TOKEN
+  ) {
+    return reply({ success: false, error: "Unauthorized" }, 401);
+  }
+
   const response = await fetch("https://api.mailchannels.net/tx/v1/send", {
     method: "POST",
     headers: {
@@ -32,9 +39,11 @@ async function handlePOST(request: Request, env: ENV) {
       subject,
       content,
     }),
-  }).then((res) => res.json());
+  }).then((res) => res.json<null | { errors: string[] }>());
 
-  console.log(response);
+  if (response?.errors) {
+    throw new Error(response.errors.join("; "));
+  }
 
   return reply({ success: true }, 200);
 }

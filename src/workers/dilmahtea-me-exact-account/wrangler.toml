@@ -5,7 +5,9 @@ main = "./src/index.ts"
 workers_dev = false
 logpush = true
 placement = { mode = "smart" }
-vars = { ENVIRONMENT = "PRODUCTION", PAYMENT_CONDITION = "VB" }
+routes = [
+    { pattern = "exact-account.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
+]
 kv_namespaces = [
     { binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" },
     { binding = "EXACT_GUID_COLLECTION", id = "b75eb1bee9d7488fa33b8be89caab307" },
@@ -17,7 +19,9 @@ services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" 
 
 [env.development]
 name = "dilmahtea-me-exact-account-dev"
-vars = { ENVIRONMENT = "DEVELOPMENT", PAYMENT_CONDITION = "VB" }
+routes = [
+    { pattern = "dev.exact-account.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
+]
 kv_namespaces = [
     { binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" },
     { binding = "EXACT_GUID_COLLECTION", id = "f767fadbe91d459893e903cc9a01d40a" },
@@ -30,3 +34,4 @@ services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" 
 # secrets
 # DKIM_PRIVATE_KEY
 # EXACT_API_ENDPOINT
+# CF_SECURE_WORKER_TOKEN

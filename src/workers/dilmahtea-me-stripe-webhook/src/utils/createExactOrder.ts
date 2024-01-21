@@ -48,11 +48,12 @@ export default async function createExactOrder(
   const CustomerData = { Name, Email, FirstName, LastName, Language, Address };
 
   const { success, error, Customer } = await env.EXACT_ACCOUNT.fetch(
-    request.url,
+    env.EXACT_ACCOUNT_WORKER_URL,
     {
       method: "POST",
       headers: {
         "content-type": "application/json",
+        "x-cf-secure-worker-token": env.CF_SECURE_WORKER_TOKEN,
       },
       body: JSON.stringify(CustomerData),
     },

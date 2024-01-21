@@ -28,6 +28,13 @@ async function handlePOST(request: Request, env: ENV) {
   const { userId, Email, Phone, FirstName, LastName, Language, Address } =
     await request.json<Body>();
 
+  if (
+    request.headers.get("x-cf-secure-worker-token") !==
+    env.CF_SECURE_WORKER_TOKEN
+  ) {
+    return reply({ success: false, error: "Unauthorized" }, 401);
+  }
+
   if (!userId) {
     handlePOST.retry = false;
     handlePOST.catchError = true;

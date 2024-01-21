@@ -5,7 +5,7 @@ main = "./src/index.ts"
 workers_dev = false
 logpush = true
 placement = { mode = "smart" }
-vars = { ENVIRONMENT = "PRODUCTION", PAYMENT_CONDITION = "VB" }
+vars = { ENVIRONMENT = "PRODUCTION", PAYMENT_CONDITION = "VB", EMAIL_WORKER_URL = "https://email.scripts.dilmahtea.me", EXACT_ACCOUNT_WORKER_URL = "https://exact-account.scripts.dilmahtea.me" }
 routes = [
     { pattern = "pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
@@ -20,13 +20,14 @@ d1_databases = [
     { binding = "USERS", database_name = "users", database_id = "74a1dc02-0705-44fb-b009-fb2fe974e098" }
 ]
 services = [
+    { binding = "EMAIL", service = "dilmahtea-me-email" },
+    { binding = "EXACT_ACCOUNT", service = "dilmahtea-me-exact-account" },
     { binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" },
-    { binding = "EXACT_ACCOUNT", service = "dilmahtea-me-exact-account" }
 ]
 
 [env.development]
 name = "dilmahtea-me-stripe-webhook-dev"
-vars = { ENVIRONMENT = "DEVELOPMENT", PAYMENT_CONDITION = "VB" }
+vars = { ENVIRONMENT = "DEVELOPMENT", PAYMENT_CONDITION = "VB", EMAIL_WORKER_URL = "https://email.scripts.dilmahtea.me", EXACT_ACCOUNT_WORKER_URL = "https://dev.exact-account.scripts.dilmahtea.me" }
 routes = [
     { pattern = "dev.pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
@@ -41,8 +42,9 @@ d1_databases = [
     { binding = "USERS", database_name = "users_dev", database_id = "076751ed-7610-4965-b72d-e9d619227957" }
 ]
 services = [
-    { binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" },
-    { binding = "EXACT_ACCOUNT", service = "dilmahtea-me-exact-account-dev" }
+    { binding = "EMAIL", service = "dilmahtea-me-email" },
+    { binding = "EXACT_ACCOUNT", service = "dilmahtea-me-exact-account-dev" },
+    { binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }
 ]
 
 # secrets
@@ -55,6 +57,7 @@ services = [
 # DIMASS_API_KEY
 # DIMASS_API_URL
 # DIMASS_API_SECRET
-# EXACT_API_ENDPOINT
 # STRIPE_SECRET_KEY
 # STRIPE_SIGNING_SECRET_KEY
+# EXACT_API_ENDPOINT
+# CF_SECURE_WORKER_TOKEN

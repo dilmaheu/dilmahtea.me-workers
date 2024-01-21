@@ -6,7 +6,11 @@ workers_dev = false
 logpush = true
 placement = { mode = "smart" }
 vars = { FROM_NAME = "Dilmah Europe", FROM_EMAIL = "hello@dilmahtea.me"  }
+routes = [
+    { pattern = "email.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
+]
 services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
 # secrets
 # DKIM_PRIVATE_KEY
+# CF_SECURE_WORKER_TOKEN
