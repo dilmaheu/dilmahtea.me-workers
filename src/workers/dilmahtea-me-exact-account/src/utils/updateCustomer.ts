@@ -193,9 +193,9 @@ export default async function updateCustomer(
                 }),
           }).then(() => console.log(`Exact: Contact updated`)),
         );
-
-        return matchedContact;
       }
+
+      return matchedContact;
     } else {
       // create a new contact if there is no contact or exact match
       const NewContact = await fetchExactAPI("POST", "/CRM/Contacts", {

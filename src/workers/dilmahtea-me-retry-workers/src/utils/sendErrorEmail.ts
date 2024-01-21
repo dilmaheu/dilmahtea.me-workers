@@ -32,7 +32,7 @@ export default function sendErrorEmail(
     body = "Request #" + requestID + " retry completed successfully.";
   }
 
-  return fetch(env.EMAIL_WORKER_URL, {
+  return env.EMAIL.fetch(env.EMAIL_WORKER_URL, {
     method: "POST",
     headers: {
       "content-type": "application/json",

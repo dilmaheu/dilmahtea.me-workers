@@ -26,8 +26,7 @@ export default {
                 );
 
                 if (storedRequest) {
-                  const { SECURE_WORKER_ID, url, method, headers, body } =
-                    storedRequest;
+                  const { url, method, headers, body } = storedRequest;
 
                   const retryAttemptURL = new URL(url);
 

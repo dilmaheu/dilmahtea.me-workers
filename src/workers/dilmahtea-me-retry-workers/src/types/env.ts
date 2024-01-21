@@ -9,6 +9,9 @@ export interface ENV {
   // KV
   WORKER_REQUESTS: KVNamespace;
 
+  // SERVICES
+  EMAIL: Fetcher;
+
   // STRIPE
   STRIPE_DEV_SIGNING_SECRET_KEY: string;
   STRIPE_PROD_SIGNING_SECRET_KEY: string;
