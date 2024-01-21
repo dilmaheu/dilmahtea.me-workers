@@ -8,7 +8,14 @@ import fetchExactAPI from "../../../utils/fetchExactAPI";
 import getCustomerFilter from "../../../utils/getCustomerFilter";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
-declare interface Body {
+declare interface ContactUpdate {
+  ProviderId: string;
+  contact: string;
+  exact_account_guid: string;
+  exact_contact_guid: string;
+}
+
+declare interface Customer {
   userId?: string;
   Email?: string;
   Phone?: string;
@@ -24,9 +31,32 @@ declare interface Body {
   };
 }
 
+async function handlePUT(request: Request, env: ENV) {
+  const { ProviderId, contact, exact_account_guid, exact_contact_guid } =
+    await request.json<ContactUpdate>();
+
+  if (
+    request.headers.get("x-cf-secure-worker-token") !==
+    env.CF_SECURE_WORKER_TOKEN
+  ) {
+    return reply({ success: false, error: "Unauthorized" }, 401);
+  }
+
+  await Promise.all([
+    fetchExactAPI("PUT", "/crm/Accounts(guid'" + exact_account_guid + "')", {
+      [ProviderId]: contact,
+    }),
+    fetchExactAPI("PUT", "/crm/Contacts(guid'" + exact_contact_guid + "')", {
+      [ProviderId]: contact,
+    }),
+  ]);
+
+  return reply({ success: true }, 200);
+}
+
 async function handlePOST(request: Request, env: ENV) {
   const { userId, Email, Phone, FirstName, LastName, Language, Address } =
-    await request.json<Body>();
+    await request.json<Customer>();
 
   if (
     request.headers.get("x-cf-secure-worker-token") !==
@@ -91,8 +121,9 @@ async function handlePOST(request: Request, env: ENV) {
 }
 
 handlePOST.retry = true;
+handlePUT.retry = true;
 
 export default createModuleWorker({
   pathname: "*",
-  methods: { POST: handlePOST },
+  methods: { POST: handlePOST, PUT: handlePUT },
 });
