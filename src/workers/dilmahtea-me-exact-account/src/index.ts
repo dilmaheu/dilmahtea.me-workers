@@ -91,7 +91,6 @@ async function handlePOST(request: Request, env: ENV) {
 }
 
 handlePOST.retry = true;
-handlePOST.SECURE_WORKER_ID = "EXACT_ACCOUNT";
 
 export default createModuleWorker({
   pathname: "*",
