@@ -14,7 +14,6 @@ export default async function sendEmail(paymentData) {
     city,
     street,
     postal_code,
-    kindness_cause,
     shipping_method,
     shipping_cost,
     perk,

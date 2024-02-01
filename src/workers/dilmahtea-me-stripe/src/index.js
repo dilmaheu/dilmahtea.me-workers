@@ -30,7 +30,6 @@ const handlePOST = async (request, env, ctx) => {
     city,
     street,
     postal_code,
-    kindness_cause,
     shipping_method,
     shipping_cost,
     perk,
