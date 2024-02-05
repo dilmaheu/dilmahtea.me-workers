@@ -10,7 +10,7 @@ import throwExtendedError from "../../../../utils/throwExtendedError";
 
 import context from "../context";
 
-export default async function createOrder(paymentData, request) {
+export default async function createOrder(paymentData) {
   const {
     domain,
     paymentID,
@@ -23,7 +23,6 @@ export default async function createOrder(paymentData, request) {
     city,
     street,
     postal_code,
-    kindness_cause,
     shipping_method,
     shipping_cost,
     perk,
@@ -40,8 +39,8 @@ export default async function createOrder(paymentData, request) {
   paymentData.countryCode = await getCountryCode(country);
 
   try {
-    context.salesOrder ||= await createExactOrder(paymentData, request).catch(
-      (error) => rethrow(error, "Exact"),
+    context.salesOrder ||= await createExactOrder(paymentData).catch((error) =>
+      rethrow(error, "Exact"),
     );
 
     const { "d:OrderNumber": orderNumber, "d:Created": order_date } =
