@@ -59,7 +59,6 @@ export default async function getValidatedData(paymentData, CMSData) {
     postal_code: z.string().regex(/^[\w- ]+$/),
     billing_first_name: z.string(),
     billing_last_name: z.string(),
-    billing_email: z.string().email(),
     billing_city: z.string(),
     billing_street: z.string(),
     billing_postal_code: z.string().regex(/^[\w- ]+$/),

@@ -7,7 +7,6 @@ export default async function getCustomerID(stripe, paymentData, CMSData) {
   const {
     billing_first_name,
     billing_last_name,
-    billing_email,
     billing_city,
     billing_street,
     billing_postal_code,
@@ -26,7 +25,7 @@ export default async function getCustomerID(stripe, paymentData, CMSData) {
     };
 
   const customer = {
-    email: billing_email,
+    email,
     name,
     address,
     shipping: {
@@ -37,7 +36,7 @@ export default async function getCustomerID(stripe, paymentData, CMSData) {
 
   const {
     data: [existingCustomer],
-  } = await stripe.customers.list({ email: billing_email });
+  } = await stripe.customers.list({ email });
 
   const hasToUpdateCustomer =
     existingCustomer &&

@@ -32,7 +32,6 @@ const handlePOST = async (request, env, ctx) => {
     postal_code,
     billing_first_name,
     billing_last_name,
-    billing_email,
     billing_street,
     billing_city,
     billing_postal_code,
