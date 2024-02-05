@@ -1,19 +1,18 @@
 // @ts-check
 
 export default async function getCustomerID(stripe, paymentData, CMSData) {
-  const { email, first_name, last_name, city, street, postal_code } =
-    paymentData;
-
   const {
+    email,
     billing_first_name,
     billing_last_name,
+    billing_country,
     billing_city,
     billing_street,
     billing_postal_code,
-  } = CMSData;
+  } = paymentData;
 
   const countryCode = CMSData.countries.data.find(
-    ({ attributes: { name } }) => name === billing_city,
+    ({ attributes: { name } }) => name === billing_country,
   ).attributes.code;
 
   const name = billing_first_name + " " + billing_last_name,
@@ -63,6 +62,7 @@ export default async function getCustomerID(stripe, paymentData, CMSData) {
 
   if (!existingCustomer || hasToUpdateCustomer) {
     const createdCustomer = await stripe.customers.create(customer);
+
     return createdCustomer;
   } else {
     return existingCustomer;
