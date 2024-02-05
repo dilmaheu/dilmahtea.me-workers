@@ -1,23 +1,32 @@
 // @ts-check
 
 export default async function getCustomerID(stripe, paymentData, CMSData) {
-  const { email, first_name, last_name, country, city, street, postal_code } =
+  const { email, first_name, last_name, city, street, postal_code } =
     paymentData;
 
+  const {
+    billing_first_name,
+    billing_last_name,
+    billing_email,
+    billing_city,
+    billing_street,
+    billing_postal_code,
+  } = CMSData;
+
   const countryCode = CMSData.countries.data.find(
-    ({ attributes: { name } }) => name === country,
+    ({ attributes: { name } }) => name === billing_city,
   ).attributes.code;
 
-  const name = first_name + " " + last_name,
+  const name = billing_first_name + " " + billing_last_name,
     address = {
       country: countryCode,
-      city,
-      postal_code,
-      line1: street,
+      city: billing_city,
+      postal_code: billing_postal_code,
+      line1: billing_street,
     };
 
   const customer = {
-    email,
+    email: billing_email,
     name,
     address,
     shipping: {
@@ -28,7 +37,7 @@ export default async function getCustomerID(stripe, paymentData, CMSData) {
 
   const {
     data: [existingCustomer],
-  } = await stripe.customers.list({ email });
+  } = await stripe.customers.list({ email: billing_email });
 
   const hasToUpdateCustomer =
     existingCustomer &&
@@ -55,7 +64,6 @@ export default async function getCustomerID(stripe, paymentData, CMSData) {
 
   if (!existingCustomer || hasToUpdateCustomer) {
     const createdCustomer = await stripe.customers.create(customer);
-
     return createdCustomer;
   } else {
     return existingCustomer;
