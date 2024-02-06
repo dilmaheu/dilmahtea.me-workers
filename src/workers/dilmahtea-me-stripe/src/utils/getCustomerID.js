@@ -1,19 +1,26 @@
 // @ts-check
 
 export default async function getCustomerID(stripe, paymentData, CMSData) {
-  const { email, first_name, last_name, country, city, street, postal_code } =
-    paymentData;
+  const {
+    email,
+    billing_first_name,
+    billing_last_name,
+    billing_country,
+    billing_city,
+    billing_street,
+    billing_postal_code,
+  } = paymentData;
 
   const countryCode = CMSData.countries.data.find(
-    ({ attributes: { name } }) => name === country,
+    ({ attributes: { name } }) => name === billing_country,
   ).attributes.code;
 
-  const name = first_name + " " + last_name,
+  const name = billing_first_name + " " + billing_last_name,
     address = {
       country: countryCode,
-      city,
-      postal_code,
-      line1: street,
+      city: billing_city,
+      postal_code: billing_postal_code,
+      line1: billing_street,
     };
 
   const customer = {
