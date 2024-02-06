@@ -70,6 +70,7 @@ export default async function getValidatedData(paymentData, CMSData) {
   const CrowdfundingPaymentIntentSchema = BasePaymentIntentSchema.extend({
     payment_type: z.literal("crowdfunding"),
     country: z.literal("Netherlands"),
+    billing_country: z.literal("Netherlands"),
     favorite_tea: z.string(),
     // @ts-ignore
     perk: z.enum(Object.keys(crowdfundingPerks)),
@@ -84,6 +85,7 @@ export default async function getValidatedData(paymentData, CMSData) {
   const EcommercePaymentIntentSchema = BasePaymentIntentSchema.extend({
     payment_type: z.literal("ecommerce"),
     country: z.enum(countries),
+    billing_country: z.enum(countries),
     // @ts-ignore
     shipping_method: z.enum(Object.keys(shippingMethods)),
     shipping_cost: z
