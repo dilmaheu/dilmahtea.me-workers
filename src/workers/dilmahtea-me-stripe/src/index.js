@@ -83,10 +83,6 @@ const handlePOST = async (request, env, ctx) => {
   // Redirects the customer to s Stripe checkout page.
   // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
 
-  await stripe.paymentMethods.attach(paymentMethod.id, {
-    customer: customer.id,
-  });
-
   function convertPriceToCents(price, quantity = 1) {
     return Math.round(price * quantity * 100);
   }
