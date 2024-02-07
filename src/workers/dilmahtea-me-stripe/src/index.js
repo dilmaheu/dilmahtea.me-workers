@@ -98,7 +98,9 @@ const handlePOST = async (request, env, ctx) => {
   }
 
   const totalAmount = Object.values(cart).reduce((total, item) =>
-  total + convertPriceToCents(item.price, item.quantity), 0);
+    total + convertPriceToCents(item.price, item.quantity), 0) +
+    convertPriceToCents(shippingCost);
+  
 
   const paymentIntent = await stripe.paymentIntents.create({
     customer: customer.id,
