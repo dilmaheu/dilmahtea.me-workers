@@ -63,7 +63,9 @@ const handlePOST = async (request, env, ctx) => {
   });
 
   const queryString = searchParams.toString(),
-    cancel_url = origin_url + "?" + queryString;
+    cancel_url = origin_url + "?" + queryString,
+    success_url = success_url +
+      (payment_type === "ecommerce" ? "&paymentID=" + paymentID : "");
 
   const paymentID = crypto.randomUUID(),
     paymentData = { ...validatedData, request_headers };
@@ -107,11 +109,7 @@ const handlePOST = async (request, env, ctx) => {
     metadata: { paymentID, payment_type },
   });
 
-  const confirmPaymentIntent = await stripe.paymentIntents.confirm(
-      paymentIntent.id,
-      {return_url: success_url +
-        (payment_type === "ecommerce" ? "&paymentID=" + paymentID : "")}
-    );
+  const confirmPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id);
 
   ctx.waitUntil(
     createBaserowRecord(
@@ -138,7 +136,9 @@ const handlePOST = async (request, env, ctx) => {
     }),
   );
 
-  return Response.redirect(session.url, 303);
+  const return_url = confirmPaymentIntent.status === 'succeeded' ? success_url : cancel_url;
+
+  return Response.redirect(return_url, 303);
 };
 
 handlePOST.catchError = true;
