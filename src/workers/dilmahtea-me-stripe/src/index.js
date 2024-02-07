@@ -45,7 +45,6 @@ const handlePOST = async (request, env, ctx) => {
     price,
     tax,
     payment_type,
-    payment_method,
     stripeToken,
     locale,
     origin_url,
@@ -82,50 +81,45 @@ const handlePOST = async (request, env, ctx) => {
   // Redirects the customer to s Stripe checkout page.
   // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
   const paymentMethod = await stripe.paymentMethods.create({
-    type: payment_method,
+    type: 'card',
     card: {
       token: stripeToken,
     },
   });
 
-  const session = await stripe.checkout.sessions.create({
-    locale: locale,
-    mode: "payment",
+  await stripe.paymentMethods.attach(paymentMethod.id, {
+    customer: customer.id,
+  });
+
+  function convertPriceToCents(price, quantity = 1) {
+    return Math.round(price * quantity * 100);
+  }
+
+  const totalAmount = Object.values(cart).reduce((total, item) =>
+  total + convertPriceToCents(item.price, item.quantity), 0);
+
+  const paymentIntent = await stripe.paymentIntents.create({
     customer: customer.id,
     payment_method_types: ['card'],
     payment_method: paymentMethod.id,
-    cancel_url,
-    success_url:
-      success_url +
-      (payment_type === "ecommerce" ? "&paymentID=" + paymentID : ""),
-    payment_intent_data: { metadata: { paymentID, payment_type } },
-    line_items: (payment_type === "ecommerce"
-      ? [
-          ...Object.values(cart),
-          {
-            name: shipping_method,
-            price: shipping_cost,
-            quantity: 1,
-          },
-        ]
-      : [
-          {
-            name: product_desc,
-            price,
-            quantity: 1,
-          },
-        ]
-    ).map(({ name, names, price, quantity }) => ({
-      quantity: 1,
-      price_data: {
-        currency: "eur",
-        unit_amount: Math.round(price * 100),
-        product_data: {
-          name: name || `${quantity}x ${JSON.parse(names)[locale]}`,
-        },
-      },
-    })),
+    amount: totalAmount,
+    currency: 'eur',
+    metadata: { paymentID, payment_type },
   });
+
+  const confirmPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id);
+
+  if (confirmPaymentIntent.status === 'succeeded') {
+    // Payment succeeded, redirect to success URL
+    res.json({ 
+      success: true, 
+      redirectUrl: success_url +
+      (payment_type === "ecommerce" ? "&paymentID=" + paymentID : ""), 
+    });
+  } else {
+    // Payment failed, redirect to cancel URL
+    res.json({ success: false, redirectUrl: cancel_url });
+  }
 
   ctx.waitUntil(
     createBaserowRecord(

@@ -72,7 +72,6 @@ export default async function getValidatedData(paymentData, CMSData) {
     country: z.literal("Netherlands"),
     billing_country: z.literal("Netherlands"),
     favorite_tea: z.string(),
-    payment_method: z.string(),
     stripeToken: z.string(),
     // @ts-ignore
     perk: z.enum(Object.keys(crowdfundingPerks)),
@@ -88,7 +87,6 @@ export default async function getValidatedData(paymentData, CMSData) {
     payment_type: z.literal("ecommerce"),
     country: z.enum(countries),
     billing_country: z.enum(countries),
-    payment_method: z.string(),
     stripeToken: z.string(),
     // @ts-ignore
     shipping_method: z.enum(Object.keys(shippingMethods)),
