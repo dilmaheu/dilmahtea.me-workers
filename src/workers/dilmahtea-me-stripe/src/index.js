@@ -107,19 +107,11 @@ const handlePOST = async (request, env, ctx) => {
     metadata: { paymentID, payment_type },
   });
 
-  const confirmPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id);
-
-  if (confirmPaymentIntent.status === 'succeeded') {
-    // Payment succeeded, redirect to success URL
-    res.json({ 
-      success: true, 
-      redirectUrl: success_url +
-      (payment_type === "ecommerce" ? "&paymentID=" + paymentID : ""), 
-    });
-  } else {
-    // Payment failed, redirect to cancel URL
-    res.json({ success: false, redirectUrl: cancel_url });
-  }
+  const confirmPaymentIntent = await stripe.paymentIntents.confirm(
+      paymentIntent.id,
+      {return_url: success_url +
+        (payment_type === "ecommerce" ? "&paymentID=" + paymentID : "")}
+    );
 
   ctx.waitUntil(
     createBaserowRecord(
