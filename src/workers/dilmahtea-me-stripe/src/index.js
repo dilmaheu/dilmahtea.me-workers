@@ -45,7 +45,7 @@ const handlePOST = async (request, env, ctx) => {
     price,
     tax,
     payment_type,
-    stripeToken,
+    bank,
     locale,
     origin_url,
     success_url,
@@ -83,9 +83,9 @@ const handlePOST = async (request, env, ctx) => {
   // Redirects the customer to s Stripe checkout page.
   // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
   const paymentMethod = await stripe.paymentMethods.create({
-    type: 'card',
-    card: {
-      token: stripeToken,
+    type: 'ideal',
+    ideal: {
+      bank: bank,
     },
   });
 
