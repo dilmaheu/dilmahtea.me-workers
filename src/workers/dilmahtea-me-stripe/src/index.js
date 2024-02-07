@@ -45,6 +45,11 @@ const handlePOST = async (request, env, ctx) => {
     price,
     tax,
     payment_type,
+    payment_method,
+    card_number,
+    card_exp_month,
+    card_exp_year,
+    card_cvv,
     locale,
     origin_url,
     success_url,
@@ -79,11 +84,23 @@ const handlePOST = async (request, env, ctx) => {
   // Create new Checkout Session for the order.
   // Redirects the customer to s Stripe checkout page.
   // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
+
+  const paymentMethod = await stripe.paymentMethods.create({
+    type: payment_method,
+    card: {
+      number: card_number,
+      exp_month: card_exp_month,
+      exp_year: card_exp_year,
+      cvc: card_cvc,
+    },
+  });
+
   const session = await stripe.checkout.sessions.create({
     locale: locale,
     mode: "payment",
     customer: customer.id,
-    payment_method_types,
+    payment_method_types: ['card'],
+    payment_method: paymentMethod.id,
     cancel_url,
     success_url:
       success_url +
