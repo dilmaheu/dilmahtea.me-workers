@@ -62,13 +62,13 @@ const handlePOST = async (request, env, ctx) => {
     postal_code,
   });
 
+  const paymentID = crypto.randomUUID(),
+    paymentData = { ...validatedData, request_headers };
+
   const queryString = searchParams.toString(),
     cancel_url = origin_url + "?" + queryString,
     successUrl = success_url +
       (payment_type === "ecommerce" ? "&paymentID=" + paymentID : "");
-
-  const paymentID = crypto.randomUUID(),
-    paymentData = { ...validatedData, request_headers };
 
   const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
     // Cloudflare Workers use the Fetch API for their API requests.
