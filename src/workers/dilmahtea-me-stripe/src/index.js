@@ -46,10 +46,6 @@ const handlePOST = async (request, env, ctx) => {
     tax,
     payment_type,
     payment_method,
-    card_number,
-    card_exp_month,
-    card_exp_year,
-    card_cvc,
     locale,
     origin_url,
     success_url,
@@ -84,16 +80,6 @@ const handlePOST = async (request, env, ctx) => {
   // Create new Checkout Session for the order.
   // Redirects the customer to s Stripe checkout page.
   // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
-
-  const token = await stripe.tokens.create({
-    card: {
-      number: card_number,
-      exp_month: card_exp_month,
-      exp_year: card_exp_year,
-      cvc: card_cvc,
-    },
-  });
-
   const paymentMethod = await stripe.paymentMethods.create({
     type: payment_method,
     card: {

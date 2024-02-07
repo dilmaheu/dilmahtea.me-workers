@@ -73,10 +73,6 @@ export default async function getValidatedData(paymentData, CMSData) {
     billing_country: z.literal("Netherlands"),
     favorite_tea: z.string(),
     payment_method: z.string(),
-    card_number: z.string().regex(/^[\w- ]+$/),
-    card_exp_month: z.string().regex(/^[\w- ]+$/),
-    card_exp_year: z.string().regex(/^[\w- ]+$/),
-    card_cvc: z.string().regex(/^[\w- ]+$/),
     // @ts-ignore
     perk: z.enum(Object.keys(crowdfundingPerks)),
     product_desc: z
@@ -92,10 +88,6 @@ export default async function getValidatedData(paymentData, CMSData) {
     country: z.enum(countries),
     billing_country: z.enum(countries),
     payment_method: z.string(),
-    card_number: z.string().regex(/^[\w- ]+$/),
-    card_exp_month: z.string().regex(/^[\w- ]+$/),
-    card_exp_year: z.string().regex(/^[\w- ]+$/),
-    card_cvc: z.string().regex(/^[\w- ]+$/),
     // @ts-ignore
     shipping_method: z.enum(Object.keys(shippingMethods)),
     shipping_cost: z
