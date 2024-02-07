@@ -46,6 +46,7 @@ const handlePOST = async (request, env, ctx) => {
     tax,
     payment_type,
     payment_method,
+    stripeToken,
     locale,
     origin_url,
     success_url,
@@ -83,7 +84,7 @@ const handlePOST = async (request, env, ctx) => {
   const paymentMethod = await stripe.paymentMethods.create({
     type: payment_method,
     card: {
-      token: token.id,
+      token: stripeToken,
     },
   });
 
