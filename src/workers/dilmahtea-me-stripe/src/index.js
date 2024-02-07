@@ -64,7 +64,7 @@ const handlePOST = async (request, env, ctx) => {
 
   const queryString = searchParams.toString(),
     cancel_url = origin_url + "?" + queryString,
-    success_url = success_url +
+    successUrl = success_url +
       (payment_type === "ecommerce" ? "&paymentID=" + paymentID : "");
 
   const paymentID = crypto.randomUUID(),
@@ -100,7 +100,6 @@ const handlePOST = async (request, env, ctx) => {
   const totalAmount = Object.values(cart).reduce((total, item) =>
     total + convertPriceToCents(item.price, item.quantity), 0) +
     convertPriceToCents(shippingCost);
-  
 
   const paymentIntent = await stripe.paymentIntents.create({
     customer: customer.id,
@@ -138,7 +137,7 @@ const handlePOST = async (request, env, ctx) => {
     }),
   );
 
-  const return_url = confirmPaymentIntent.status === 'succeeded' ? success_url : cancel_url;
+  const return_url = confirmPaymentIntent.status === 'succeeded' ? successUrl : cancel_url;
 
   return Response.redirect(return_url, 303);
 };
