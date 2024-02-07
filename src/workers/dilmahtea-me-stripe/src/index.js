@@ -104,10 +104,12 @@ const handlePOST = async (request, env, ctx) => {
     amount: totalAmount,
     currency: 'eur',
     metadata: { paymentID, payment_type },
-    return_url: successUrl,
   });
 
-  const confirmPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id);
+  const confirmPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id, {
+    payment_method: paymentMethod.id,
+    return_url: successUrl,
+  });
 
   ctx.waitUntil(
     createBaserowRecord(
