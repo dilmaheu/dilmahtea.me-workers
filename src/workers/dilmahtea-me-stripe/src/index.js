@@ -49,7 +49,7 @@ const handlePOST = async (request, env, ctx) => {
     card_number,
     card_exp_month,
     card_exp_year,
-    card_cvv,
+    card_cvc,
     locale,
     origin_url,
     success_url,
