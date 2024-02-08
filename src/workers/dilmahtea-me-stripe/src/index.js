@@ -110,9 +110,11 @@ const handlePOST = async (request, env, ctx) => {
   //   return_url: successUrl,
   // });
 
-  const confirmPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id);
-
-  const redirectUrl = confirmPaymentIntent.status === 'succeeded' ? successUrl : cancel_url;
+  const redirectUrl = paymentIntent.status === 'requires_action' && paymentIntent.next_action.type === 'redirect_to_url'
+    ? paymentIntent.next_action.redirect_to_url.url
+    : paymentIntent.status === 'succeeded'
+      ? successUrl
+      : cancel_url;
 
   ctx.waitUntil(
     createBaserowRecord(
