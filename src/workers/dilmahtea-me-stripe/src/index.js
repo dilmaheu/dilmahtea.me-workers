@@ -106,7 +106,6 @@ const handlePOST = async (request, env, ctx) => {
     metadata: { paymentID, payment_type },
     confirm: true,
     return_url: successUrl,
-    cancel_url: cancel_url,
   });
 
   // const confirmPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id, {
