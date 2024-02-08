@@ -83,7 +83,10 @@ const handlePOST = async (request, env, ctx) => {
   // Redirects the customer to s Stripe checkout page.
   // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
   const paymentMethod = await stripe.paymentMethods.create({
-    type: 'paypal',
+    type: 'bancontact',
+    billing_details:  {
+      name: customer.name,
+    }
   });
 
   function convertPriceToCents(price, quantity = 1) {
@@ -96,7 +99,7 @@ const handlePOST = async (request, env, ctx) => {
 
   const paymentIntent = await stripe.paymentIntents.create({
     customer: customer.id,
-    payment_method_types: ['paypal'],
+    payment_method_types: ['bancontact'],
     payment_method: paymentMethod.id,
     amount: totalAmount,
     currency: 'eur',
@@ -110,11 +113,7 @@ const handlePOST = async (request, env, ctx) => {
   //   return_url: successUrl,
   // });
 
-  const redirectUrl = paymentIntent.status === 'requires_action' && paymentIntent.next_action.type === 'redirect_to_url'
-    ? paymentIntent.next_action.redirect_to_url.url
-    : paymentIntent.status === 'succeeded'
-      ? successUrl
-      : cancel_url;
+  const redirectUrl = paymentIntent.next_action?.redirect_to_url?.url || cancel_url;
 
   ctx.waitUntil(
     createBaserowRecord(
