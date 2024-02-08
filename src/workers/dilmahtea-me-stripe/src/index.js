@@ -110,8 +110,6 @@ const handlePOST = async (request, env, ctx) => {
   //   return_url: successUrl,
   // });
 
-  const redirectUrl = paymentIntent.next_action?.redirect_to_url?.url || cancel_url;
-
   ctx.waitUntil(
     createBaserowRecord(
       {
@@ -138,7 +136,6 @@ const handlePOST = async (request, env, ctx) => {
   );
 
 
-  return Response.redirect(redirectUrl, 303);
 };
 
 handlePOST.catchError = true;
