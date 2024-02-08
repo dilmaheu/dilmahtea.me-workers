@@ -90,10 +90,10 @@ const handlePOST = async (request, env, ctx) => {
       address: {
         country: customer.address?.country,
       },
-    }
+    },
     sofort: {
       country: customer.address?.country,
-    }
+    },
   });
 
   function convertPriceToCents(price, quantity = 1) {
