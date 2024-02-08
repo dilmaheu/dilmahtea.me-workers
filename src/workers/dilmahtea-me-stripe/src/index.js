@@ -112,9 +112,8 @@ const handlePOST = async (request, env, ctx) => {
   //   payment_method: paymentMethod.id,
   //   return_url: successUrl,
   // });
-  if (paymentIntent.next_action && paymentIntent.next_action.redirect_to_url) {
-    const redirectUrl = paymentIntent.next_action.redirect_to_url.url;
-  }
+
+  const redirectUrl = paymentIntent.next_action?.redirect_to_url?.url || cancel_url;
 
   ctx.waitUntil(
     createBaserowRecord(
