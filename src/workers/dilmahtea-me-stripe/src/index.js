@@ -102,6 +102,7 @@ const handlePOST = async (request, env, ctx) => {
     currency: 'eur',
     metadata: { paymentID, payment_type },
     confirm: true,
+    return_url: successUrl,
   });
 
   // const confirmPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id, {
