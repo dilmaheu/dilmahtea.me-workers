@@ -83,9 +83,9 @@ const handlePOST = async (request, env, ctx) => {
   // Redirects the customer to s Stripe checkout page.
   // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
   const paymentMethod = await stripe.paymentMethods.create({
-    type: 'ideal',
-    ideal: {
-      bank: bank,
+    type: 'paypal',
+    paypal: {
+      payer_email: email,
     },
   });
 
@@ -99,12 +99,13 @@ const handlePOST = async (request, env, ctx) => {
 
   const paymentIntent = await stripe.paymentIntents.create({
     customer: customer.id,
-    payment_method_types: ['ideal'],
+    payment_method_types: ['paypal'],
     payment_method: paymentMethod.id,
     amount: totalAmount,
     currency: 'eur',
     metadata: { paymentID, payment_type },
     confirm: true,
+    cancel_url: cancel_url,
     return_url: successUrl,
   });
 
