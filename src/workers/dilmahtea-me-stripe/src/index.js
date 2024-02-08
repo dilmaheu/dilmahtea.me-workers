@@ -87,7 +87,7 @@ const handlePOST = async (request, env, ctx) => {
     billing_details:  {
       name: customer.name,
       address: {
-        customer.adrress
+        country: customer.address?.country,
       },
     }
   });
