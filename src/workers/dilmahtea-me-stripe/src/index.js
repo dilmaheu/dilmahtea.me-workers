@@ -100,7 +100,7 @@ const handlePOST = async (request, env, ctx) => {
   const paymentIntent = await stripe.paymentIntents.create({
     customer: customer.id,
     payment_method_types: ['paypal'],
-    payment_method: paymentMethod.id,
+    // payment_method: paymentMethod.id,
     amount: totalAmount,
     currency: 'eur',
     metadata: { paymentID, payment_type },
