@@ -82,12 +82,12 @@ const handlePOST = async (request, env, ctx) => {
   // Create new Checkout Session for the order.
   // Redirects the customer to s Stripe checkout page.
   // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
-  const paymentMethod = await stripe.paymentMethods.create({
-    type: 'paypal',
-    paypal: {
-      payer_email: email,
-    },
-  });
+  // const paymentMethod = await stripe.paymentMethods.create({
+  //   type: 'paypal',
+  //   paypal: {
+  //     payer_email: email,
+  //   },
+  // });
 
   function convertPriceToCents(price, quantity = 1) {
     return Math.round(price * quantity * 100);
