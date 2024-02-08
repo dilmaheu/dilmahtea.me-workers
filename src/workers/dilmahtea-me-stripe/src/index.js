@@ -83,9 +83,10 @@ const handlePOST = async (request, env, ctx) => {
   // Redirects the customer to s Stripe checkout page.
   // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
   const paymentMethod = await stripe.paymentMethods.create({
-    type: 'bancontact',
+    type: 'klarna',
     billing_details:  {
       name: customer.name,
+      address: customer.adrress,
     }
   });
 
@@ -99,7 +100,7 @@ const handlePOST = async (request, env, ctx) => {
 
   const paymentIntent = await stripe.paymentIntents.create({
     customer: customer.id,
-    payment_method_types: ['bancontact'],
+    payment_method_types: ['klarna'],
     payment_method: paymentMethod.id,
     amount: totalAmount,
     currency: 'eur',
