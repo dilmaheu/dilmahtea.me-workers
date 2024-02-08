@@ -104,12 +104,18 @@ const handlePOST = async (request, env, ctx) => {
     amount: totalAmount,
     currency: 'eur',
     metadata: { paymentID, payment_type },
+    confirm: true,
+    return_url: successUrl,
+    cancel_url: cancel_url,
   });
 
-  const confirmPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id, {
-    payment_method: paymentMethod.id,
-    return_url: successUrl,
-  });
+  // const confirmPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id, {
+  //   payment_method: paymentMethod.id,
+  //   return_url: successUrl,
+  // });
+  if (paymentIntent.next_action && paymentIntent.next_action.redirect_to_url) {
+    const redirectUrl = paymentIntent.next_action.redirect_to_url.url;
+  }
 
   ctx.waitUntil(
     createBaserowRecord(
@@ -136,7 +142,7 @@ const handlePOST = async (request, env, ctx) => {
     }),
   );
 
-  const return_url = confirmPaymentIntent.status === 'succeeded' ? successUrl : cancel_url;
+  const return_url = paymentIntent.status === 'succeeded' ? successUrl : cancel_url;
 
   return Response.redirect(return_url, 303);
 };
