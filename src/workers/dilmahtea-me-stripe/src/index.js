@@ -105,7 +105,6 @@ const handlePOST = async (request, env, ctx) => {
     currency: 'eur',
     metadata: { paymentID, payment_type },
     confirm: true,
-    cancel_url: cancel_url,
     return_url: successUrl,
   });
 
