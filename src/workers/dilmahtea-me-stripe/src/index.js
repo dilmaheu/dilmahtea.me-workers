@@ -86,7 +86,7 @@ const handlePOST = async (request, env, ctx) => {
     type: 'klarna',
     billing_details:  {
       name: customer.name,
-      address: customer.adrress,
+      customer.adrress,
     }
   });
 
