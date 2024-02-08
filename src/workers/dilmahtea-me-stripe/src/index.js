@@ -84,6 +84,9 @@ const handlePOST = async (request, env, ctx) => {
   // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
   const paymentMethod = await stripe.paymentMethods.create({
     type: 'bancontact',
+    billing_details:  {
+      name: customer.name,
+    }
   });
 
   function convertPriceToCents(price, quantity = 1) {
