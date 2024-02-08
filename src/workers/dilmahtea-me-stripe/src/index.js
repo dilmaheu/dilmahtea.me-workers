@@ -105,7 +105,6 @@ const handlePOST = async (request, env, ctx) => {
     currency: 'eur',
     metadata: { paymentID, payment_type },
     confirm: true,
-    return_url: successUrl,
   });
 
   // const confirmPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id, {
@@ -141,9 +140,8 @@ const handlePOST = async (request, env, ctx) => {
     }),
   );
 
-  const return_url = paymentIntent.status === 'succeeded' ? successUrl : cancel_url;
 
-  return Response.redirect(return_url, 303);
+  return Response.redirect(redirectUrl, 303);
 };
 
 handlePOST.catchError = true;
