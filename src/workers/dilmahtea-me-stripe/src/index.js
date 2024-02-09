@@ -79,7 +79,7 @@ const handlePOST = async (request, env, ctx) => {
   });
 
   const customer = await getCustomerID(stripe, paymentData, CMSData),
-    payment_method_types = await getPaymentMethodTypes(country, CMSData);
+    payment_method_types = await getPaymentMethodTypes(billing_country, CMSData);
 
   // Create new Checkout Session for the order.
   // Redirects the customer to s Stripe checkout page.
