@@ -47,6 +47,7 @@ const handlePOST = async (request, env, ctx) => {
     payment_type,
     payment_method_name,
     stripeToken,
+    bank,
     locale,
     origin_url,
     success_url,
@@ -85,14 +86,24 @@ const handlePOST = async (request, env, ctx) => {
   // @see https://stripe.com/docs/payments/accept-a-payment?integration=checkout
   const paymentMethod = await stripe.paymentMethods.create({
     type: payment_method_name,
-    card: {
-      token: stripeToken,
-    },
+    ...(payment_method_name === "card" && {
+      card: {
+        token: stripeToken,
+      }
+    }),
+    ...(payment_method_name === "ideal" && {
+      ideal: {
+        bank: bank,
+      }
+    }),
   });
 
-  await stripe.paymentMethods.attach(paymentMethod.id, {
-    customer: customer.id,
-  });
+
+  if (payment_method_name === "card") {
+    await stripe.paymentMethods.attach(paymentMethod.id, {
+      customer: customer.id,
+    });
+  }
 
   function convertPriceToCents(price, quantity = 1) {
     return Math.round(price * quantity * 100);
@@ -100,7 +111,7 @@ const handlePOST = async (request, env, ctx) => {
 
   const totalAmount = Object.values(cart).reduce((total, item) =>
     total + convertPriceToCents(item.price, item.quantity), 0) +
-    convertPriceToCents(shipping_cost);
+    (payment_type === 'ecommerce' ? convertPriceToCents(shipping_cost) : 0);
 
   const paymentIntent = await stripe.paymentIntents.create({
     customer: customer.id,
@@ -109,9 +120,17 @@ const handlePOST = async (request, env, ctx) => {
     amount: totalAmount,
     currency: 'eur',
     metadata: { paymentID, payment_type },
+    ...(payment_method_name === "card" ? { confirm: true } : { return_url: successUrl }),
   });
 
-  const confirmPaymentIntent = await stripe.paymentIntents.confirm(paymentIntent.id);
+  const confirmPaymentIntent =
+    payment_method_name === "card" &&
+    (await stripe.paymentIntents.confirm(paymentIntent.id));
+
+  const redirectUrl =
+    (confirmPaymentIntent?.status === "succeeded"
+      ? successUrl
+      : paymentIntent.next_action?.redirect_to_url?.url) || cancelUrl;
 
   ctx.waitUntil(
     createBaserowRecord(
@@ -137,8 +156,6 @@ const handlePOST = async (request, env, ctx) => {
       );
     }),
   );
-
-  const redirectUrl = confirmPaymentIntent.status === 'succeeded' ? successUrl : cancelUrl;
 
   return Response.redirect(redirectUrl, 303);
 };
