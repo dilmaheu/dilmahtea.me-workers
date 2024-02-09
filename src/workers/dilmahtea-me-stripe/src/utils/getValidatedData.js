@@ -75,7 +75,6 @@ export default async function getValidatedData(paymentData, CMSData) {
     payment_method_name: z.string(),
     // @ts-ignore
     stripeToken: z.string(),
-    bank: z.string(),
     perk: z.enum(Object.keys(crowdfundingPerks)),
     product_desc: z
       .string()
@@ -92,7 +91,6 @@ export default async function getValidatedData(paymentData, CMSData) {
     payment_method_name: z.string(),
     // @ts-ignore
     stripeToken: z.string(),
-    bank: z.string(),
     shipping_method: z.enum(Object.keys(shippingMethods)),
     shipping_cost: z
       .number()
