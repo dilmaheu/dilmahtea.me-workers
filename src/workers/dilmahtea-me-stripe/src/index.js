@@ -120,7 +120,7 @@ const handlePOST = async (request, env, ctx) => {
     amount: totalAmount,
     currency: 'eur',
     metadata: { paymentID, payment_type },
-    ...(payment_method_name === "card" ? { confirm: true } : { return_url: successUrl }),
+    ...(payment_method_name !== "card" && { confirm: true, return_url: successUrl }),
   });
 
   const confirmPaymentIntent =
