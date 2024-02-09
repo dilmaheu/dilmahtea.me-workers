@@ -96,6 +96,18 @@ const handlePOST = async (request, env, ctx) => {
         bank: bank,
       }
     }),
+    ...(payment_method_name === "sofort" && {
+      sofort: {
+        country: customer.address?.country,
+      },
+    }),
+    billing_details:  {
+      name: customer.name,
+      email: customer.email,
+      address: {
+        country: customer.address?.country,
+      },
+    }
   });
 
 
