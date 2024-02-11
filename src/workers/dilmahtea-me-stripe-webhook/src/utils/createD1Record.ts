@@ -20,7 +20,7 @@ export default async function createD1Record(
     .slice(0, 10);
 
   await env.USERS.prepare(
-    "INSERT INTO orders (id, customer_exact_account_guid, customer_email, customer_phone, status, order_date, estimated_shipment_date, estimated_delivery_date, delivery_date, tracking_url, items) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    "INSERT INTO orders (id, exact_account_guid, customer_email, customer_phone, status, order_date, estimated_shipment_date, estimated_delivery_date, delivery_date, tracking_url, items) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
   )
     .bind(
       orderNumber,
