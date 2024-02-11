@@ -2,20 +2,17 @@ import env from "../env";
 
 import fetchExactAPI from "../../../../utils/fetchExactAPI";
 
-export default async function createExactOrder(
-  {
-    locale,
-    email: Email,
-    first_name: FirstName,
-    last_name: LastName,
-    city: City,
-    postal_code: Postcode,
-    street,
-    cart,
-    countryCode: Country,
-  },
-  request,
-) {
+export default async function createExactOrder({
+  locale,
+  email: Email,
+  first_name: FirstName,
+  last_name: LastName,
+  city: City,
+  postal_code: Postcode,
+  street,
+  cart,
+  countryCode: Country,
+}) {
   const Name = `${FirstName} ${LastName}`,
     Language = locale.toUpperCase();
 
