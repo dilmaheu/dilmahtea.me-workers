@@ -50,7 +50,7 @@ export default async function createOrder(paymentData) {
     } = context.salesOrder.entry.content["m:properties"];
 
     if (!context.hasCreatedD1Record) {
-      await createD1Record(customerID, email, cart, orderNumber, order_date);
+      await createD1Record(customerID, cart, orderNumber, order_date);
 
       context.hasCreatedD1Record = true;
     }
