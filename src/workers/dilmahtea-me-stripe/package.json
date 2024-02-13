@@ -6,10 +6,5 @@
   "type": "module",
   "main": "src/index.js",
   "author": "dilmaheu",
-  "license": "MIT",
-  "dependencies": {
-    "stripe": "^14.16.0",
-    "zod": "^3.22.4",
-    "zod-validation-error": "^3.0.0"
-  }
+  "license": "MIT"
 }
