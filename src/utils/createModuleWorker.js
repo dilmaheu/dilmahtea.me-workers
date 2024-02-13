@@ -126,7 +126,10 @@ export default function ({ pathname: endpointPathname, methods }) {
             ]);
 
             if (error) {
-              return reply({ message: `Error: ${error.message}` }, 200);
+              return reply(
+                { success: false, message: `Error: ${error.message}` },
+                200,
+              );
             }
           }
         }
