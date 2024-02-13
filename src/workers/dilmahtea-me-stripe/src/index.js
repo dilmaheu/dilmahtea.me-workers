@@ -71,7 +71,7 @@ const handlePOST = async (request, env, ctx) => {
     cancelUrl = origin_url + "?" + queryString,
     successUrl =
       success_url +
-      (payment_type === "ecommerce" ? "&paymentID=" + paymentID : "");
+      (payment_type === "ecommerce" ? "?paymentID=" + paymentID : "");
 
   const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
     // Cloudflare Workers use the Fetch API for their API requests.
