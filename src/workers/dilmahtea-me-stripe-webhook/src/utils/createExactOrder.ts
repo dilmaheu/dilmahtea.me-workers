@@ -1,6 +1,7 @@
 import env from "../env";
 
 import fetchExactAPI from "../../../../utils/fetchExactAPI";
+import fetchExactAccountWorker from "../../../../utils/fetchExactAccountWorker";
 
 export default async function createExactOrder({
   locale,
@@ -44,17 +45,11 @@ export default async function createExactOrder({
 
   const CustomerData = { Name, Email, FirstName, LastName, Language, Address };
 
-  const { success, error, Customer } = await env.EXACT_ACCOUNT.fetch(
-    env.EXACT_ACCOUNT_WORKER_URL,
-    {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-cf-secure-worker-token": env.CF_SECURE_WORKER_TOKEN,
-      },
-      body: JSON.stringify(CustomerData),
-    },
-  ).then((res) => res.json<any>());
+  const { success, error, Customer } = await fetchExactAccountWorker(
+    "/account",
+    "POST",
+    CustomerData,
+  );
 
   if (!success) {
     throw new Error(error);
