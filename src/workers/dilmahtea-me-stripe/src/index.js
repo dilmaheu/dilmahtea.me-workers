@@ -96,7 +96,7 @@ const handlePOST = async (request, env, ctx) => {
     }),
     ...(payment_method_name === "ideal" && {
       ideal: {
-        bank: bank,
+        bank,
       },
     }),
     ...(payment_method_name === "sofort" && {
