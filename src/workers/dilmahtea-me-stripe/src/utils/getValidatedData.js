@@ -3,6 +3,8 @@
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 
+import getPaymentMethodTypes from "./getPaymentMethodTypes";
+
 export default async function getValidatedData(paymentData, CMSData) {
   // process data for validation
   const {
@@ -44,6 +46,11 @@ export default async function getValidatedData(paymentData, CMSData) {
     shippingMethods[method] = cost;
   });
 
+  const paymentMethodNames = getPaymentMethodTypes(
+    paymentData.billing_country,
+    CMSData,
+  );
+
   // validate data
   paymentData.tax &&= +paymentData.tax;
   paymentData.price &&= +paymentData.price;
@@ -72,7 +79,7 @@ export default async function getValidatedData(paymentData, CMSData) {
     country: z.literal("Netherlands"),
     billing_country: z.literal("Netherlands"),
     favorite_tea: z.string(),
-    payment_method_name: z.string(),
+    payment_method_name: z.enum(paymentMethodNames),
     // @ts-ignore
     stripeToken: z.string(),
     perk: z.enum(Object.keys(crowdfundingPerks)),
@@ -88,7 +95,7 @@ export default async function getValidatedData(paymentData, CMSData) {
     payment_type: z.literal("ecommerce"),
     country: z.enum(countries),
     billing_country: z.enum(countries),
-    payment_method_name: z.string(),
+    payment_method_name: z.enum(paymentMethodNames),
     // @ts-ignore
     stripeToken: z.string(),
     shipping_method: z.enum(Object.keys(shippingMethods)),
