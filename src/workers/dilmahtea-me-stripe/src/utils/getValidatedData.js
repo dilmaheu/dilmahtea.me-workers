@@ -46,7 +46,7 @@ export default async function getValidatedData(paymentData, CMSData) {
     shippingMethods[method] = cost;
   });
 
-  const paymentMethodNames = getPaymentMethodTypes(
+  const paymentMethodNames = await getPaymentMethodTypes(
     paymentData.billing_country,
     CMSData,
   );
