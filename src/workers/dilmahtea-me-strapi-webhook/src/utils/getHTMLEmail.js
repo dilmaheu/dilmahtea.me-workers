@@ -11,6 +11,8 @@ const getHTMLEmail = ({
   Total,
   Shipping,
   Company_address,
+  text_shipping_address,
+  text_billing_address,
 }) => `
     <!DOCTYPE html>
     <html lang="en">
