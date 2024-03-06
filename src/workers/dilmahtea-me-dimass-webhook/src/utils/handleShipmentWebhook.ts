@@ -52,7 +52,7 @@ export default async function handleShipmentWebhook(
 
   const shippingMethod = await fetchExactAPI(
     "GET",
-    `/sales/ShippingMethods?$filter=Code eq '${courier_code}'&$select=ID`,
+    `/sales/ShippingMethods?$filter=Code eq '${courier_code}' or Description eq '${courier_code}'&$select=ID`,
   );
 
   const shippingMethodID =
