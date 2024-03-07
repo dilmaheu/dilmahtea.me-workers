@@ -36,13 +36,19 @@ export default async function sendInvoice(
     context.hasInvoicedSalesOrder = true;
   }
 
-  const invoice = await fetchExactAPI(
+  const {
+    feed: { entry: Invoice },
+  } = await fetchExactAPI(
     "GET",
     `/salesinvoice/SalesInvoices?$filter=OrderNumber eq ${orderNumber}&$select=InvoiceID`,
   );
 
-  const { "d:InvoiceID": InvoiceID } =
-    invoice.feed.entry.content["m:properties"];
+  // resolve invoice creation failure in the next attempt
+  if (!Invoice) {
+    context.hasInvoicedSalesOrder = false;
+  }
+
+  const { "d:InvoiceID": InvoiceID } = Invoice.content["m:properties"];
 
   await env.USERS.prepare(
     "UPDATE orders SET status = ?, tracking_url = ? WHERE id = ?",
