@@ -143,8 +143,8 @@ const getHTMLEmail = ({
                             \${line_items}
                             ${
                               !Shipping
-                              ? ""
-                              : `
+                                ? ""
+                                : `
                                 <div
                                   style="
                                     display: flex; 
@@ -237,8 +237,8 @@ const getHTMLEmail = ({
                         <div style="display: grid; gap: 10px; gap: clamp(5px, 0.063rem + 0.625vw, 10px);">
                           ${
                             !Shipping
-                            ? ""
-                            : `
+                              ? ""
+                              : `
                               <div style="display: grid; gap: 10px; gap: clamp(5px, 0.063rem + 0.625vw, 10px);">
                                 <div 
                                   style="
