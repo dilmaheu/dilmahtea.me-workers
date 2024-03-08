@@ -36,10 +36,13 @@ const getHTMLEmail = ({
         />
 
         <style>
-          .preheader-text a, .body-text a {
-            color: #1E4848;
+          .preheader-text a, .body-text a {          
             font-weight: 700;
             font-style: normal;
+          }
+
+          .body-text a {
+            color: #1E4848;
           }
         </style>
       </head>
