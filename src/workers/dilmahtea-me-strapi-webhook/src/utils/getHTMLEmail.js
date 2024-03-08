@@ -31,7 +31,7 @@ const getHTMLEmail = ({
           rel="stylesheet"
         />
         <link
-          href="https://drive.google.com/file/d/1hMgHTjfCIoDhXl_ZyKP_0_Lxv5WIVniZ/view?usp=drive_link"
+          href="https://drive.usercontent.google.com/u/0/uc?id=1hMgHTjfCIoDhXl_ZyKP_0_Lxv5WIVniZ&export=download"
           rel="stylesheet"
         />
 
