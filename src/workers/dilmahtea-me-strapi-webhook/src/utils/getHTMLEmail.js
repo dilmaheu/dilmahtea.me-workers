@@ -67,7 +67,7 @@ const getHTMLEmail = ({
           <!-- brand logo -->
           <img
             alt="Dilmah Tea Logo"
-            src="https://imagedelivery.net/BX3RwoS0OdbsyY2M52BQzw/c49ecab8-5548-4d65-41e8-efa0e59fb000/opengraph"
+            src="https://dilmahtea.me/_astro/logo-image.png"
             style="display: block; width: auto; height: 100px; height: clamp(70px, 2.875rem + 3.75vw, 100px); margin: 0 auto;"
           />
     
