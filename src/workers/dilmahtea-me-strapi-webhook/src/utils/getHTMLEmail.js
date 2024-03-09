@@ -106,8 +106,8 @@ const getHTMLEmail = ({
                     padding: clamp(15px, -0.063rem + 2.5vw, 35px);
                     line-height: 150%;
                     color: #474747;
-                    margin-top: 30px 0;
-                    margin-top: clamp(25px, 1.313rem + 0.625vw, 30px) 0;
+                    margin-top: 30px;
+                    margin-top: clamp(25px, 1.313rem + 0.625vw, 30px);
                   "
                 >
                   ${bodyText}
@@ -124,8 +124,8 @@ const getHTMLEmail = ({
                           color: #474747;
                           background: #FAF4F2;
                           border-radius: 10px;
-                          margin-top: 30px 0;
-                          margin-top: clamp(25px, 1.313rem + 0.625vw, 30px) 0;
+                          margin-top: 30px;
+                          margin-top: clamp(25px, 1.313rem + 0.625vw, 30px);
                         "
                       >
                         <h2 
