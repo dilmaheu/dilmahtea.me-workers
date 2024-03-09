@@ -41,6 +41,10 @@ const getHTMLEmail = ({
             font-style: normal;
           }
 
+          .preheader-text a {
+            color: #FAF4F2;
+          }
+
           .body-text a {
             color: #1E4848;
           }
@@ -53,8 +57,6 @@ const getHTMLEmail = ({
 
         <div 
           style="
-            display: grid;
-            gap: 50px;
             max-width: 720px;
             padding: 50px 24px;
             margin: 0 auto;
@@ -73,11 +75,10 @@ const getHTMLEmail = ({
     
           <div
             role="main"
-            style="display: block;"
+            style="display: block; margin: 50px 0;"
           >
-            <div style="display: grid; gap: 30px; gap: clamp(25px, 1.313rem + 0.625vw, 30px);">
+            <div>
               <!-- Preheader Text -->
-              
               <h1
                 class="preheader-text"
                 style="
@@ -104,6 +105,8 @@ const getHTMLEmail = ({
                     padding: clamp(15px, -0.063rem + 2.5vw, 35px);
                     line-height: 150%;
                     color: #474747;
+                    margin: 30px 0;
+                    margin: clamp(25px, 1.313rem + 0.625vw, 30px) 0;
                   "
                 >
                   ${bodyText}
@@ -115,9 +118,6 @@ const getHTMLEmail = ({
                     : `
                       <div
                         style="
-                          display: grid;
-                          gap: 30px;
-                          gap: clamp(25px, 1.313rem + 0.625vw, 30px);
                           padding: 35px;
                           padding: clamp(15px, -0.063rem + 2.5vw, 35px);
                           color: #474747;
@@ -133,52 +133,54 @@ const getHTMLEmail = ({
                             font-weight: 700; 
                             line-height: 140%;
                             color: #1E4848;
+                            margin-bottom: 30px;
+                            margin-bottom: clamp(25px, 1.313rem + 0.625vw, 30px);
                           "
                         >
                           ${Overview_Title}
                         </h2>
 
-                        <div style="display: grid; gap: 10px; gap: clamp(5px, 0.063rem + 0.625vw, 10px);">
-                          <div style="display: grid; gap: 10px; gap: clamp(5px, 0.063rem + 0.625vw, 10px);">
+                        <div>
+                          <div>
                             \${line_items}
                             ${
                               !Shipping
                                 ? ""
                                 : `
-                                <div
-                                  style="
-                                    display: flex; 
-                                    justify-content: space-between;
-                                    gap: 10px;
-                                    gap: clamp(5px, 0.063rem + 0.625vw, 10px);
-                                    font-size: 16px;
-                                    font-size: clamp(16px, 0.8rem + 0.5vw, 20px);
-                                  "
-                                >
-                                  <div>${Shipping}</div>
+                                <div style="font-size: 16px; font-size: clamp(16px, 0.8rem + 0.5vw, 20px);">
+                                  <div style="margin-right:auto;">${Shipping}</div>
 
-                                  <div>&euro;\${shipping_cost}</div>
+                                  <div 
+                                    style="
+                                      margin-left:10px; 
+                                      margin-left: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                    "
+                                  >
+                                    &euro;\${shipping_cost}
+                                  </div>
                                 </div>
+
+                                <div 
+                                  style="
+                                    border-bottom: 1px solid #B2CCCC;
+                                    margin: 10px 0;
+                                    margin: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                  "
+                                ></div>
                               `
                             } 
                           </div>
 
-                          <div style="border-bottom: 1px solid #B2CCCC;"></div>
-
-                          <div style="display: grid; gap: 10px; gap: clamp(5px, 0.063rem + 0.625vw, 10px);">
+                          <div>
                             <div
                               style="
-                                display: flex; 
-                                justify-content: space-between;
-                                gap: 10px;
-                                gap: clamp(5px, 0.063rem + 0.625vw, 10px);
                                 font-size: 28px;
                                 font-size: clamp(20px, 0.85rem + 1vw, 28px);
                                 font-weight: 700;
                                 color: #000;
                               "
                             >
-                              <div>${Total}</div>
+                              <div style="margin-right:auto;">${Total}</div>
 
                               <div>$&euro;\${price}</div>
                             </div>
@@ -195,7 +197,14 @@ const getHTMLEmail = ({
                             >
                               <div>${VAT}</div>
 
-                              <div>$&euro;\${tax}</div>
+                              <div 
+                                style="
+                                  margin-left:10px; 
+                                  margin-left: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                "
+                              >
+                                &euro;\${tax}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -210,9 +219,6 @@ const getHTMLEmail = ({
                     : `
                       <div
                         style="
-                          display: grid;
-                          gap: 30px;
-                          gap: clamp(25px, 1.313rem + 0.625vw, 30px);
                           padding: 35px;
                           padding: clamp(15px, -0.063rem + 2.5vw, 35px);
                           color: #474747;
@@ -229,22 +235,26 @@ const getHTMLEmail = ({
                             font-weight: 700; 
                             line-height: 140%;
                             color: #1E4848;
+                            margin-bottom: 30px;
+                            margin-bottom: clamp(25px, 1.313rem + 0.625vw, 30px);
                           "
                         >
                           ${Billing_Details_Title}
                         </h2>
                         
-                        <div style="display: grid; gap: 10px; gap: clamp(5px, 0.063rem + 0.625vw, 10px);">
+                        <div>
                           ${
                             !Shipping
                               ? ""
                               : `
-                              <div style="display: grid; gap: 10px; gap: clamp(5px, 0.063rem + 0.625vw, 10px);">
+                              <div>
                                 <div 
                                   style="
                                     font-size: 18px; 
                                     font-size: clamp(16px, 0.9rem + 0.25vw, 18px); 
                                     font-weight: 600;
+                                    margin-bottom: 10px; 
+                                    margin-bottom: clamp(5px, 0.063rem + 0.625vw, 10px);
                                   "
                                 >
                                   ${text_shipping_address}
@@ -254,13 +264,27 @@ const getHTMLEmail = ({
                                   \${shipping_address}
                                 </div>
                               </div>
+
+                              <div 
+                                style="
+                                  border-bottom: 1px solid #B2CCCC;
+                                  margin: 10px 0;
+                                  margin: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                "
+                              ></div>
                             `
                           }
 
-                          <div style="border-bottom: 1px solid #B2CCCC;"></div>
-
-                          <div style="display: grid; gap: 10px; gap: clamp(5px, 0.063rem + 0.625vw, 10px);">
-                            <div style="font-size: 18px; font-size: clamp(16px, 0.9rem + 0.25vw, 18px); font-weight: 600;">
+                          <div>
+                            <div 
+                              style="
+                                font-size: 18px; 
+                                font-size: clamp(16px, 0.9rem + 0.25vw, 18px); 
+                                font-weight: 600;
+                                margin-bottom: 10px; 
+                                margin-bottom: clamp(5px, 0.063rem + 0.625vw, 10px);
+                              "
+                            >
                               ${text_billing_address}
                             </div>
 
@@ -279,9 +303,6 @@ const getHTMLEmail = ({
           <!-- Footer Section -->
           <div
             style="
-              display: grid;
-              gap: 10px;
-              gap: clamp(5px, 0.063rem + 0.625vw, 10px);
               font-size: 16px;
               font-size: clamp(12px, 0.55rem + 0.5vw, 16px);
               line-height: 150%;
@@ -290,7 +311,9 @@ const getHTMLEmail = ({
             "
             role="contentinfo"
           >
-            <div>${Company_address}</div>
+            <div style="margin-bottom: 10px; margin-bottom: clamp(5px, 0.063rem + 0.625vw, 10px);">
+              ${Company_address}
+            </div>
 
             <div>${footerText}</div>
           </div>

@@ -69,19 +69,17 @@ export default async function sendEmail(paymentData) {
       "${line_items}",
       lineItems
         .map(([name, price]) =>
-          `<div
-            style="
-              display: flex; 
-              justify-content: space-between;
-              gap: 10px;
-              gap: clamp(5px, 0.063rem + 0.625vw, 10px);
-              font-size: 16px;
-              font-size: clamp(16px, 0.8rem + 0.5vw, 20px);
-            "
-          >
-            <div>\${name}</div>
+          `<div style="font-size: 16px; font-size: clamp(16px, 0.8rem + 0.5vw, 20px);">
+            <div style="margin-right:auto;">\${name}</div>
 
-            <div>&euro;\${price}</div>
+            <div 
+              style="
+                margin-left:10px; 
+                margin-left: clamp(5px, 0.063rem + 0.625vw, 10px);
+              "
+            >
+              &euro;\${price}
+            </div>
           </div>`
             .replace("${name}", name)
             .replace("${price}", price),
