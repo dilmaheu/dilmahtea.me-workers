@@ -3,6 +3,8 @@
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 
+import getPaymentMethodTypes from "./getPaymentMethodTypes";
+
 export default async function getValidatedData(paymentData, CMSData) {
   // process data for validation
   const {
@@ -44,6 +46,11 @@ export default async function getValidatedData(paymentData, CMSData) {
     shippingMethods[method] = cost;
   });
 
+  const paymentMethodNames = await getPaymentMethodTypes(
+    paymentData.billing_country,
+    CMSData,
+  );
+
   // validate data
   paymentData.tax &&= +paymentData.tax;
   paymentData.price &&= +paymentData.price;
@@ -57,6 +64,11 @@ export default async function getValidatedData(paymentData, CMSData) {
     city: z.string(),
     street: z.string(),
     postal_code: z.string().regex(/^[\w- ]+$/),
+    billing_first_name: z.string(),
+    billing_last_name: z.string(),
+    billing_city: z.string(),
+    billing_street: z.string(),
+    billing_postal_code: z.string().regex(/^[\w- ]+$/),
     locale: z.enum(locales),
     origin_url: z.string().url(),
     success_url: z.string().url(),
@@ -65,8 +77,11 @@ export default async function getValidatedData(paymentData, CMSData) {
   const CrowdfundingPaymentIntentSchema = BasePaymentIntentSchema.extend({
     payment_type: z.literal("crowdfunding"),
     country: z.literal("Netherlands"),
+    billing_country: z.literal("Netherlands"),
     favorite_tea: z.string(),
+    payment_method_name: z.enum(paymentMethodNames),
     // @ts-ignore
+    stripeToken: z.string(),
     perk: z.enum(Object.keys(crowdfundingPerks)),
     product_desc: z
       .string()
@@ -79,7 +94,10 @@ export default async function getValidatedData(paymentData, CMSData) {
   const EcommercePaymentIntentSchema = BasePaymentIntentSchema.extend({
     payment_type: z.literal("ecommerce"),
     country: z.enum(countries),
+    billing_country: z.enum(countries),
+    payment_method_name: z.enum(paymentMethodNames),
     // @ts-ignore
+    stripeToken: z.string(),
     shipping_method: z.enum(Object.keys(shippingMethods)),
     shipping_cost: z
       .number()

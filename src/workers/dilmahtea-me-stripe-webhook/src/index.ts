@@ -94,15 +94,12 @@ async function handlePOST(request: Request, env: ENV) {
     if (payment_type === "ecommerce") {
       if (!context.hasCreatedOrder) {
         promises.push(
-          createOrder(
-            {
-              paymentID,
-              domain,
-              paymentBaserowRecordID,
-              ...paymentIntentData,
-            },
-            request,
-          ).then(() => {
+          createOrder({
+            paymentID,
+            domain,
+            paymentBaserowRecordID,
+            ...paymentIntentData,
+          }).then(() => {
             context.hasCreatedOrder = true;
           }),
         );

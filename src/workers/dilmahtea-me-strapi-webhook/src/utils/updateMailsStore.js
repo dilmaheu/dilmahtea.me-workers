@@ -22,6 +22,8 @@ const query = `
     From_name
     Company_email
     Company_address
+    text_shipping_address
+    text_billing_address
   }
 
   fragment CheckoutRecurringElementAttributes on CheckoutRecurringElement {
@@ -147,6 +149,8 @@ export async function updateMailsStore(env) {
           Company_email: From_email,
           Footer_text,
           Company_address,
+          text_shipping_address,
+          text_billing_address,
         } = recurringElementData[locale];
 
         const { text_total: Total, text_shipping: Shipping } =
@@ -161,7 +165,7 @@ export async function updateMailsStore(env) {
               `
                 <a
                   href="mailto:${From_email}"
-                  style="font-style: italic;"
+                  style="color: #1E4848; font-weight: 700;"
                   >${From_email}</a
                 >
               `,
@@ -183,6 +187,8 @@ export async function updateMailsStore(env) {
           Total,
           Shipping,
           Company_address,
+          text_shipping_address,
+          text_billing_address,
         });
 
         const mailData = {

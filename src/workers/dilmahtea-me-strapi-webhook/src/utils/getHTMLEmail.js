@@ -11,263 +11,321 @@ const getHTMLEmail = ({
   Total,
   Shipping,
   Company_address,
+  text_shipping_address,
+  text_billing_address,
 }) => `
     <!DOCTYPE html>
     <html lang="en">
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
         <title>Je betaling is succesvol ontvangen. Dank hiervoor!</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
         <link
-          href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet"
           rel="stylesheet"
         />
+
         <link
           href="https://fonts.googleapis.com/css2?family=Alice&family=Roboto&display=swap"
           rel="stylesheet"
         />
+        
+        <link
+          href="https://drive.usercontent.google.com/u/0/uc?id=1hMgHTjfCIoDhXl_ZyKP_0_Lxv5WIVniZ&export=download"
+          rel="stylesheet"
+        />
 
         <style>
-          .preheader-text, .preheader-text a {
-            color: #e2dfde;
+          .preheader-text a, .body-text a {          
+            font-weight: 700;
+            font-style: normal;
+          }
+
+          .preheader-text a {
+            color: #FAF4F2;
           }
 
           .body-text a {
-            display: inline;
-            color: #4e878a;
-            text-decoration: none;
-            border-bottom: 1px solid #4e878a;
+            color: #1E4848;
           }
         </style>
       </head>
       
-      <body style="padding: 0; margin: 0; background-color: #2b4b50;">
+      <body style="padding: 0; margin: 0; background-color: #1E4848;">
         <!-- Preview Text -->
         <div style="display: none;"><${previewText}></div>
-  
-        <!-- Background Section -->
-        <div
+
+        <div 
           style="
-            position: relative;
-            display: block;
-            background-image: url(https://imagedelivery.net/BX3RwoS0OdbsyY2M52BQzw/7fa35dcb-abd3-41df-4711-3b9cac1b0500/opengraph);
-            background-repeat: no-repeat;
-            background-size: 100% 100%;
-            height: 160px;
-            object-fit: cover;
-            overflow: hidden;
+            max-width: 720px;
+            padding: 50px 24px;
+            margin: 0 auto;
+            font-family: Roboto Flex, sans-serif;
+            font-size: 24px;
+            font-size: clamp(18px, 0.75vw + 13.2px, 24px);
+            line-height: 150%;
           "
         >
+          <!-- brand logo -->
           <img
             alt="Dilmah Tea Logo"
-            src="https://imagedelivery.net/BX3RwoS0OdbsyY2M52BQzw/c49ecab8-5548-4d65-41e8-efa0e59fb000/opengraph"
-            style="display: block; width: auto; height: 100px; padding-top: 20px; margin: 0 auto;"
+            src="https://dilmahtea.me/_astro/logo-image.png"
+            style="display: block; width: auto; height: 100px; height: clamp(70px, 2.875rem + 3.75vw, 100px); margin: 0 auto;"
           />
-        </div>
-  
-        <div
-          role="main"
-          style="display: block; justify-content: center;"
-        >
+    
           <div
-            style="
-              display: block;
-              text-align: center;
-              padding: 0 20px;
-              margin: 0 auto;
-            "
+            role="main"
+            style="display: block; margin: 50px 0;"
           >
-            <!-- Preheader Text -->
-            <div style="display: block; margin: 0 auto; max-width: 490px;">
+            <div>
+              <!-- Preheader Text -->
               <h1
                 class="preheader-text"
                 style="
-                  max-width: 490px;
-                  padding: 45px 0;
-                  margin: auto;
-                  font-family: Alice;
-                  font-size: 24px;
-                  font-weight: 400;
-                  line-height: 120%;
+                  font-family: Recoleta, Alice, serif;
+                  font-size: 42px;
+                  font-size: clamp(28px, 1.05rem + 1.75vw, 42px);
+                  font-weight: 700;
                   text-align: center;
+                  color: #fff;
+                  line-height: 140%;
+                  margin: 0;
                 "
               >
                 ${preheaderText}
               </h1>
-            </div>
-  
-            <!-- Text content -->
-            <div style="display: block; margin: 0 auto; max-width: 490px;">
-              <div
-                style="
-                  font-family: Roboto;
-                  font-size: 20px;
-                  font-weight: 500;
-                  line-height: 140%;
-                  letter-spacing: -0.02em;
-                  text-align: left;
-                "
-              >
+    
+              <!-- Text content -->
+              <div style="display: block;">
                 <div
                   class="body-text"
                   style="
-                    background: #e2dfde;
-                    border-radius: 15px;
-                    max-width: 100%;
-                    padding: 28px 24px;
-                    margin-bottom: 40px;
-                    color: #000;
+                    background: #FAF4F2;
+                    border-radius: 10px;
+                    padding: 35px;
+                    padding: clamp(15px, -0.063rem + 2.5vw, 35px);
+                    line-height: 150%;
+                    color: #474747;
+                    margin-top: 30px;
+                    margin-top: clamp(25px, 1.313rem + 0.625vw, 30px);
                   "
                 >
                   ${bodyText}
                 </div>
-  
+    
                 ${
                   !Overview_Title
                     ? ""
                     : `
                       <div
                         style="
-                          background: #e2dfde;
-                          border-radius: 15px;
-                          max-width: 100%;
-                          margin-bottom: 40px;
-                          padding: 28px 24px;
-                          color: #2b4b50;
+                          padding: 35px;
+                          padding: clamp(15px, -0.063rem + 2.5vw, 35px);
+                          color: #474747;
+                          background: #FAF4F2;
+                          border-radius: 10px;
+                          margin-top: 30px;
+                          margin-top: clamp(25px, 1.313rem + 0.625vw, 30px);
                         "
                       >
-                        <h2 style="font-weight: 600; line-height: 140%;">
+                        <h2 
+                          style="
+                            font-family: Recoleta, Alice, serif;
+                            font-size: 32px;
+                            font-size: clamp(24px, 1.1rem + 1vw, 32px)
+                            font-weight: 700; 
+                            line-height: 140%;
+                            color: #1E4848;
+                            margin-bottom: 30px;
+                            margin-bottom: clamp(25px, 1.313rem + 0.625vw, 30px);
+                          "
+                        >
                           ${Overview_Title}
                         </h2>
 
-                        <table width="100%" style="padding-top: 15px;">
-                          <tbody>
+                        <div>
+                          <div>
                             \${line_items}
                             ${
                               !Shipping
                                 ? ""
-                                : `<tr>
-                              <td
-                                style="vertical-align: middle; padding-top: 15px;"
-                              >
-                                ${Shipping}
-                              </td>
-                              
-                              <td
-                                align="right"
-                                style="vertical-align: middle; padding-top: 15px; padding-left: 10px;"
-                              >
-                                &euro;\${shipping_cost}
-                              </td>
-                            </tr>`
-                            }
-                          </tbody>
-                        </table>
+                                : `
+                                <div style="font-size: 16px; font-size: clamp(16px, 0.8rem + 0.5vw, 20px);">
+                                  <div style="margin-right:auto;">${Shipping}</div>
 
-                        <div
-                          style="
-                            display: block;
-                            margin-top: 40px;
-                            margin-bottom: 40px;
-                            border: 1px solid rgba(43, 75, 80, 0.3);
-                          "
-                        ></div>
+                                  <div 
+                                    style="
+                                      margin-left:10px; 
+                                      margin-left: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                    "
+                                  >
+                                    &euro;\${shipping_cost}
+                                  </div>
+                                </div>
 
-                        <table width="100%">
-                          <tbody>
-                            <tr style="font-size: 28px; font-weight: 600;">
-                              <td style="vertical-align: middle;">${Total}</td>
+                                <div 
+                                  style="
+                                    border-bottom: 1px solid #B2CCCC;
+                                    margin: 10px 0;
+                                    margin: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                  "
+                                ></div>
+                              `
+                            } 
+                          </div>
 
-                              <td
-                                align="right"
-                                style="vertical-align: middle; padding-left: 10px;"
-                              >
-                                &euro;\${price}
-                              </td>
-                            </tr>
+                          <div>
+                            <div
+                              style="
+                                font-size: 28px;
+                                font-size: clamp(20px, 0.85rem + 1vw, 28px);
+                                font-weight: 700;
+                                color: #000;
+                              "
+                            >
+                              <div style="margin-right:auto;">${Total}</div>
 
-                            <tr>
-                              <td
-                                style="vertical-align: middle; padding-top: 20px;"
-                              >
-                                ${VAT}
-                              </td>
+                              <div>$&euro;\${price}</div>
+                            </div>
 
-                              <td
-                                align="right"
-                                style="vertical-align: middle; padding-top: 20px; padding-left: 10px;"
+                            <div
+                              style="
+                                display: flex; 
+                                justify-content: space-between;
+                                gap: 10px;
+                                gap: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                font-size: 16px;
+                                font-size: clamp(16px, 0.8rem + 0.5vw, 20px);
+                              "
+                            >
+                              <div>${VAT}</div>
+
+                              <div 
+                                style="
+                                  margin-left:10px; 
+                                  margin-left: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                "
                               >
                                 &euro;\${tax}
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                          
                       </div>
                     `
                 }
-  
+    
                 ${
                   !Billing_Details_Title
                     ? ""
                     : `
                       <div
                         style="
-                          background: #e2dfde;
-                          border-radius: 15px;
-                          max-width: 100%;
-                          padding: 28px 24px;
-                          color: #2b4b50;
+                          padding: 35px;
+                          padding: clamp(15px, -0.063rem + 2.5vw, 35px);
+                          color: #474747;
+                          background: #FAF4F2;
+                          border-radius: 10px;
+                          margin-top: 30px 0;
+                          margin-top: clamp(25px, 1.313rem + 0.625vw, 30px) 0;
                         "
                       >
-                        <h3 style="font-weight: 600; line-height: 120%;">
-                          ${Billing_Details_Title}
-                        </h3>
-
-                        <address
+                        <h2 
                           style="
-                            font-style: normal;
-                            line-height: 120%;  
-                            padding-top: 20px;                
+                            margin: 0;
+                            font-family: Recoleta, Alice, serif;
+                            font-size: 32px;
+                            font-size: clamp(24px, 1.1rem + 1vw, 32px)
+                            font-weight: 700; 
+                            line-height: 140%;
+                            color: #1E4848;
+                            margin-bottom: 30px;
+                            margin-bottom: clamp(25px, 1.313rem + 0.625vw, 30px);
                           "
                         >
-                          \${name}<br />\${street}<br />\${postal_code}
-                          \${city}<br />\${country}
-                        </address>
+                          ${Billing_Details_Title}
+                        </h2>
+                        
+                        <div>
+                          ${
+                            !Shipping
+                              ? ""
+                              : `
+                              <div>
+                                <div 
+                                  style="
+                                    font-size: 18px; 
+                                    font-size: clamp(16px, 0.9rem + 0.25vw, 18px); 
+                                    font-weight: 600;
+                                    margin-bottom: 10px; 
+                                    margin-bottom: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                  "
+                                >
+                                  ${text_shipping_address}
+                                </div>
+
+                                <div style="font-size: 24px; font-size: clamp(18px, 0.75vw + 13.2px, 24px);">
+                                  \${shipping_address}
+                                </div>
+                              </div>
+
+                              <div 
+                                style="
+                                  border-bottom: 1px solid #B2CCCC;
+                                  margin: 10px 0;
+                                  margin: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                "
+                              ></div>
+                            `
+                          }
+
+                          <div>
+                            <div 
+                              style="
+                                font-size: 18px; 
+                                font-size: clamp(16px, 0.9rem + 0.25vw, 18px); 
+                                font-weight: 600;
+                                margin-bottom: 10px; 
+                                margin-bottom: clamp(5px, 0.063rem + 0.625vw, 10px);
+                              "
+                            >
+                              ${text_billing_address}
+                            </div>
+
+                            <div style="font-size: 24px; font-size: clamp(18px, 0.75vw + 13.2px, 24px);">
+                              \${billing_address}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     `
                 }
               </div>
             </div>
           </div>
-        </div>
-  
-        <!-- Footer Section -->
-        <div style="display: block; background-color: #2b4b50;">
+    
+          <!-- Footer Section -->
           <div
             style="
-              display: block;
-              max-width: 490px;
-              padding: 40px 0;
-              margin: auto;
-              font-family: Roboto;
               font-size: 16px;
-              font-weight: 500;
-              line-height: 162%;
+              font-size: clamp(12px, 0.55rem + 0.5vw, 16px);
+              line-height: 150%;
               text-align: center;
-              color: #e2dfde;
+              color: #FAF4F2;
             "
             role="contentinfo"
           >
-            <div style="margin-top: 15px;">
+            <div style="margin-bottom: 10px; margin-bottom: clamp(5px, 0.063rem + 0.625vw, 10px);">
               ${Company_address}
             </div>
-            <div style="margin-top: 15px;">
-              ${footerText}
-            </div>
+
+            <div>${footerText}</div>
           </div>
         </div>
+        
       </body>
     </html>
   `;

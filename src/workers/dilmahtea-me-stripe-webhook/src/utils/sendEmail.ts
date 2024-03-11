@@ -10,11 +10,14 @@ export default async function sendEmail(paymentData) {
     last_name,
     email,
     favorite_tea,
-    country,
-    city,
     street,
     postal_code,
-    kindness_cause,
+    city,
+    country,
+    billing_street,
+    billing_postal_code,
+    billing_city,
+    billing_country,
     shipping_method,
     shipping_cost,
     perk,
@@ -57,23 +60,27 @@ export default async function sendEmail(paymentData) {
     .replaceAll("${price}", price.toFixed(2).replace(".", ","))
     .replaceAll("${shipping_cost}", shipping_cost?.toFixed(2).replace(".", ","))
     .replaceAll("${tax}", tax.toFixed(2).replace(".", ","))
-    .replaceAll("${street}", street)
-    .replaceAll("${postal_code}", postal_code)
-    .replaceAll("${city}", city)
-    .replaceAll("${country}", country)
+    .replaceAll("${shipping_address}", `${street}, ${postal_code}, ${city}, ${country}`)
+    .replaceAll(
+      "${billing_address}", 
+      `${billing_street}, ${billing_postal_code}, ${billing_city}, ${billing_country}`
+    )
     .replace(
       "${line_items}",
       lineItems
         .map(([name, price]) =>
-          `<tr>
-            <td style="vertical-align: middle; padding-top: 15px;">\${name}</td>
-            <td
-              align="right"
-              style="vertical-align: middle; padding-top: 15px; padding-left: 10px;"
+          `<div style="font-size: 16px; font-size: clamp(16px, 0.8rem + 0.5vw, 20px);">
+            <div style="margin-right:auto;">\${name}</div>
+
+            <div 
+              style="
+                margin-left:10px; 
+                margin-left: clamp(5px, 0.063rem + 0.625vw, 10px);
+              "
             >
               &euro;\${price}
-            </td>
-          </tr>`
+            </div>
+          </div>`
             .replace("${name}", name)
             .replace("${price}", price),
         )

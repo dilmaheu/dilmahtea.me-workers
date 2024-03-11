@@ -29,15 +29,24 @@ const handleOPTIONS = (methods) =>
     },
   });
 
-export default function ({ pathname: endpointPathname, methods }) {
+export default function (paths) {
+  if (paths.constructor === Object) {
+    paths = [paths];
+  }
+
   const worker = {
     async fetch(request, env, ctx) {
       setENV(env);
 
       let { pathname, hostname, origin, searchParams } = new URL(request.url);
 
-      if (endpointPathname === "*" || pathname === endpointPathname) {
-        const { method } = request;
+      const endpoint = paths.find(({ pathname: endpointPathname }) =>
+        [pathname, "*"].includes(endpointPathname),
+      );
+
+      if (endpoint) {
+        const { method } = request,
+          { methods } = endpoint;
 
         methods.OPTIONS = () => handleOPTIONS(methods);
 
@@ -126,7 +135,10 @@ export default function ({ pathname: endpointPathname, methods }) {
             ]);
 
             if (error) {
-              return reply({ message: `Error: ${error.message}` }, 200);
+              return reply(
+                { success: false, message: `Error: ${error.message}` },
+                200,
+              );
             }
           }
         }
