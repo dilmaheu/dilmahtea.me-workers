@@ -19,13 +19,13 @@ export default async function updateStock(since: string) {
     );
   }
 
-  const productsStockInfo = ((Array.isArray ? item : [item]) as Item[]).map(
-    (item) => ({
-      stockAmount: item.availableStock,
-      /** SKU value without Dimass's 'DILM' prefix. */
-      SKU: item.code.split(" ").pop() as string,
-    }),
-  );
+  const productsStockInfo = (
+    (Array.isArray(item) ? item : [item]) as Item[]
+  ).map((item) => ({
+    stockAmount: item.availableStock,
+    /** SKU value without Dimass's 'DILM' prefix. */
+    SKU: item.code.split(" ").pop() as string,
+  }));
 
   if (productsStockInfo.length === 0) {
     return reply(
