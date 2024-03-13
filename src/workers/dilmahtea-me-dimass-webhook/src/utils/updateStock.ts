@@ -6,8 +6,8 @@ import getStockItems from "./getStockItems";
 import updateStrapiProducts from "./updateStrapiProducts";
 import getStrapiProductsData from "./getStrapiProductsData";
 
-export default async function updateStock(since: string) {
-  const item = await getStockItems(since);
+export default async function updateStock() {
+  const item = await getStockItems();
 
   if (!item) {
     return reply(
