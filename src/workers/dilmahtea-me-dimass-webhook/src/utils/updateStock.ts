@@ -37,7 +37,17 @@ export default async function updateStock() {
     );
   }
 
-  await updateStrapiProducts(strapiProductsData, productsStockInfo);
+  const updatedSKUs = await updateStrapiProducts(
+    strapiProductsData,
+    productsStockInfo,
+  );
 
-  return reply({ success: true, message: "Stock updated" }, 200);
+  return reply(
+    {
+      success: true,
+      message: updatedSKUs ? "Stock updated" : "Stocks are up to date",
+      SKUs: updatedSKUs,
+    },
+    200,
+  );
 }

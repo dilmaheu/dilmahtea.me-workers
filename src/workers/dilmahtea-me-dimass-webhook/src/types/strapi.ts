@@ -16,4 +16,5 @@ declare interface Data {
 
 declare interface Attributes {
   SKU: string;
+  Stock_amount: number;
 }
