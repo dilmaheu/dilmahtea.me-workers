@@ -187,7 +187,7 @@ const getHTMLEmail = ({
                             >
                               <div style="margin-right:auto;">${Total}</div>
 
-                              <div>$&euro;\${price}</div>
+                              <div>&euro;\${price}</div>
                             </div>
 
                             <div

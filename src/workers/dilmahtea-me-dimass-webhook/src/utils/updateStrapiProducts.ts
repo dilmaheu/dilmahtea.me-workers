@@ -5,12 +5,29 @@ import env from "../env";
 interface ProductInfo {
   id: number;
   SKU: string;
+  currentStockAmount: number;
 }
 
 export default async function updateStrapiProducts(
   strapiProductsData: ProductInfo[],
   productsStockInfo: ProductsStockInfo[],
 ) {
+  const productsData = [];
+
+  strapiProductsData.forEach(({ id, SKU, currentStockAmount }) => {
+    const stockInfo = productsStockInfo.find((item) => item.SKU === SKU);
+
+    if (currentStockAmount !== stockInfo.stockAmount) {
+      productsData.push({
+        id,
+        SKU,
+        stockAmount: stockInfo.stockAmount,
+      });
+    }
+  });
+
+  if (productsData.length === 0) return;
+
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
@@ -19,7 +36,7 @@ export default async function updateStrapiProducts(
   // mutation query for all products
   const mutationQuery = `
     mutation(
-      ${strapiProductsData
+      ${productsData
         .map(
           (_, i) => `
         $id${i}: ID!
@@ -28,7 +45,7 @@ export default async function updateStrapiProducts(
         )
         .join("")}
     ) {
-        ${strapiProductsData
+        ${productsData
           .map(
             (_, i) => `
               updateProduct${i}: updateProduct(
@@ -49,13 +66,11 @@ export default async function updateStrapiProducts(
   `;
 
   // mutation variables (id and Stock_amount)
-  const mutationVariables = strapiProductsData.reduce(
+  const mutationVariables = productsData.reduce(
     (acc, product, i) => ({
       ...acc,
       [`id${i}`]: product.id,
-      [`Stock_amount${i}`]: productsStockInfo.find(
-        ({ SKU }) => SKU === product.SKU,
-      ).stockAmount,
+      [`Stock_amount${i}`]: product.stockAmount,
     }),
     {},
   );
@@ -68,4 +83,6 @@ export default async function updateStrapiProducts(
       variables: mutationVariables,
     }),
   }).then((res) => res.json());
+
+  return Array.from(new Set(productsData.map(({ SKU }) => SKU)));
 }

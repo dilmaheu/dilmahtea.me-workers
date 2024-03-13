@@ -6,8 +6,8 @@ import getStockItems from "./getStockItems";
 import updateStrapiProducts from "./updateStrapiProducts";
 import getStrapiProductsData from "./getStrapiProductsData";
 
-export default async function updateStock(since: string) {
-  const item = await getStockItems(since);
+export default async function updateStock() {
+  const item = await getStockItems();
 
   if (!item) {
     return reply(
@@ -19,23 +19,13 @@ export default async function updateStock(since: string) {
     );
   }
 
-  const productsStockInfo = ((Array.isArray ? item : [item]) as Item[]).map(
-    (item) => ({
-      stockAmount: item.availableStock,
-      /** SKU value without Dimass's 'DILM' prefix. */
-      SKU: item.code.split(" ").pop() as string,
-    }),
-  );
-
-  if (productsStockInfo.length === 0) {
-    return reply(
-      {
-        success: false,
-        message: "The items to update aren't relevant for the CMS.",
-      },
-      200,
-    );
-  }
+  const productsStockInfo = (
+    (Array.isArray(item) ? item : [item]) as Item[]
+  ).map((item) => ({
+    stockAmount: item.availableStock,
+    /** SKU value without Dimass's 'DILM' prefix. */
+    SKU: item.code.split(" ").pop() as string,
+  }));
 
   // array of SKU's to query Strapi
   const SKUs = productsStockInfo.map((product) => product.SKU),
@@ -47,7 +37,17 @@ export default async function updateStock(since: string) {
     );
   }
 
-  await updateStrapiProducts(strapiProductsData, productsStockInfo);
+  const updatedSKUs = await updateStrapiProducts(
+    strapiProductsData,
+    productsStockInfo,
+  );
 
-  return reply({ success: true, message: "Stock updated" }, 200);
+  return reply(
+    {
+      success: true,
+      message: updatedSKUs ? "Stock updated" : "Stocks are up to date",
+      SKUs: updatedSKUs,
+    },
+    200,
+  );
 }
