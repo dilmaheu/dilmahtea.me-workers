@@ -27,16 +27,6 @@ export default async function updateStock() {
     SKU: item.code.split(" ").pop() as string,
   }));
 
-  if (productsStockInfo.length === 0) {
-    return reply(
-      {
-        success: false,
-        message: "The items to update aren't relevant for the CMS.",
-      },
-      200,
-    );
-  }
-
   // array of SKU's to query Strapi
   const SKUs = productsStockInfo.map((product) => product.SKU),
     strapiProductsData = await getStrapiProductsData(SKUs);
