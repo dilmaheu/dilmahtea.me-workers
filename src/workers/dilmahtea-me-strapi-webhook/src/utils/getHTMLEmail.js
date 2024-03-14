@@ -134,10 +134,11 @@ const getHTMLEmail = ({
                           style="
                             font-family: Recoleta, Alice, serif;
                             font-size: 32px;
-                            font-size: clamp(24px, 1.1rem + 1vw, 32px)
+                            font-size: clamp(24px, 1.1rem + 1vw, 32px);
                             font-weight: 700; 
                             line-height: 140%;
                             color: #1E4848;
+                            margin-top: 0;
                             margin-bottom: 30px;
                             margin-bottom: clamp(25px, 1.313rem + 0.625vw, 30px);
                           "
@@ -265,10 +266,11 @@ const getHTMLEmail = ({
                             margin: 0;
                             font-family: Recoleta, Alice, serif;
                             font-size: 32px;
-                            font-size: clamp(24px, 1.1rem + 1vw, 32px)
+                            font-size: clamp(24px, 1.1rem + 1vw, 32px);
                             font-weight: 700; 
                             line-height: 140%;
                             color: #1E4848;
+                            margin-top: 0;
                             margin-bottom: 30px;
                             margin-bottom: clamp(25px, 1.313rem + 0.625vw, 30px);
                           "
