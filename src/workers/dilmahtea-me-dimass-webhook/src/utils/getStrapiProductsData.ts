@@ -21,6 +21,7 @@ export default async function getStrapiProductsData(SKUs: SKU[]) {
           id
           attributes {
             SKU
+            Stock_amount
           }
         }
       }
@@ -45,5 +46,6 @@ export default async function getStrapiProductsData(SKUs: SKU[]) {
   return products.data.map(({ id, attributes }) => ({
     id,
     SKU: attributes.SKU,
+    currentStockAmount: attributes.Stock_amount,
   }));
 }
