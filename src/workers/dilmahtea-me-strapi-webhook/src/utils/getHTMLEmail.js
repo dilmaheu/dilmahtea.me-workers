@@ -106,6 +106,9 @@ const getHTMLEmail = ({
                     border-radius: 10px;
                     padding: 35px;
                     padding: clamp(15px, -0.063rem + 2.5vw, 35px);
+                    font-size: 16px;
+                    font-size: clamp(16px, 0.8rem + 0.5vw, 20px);
+                    font-weight: 500;
                     line-height: 150%;
                     color: #474747;
                     margin-top: 30px;
@@ -135,7 +138,7 @@ const getHTMLEmail = ({
                             font-family: Recoleta, Alice, serif;
                             font-size: 32px;
                             font-size: clamp(24px, 1.1rem + 1vw, 32px);
-                            font-weight: 700; 
+                            font-weight: 700;
                             line-height: 140%;
                             color: #1E4848;
                             margin-top: 0;
@@ -154,13 +157,10 @@ const getHTMLEmail = ({
                                 ? ""
                                 : `
                                 <tr>
-                                  <td 
-                                    style="
+                                  <td style="
                                       vertical-align:middle;
                                       padding-top: 10px;
                                       padding-top: clamp(5px, 0.063rem + 0.625vw, 10px);
-                                      font-size: 16px;
-                                      font-size: clamp(16px, 0.8rem + 0.5vw, 20px);
                                     "
                                   >
                                     ${Shipping}
@@ -196,8 +196,9 @@ const getHTMLEmail = ({
                               <td 
                                 style="
                                   vertical-align:middle;
-                                  font-size: 16px;
-                                  font-size: clamp(16px, 0.8rem + 0.5vw, 20px);
+                                  font-size: 28px;
+                                  font-size: clamp(20px, 0.893rem + 0.952vw, 28px);
+                                  font-weight: 700;
                                 "
                               >
                                 ${Total}
@@ -209,6 +210,9 @@ const getHTMLEmail = ({
                                   vertical-align: middle;
                                   padding-left: 10px;
                                   padding-left: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                  font-size: 28px;
+                                  font-size: clamp(20px, 0.893rem + 0.952vw, 28px);
+                                  font-weight: 700;
                                 "
                               >
                                 &euro;\${price}
@@ -221,8 +225,6 @@ const getHTMLEmail = ({
                                   vertical-align:middle;
                                   padding-top: 10px;
                                   padding-top: clamp(5px, 0.063rem + 0.625vw, 10px);
-                                  font-size: 16px;
-                                  font-size: clamp(16px, 0.8rem + 0.5vw, 20px);
                                 "
                               >
                                 ${VAT}
@@ -254,6 +256,8 @@ const getHTMLEmail = ({
                         style="
                           padding: 35px;
                           padding: clamp(15px, -0.063rem + 2.5vw, 35px);
+                          font-size: 24px;
+                          font-size: clamp(18px, 0.75vw + 13.2px, 24px);
                           color: #474747;
                           background: #FAF4F2;
                           border-radius: 10px;
@@ -267,7 +271,7 @@ const getHTMLEmail = ({
                             font-family: Recoleta, Alice, serif;
                             font-size: 32px;
                             font-size: clamp(24px, 1.1rem + 1vw, 32px);
-                            font-weight: 700; 
+                            font-weight: 700;
                             line-height: 140%;
                             color: #1E4848;
                             margin-top: 0;
@@ -296,16 +300,14 @@ const getHTMLEmail = ({
                                   ${text_shipping_address}
                                 </div>
 
-                                <div style="font-size: 24px; font-size: clamp(18px, 0.75vw + 13.2px, 24px);">
-                                  \${shipping_address}
-                                </div>
+                                <div>\${shipping_address}</div>
                               </div>
 
                               <div 
                                 style="
                                   border-bottom: 1px solid #B2CCCC;
                                   margin: 10px 0;
-                                  margin: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                  margin: clamp(5px, 0.063rem + 0.625vw, 10px) 0;
                                 "
                               ></div>
                             `
@@ -324,9 +326,7 @@ const getHTMLEmail = ({
                               ${text_billing_address}
                             </div>
 
-                            <div style="font-size: 24px; font-size: clamp(18px, 0.75vw + 13.2px, 24px);">
-                              \${billing_address}
-                            </div>
+                            <div>\${billing_address}</div>
                           </div>
                         </div>
                       </div>

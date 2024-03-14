@@ -70,15 +70,7 @@ export default async function sendEmail(paymentData) {
       lineItems
         .map(([name, price]) =>
           `<tr>
-            <td 
-              style="
-                vertical-align:middle;
-                font-size: 16px;
-                font-size: clamp(16px, 0.8rem + 0.5vw, 20px);
-              "
-            >
-              \${name}
-            </td>
+            <td style="vertical-align:middle;">\${name}</td>
 
             <td 
               align="right" 
