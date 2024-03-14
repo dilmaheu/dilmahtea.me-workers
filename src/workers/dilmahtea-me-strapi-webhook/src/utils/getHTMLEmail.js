@@ -157,23 +157,11 @@ const getHTMLEmail = ({
                                 ? ""
                                 : `
                                 <tr>
-                                  <td style="
-                                      vertical-align:middle;
-                                      padding-top: 10px;
-                                      padding-top: clamp(5px, 0.063rem + 0.625vw, 10px);
-                                    "
-                                  >
+                                  <td style="vertical-align:middle;">
                                     ${Shipping}
                                   </td>
 
-                                  <td 
-                                    align="right" 
-                                    style="
-                                      vertical-align: middle;
-                                      padding: 10px 0 0 10px;
-                                      padding: clamp(5px, 0.063rem + 0.625vw, 10px) 0 0 clamp(5px, 0.063rem + 0.625vw, 10px);
-                                    "
-                                  >
+                                  <td align="right" style=" vertical-align: middle;">
                                     &euro;\${shipping_cost}
                                   </td>
                                 </tr>
