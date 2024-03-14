@@ -72,11 +72,11 @@ export default async function sendEmail(paymentData) {
           `<tr>
             <td 
               style="
-              vertical-align:middle;
-              padding-bottom: 10px;
-              padding-bottom: clamp(5px, 0.063rem + 0.625vw, 10px);
-            "
-          >
+                vertical-align:middle;
+                padding-bottom: 10px;
+                padding-bottom: clamp(5px, 0.063rem + 0.625vw, 10px);
+              "
+            >
             \${name}
           </td>
 
