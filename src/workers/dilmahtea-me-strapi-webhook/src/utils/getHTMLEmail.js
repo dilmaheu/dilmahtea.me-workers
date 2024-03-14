@@ -145,74 +145,101 @@ const getHTMLEmail = ({
                           ${Overview_Title}
                         </h2>
 
-                        <div>
-                          <div>
+                        <table width="100%">
+                          <tbody>
                             \${line_items}
                             ${
                               !Shipping
                                 ? ""
                                 : `
-                                <div style="font-size: 16px; font-size: clamp(16px, 0.8rem + 0.5vw, 20px);">
-                                  <div style="margin-right:auto;">${Shipping}</div>
-
-                                  <div 
+                                <tr>
+                                  <td 
                                     style="
-                                      margin-left:10px; 
-                                      margin-left: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                      vertical-align:middle;
+                                      padding-top: 10px;
+                                      padding-top: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                      font-size: 16px;
+                                      font-size: clamp(16px, 0.8rem + 0.5vw, 20px);
+                                    "
+                                  >
+                                    ${Shipping}
+                                  </td>
+
+                                  <td 
+                                    align="right" 
+                                    style="
+                                      vertical-align: middle;
+                                      padding: 10px 0 0 10px;
+                                      padding: clamp(5px, 0.063rem + 0.625vw, 10px) 0 0 clamp(5px, 0.063rem + 0.625vw, 10px);
                                     "
                                   >
                                     &euro;\${shipping_cost}
-                                  </div>
-                                </div>
+                                  </td>
+                                </tr>
 
-                                <div 
-                                  style="
-                                    border-bottom: 1px solid #B2CCCC;
-                                    margin: 10px 0;
-                                    margin: clamp(5px, 0.063rem + 0.625vw, 10px);
-                                  "
-                                ></div>
+                                <tr>
+                                  <td>
+                                    <div 
+                                      style="
+                                        border-bottom: 1px solid #B2CCCC;
+                                        margin: 10px 0;
+                                        margin: clamp(5px, 0.063rem + 0.625vw, 10px) 0;
+                                      "
+                                    ></div>
+                                  </td>
+                                </tr>
                               `
-                            } 
-                          </div>
+                            }
 
-                          <div>
-                            <div
-                              style="
-                                font-size: 28px;
-                                font-size: clamp(20px, 0.85rem + 1vw, 28px);
-                                font-weight: 700;
-                                color: #000;
-                              "
-                            >
-                              <div style="margin-right:auto;">${Total}</div>
-
-                              <div>&euro;\${price}</div>
-                            </div>
-
-                            <div
-                              style="
-                                display: flex; 
-                                justify-content: space-between;
-                                gap: 10px;
-                                gap: clamp(5px, 0.063rem + 0.625vw, 10px);
-                                font-size: 16px;
-                                font-size: clamp(16px, 0.8rem + 0.5vw, 20px);
-                              "
-                            >
-                              <div>${VAT}</div>
-
-                              <div 
+                            <tr>
+                              <td 
                                 style="
-                                  margin-left:10px; 
-                                  margin-left: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                  vertical-align:middle;
+                                  font-size: 16px;
+                                  font-size: clamp(16px, 0.8rem + 0.5vw, 20px);
+                                "
+                              >
+                                ${Total}
+                              </td>
+
+                              <td 
+                                align="right" 
+                                style="
+                                  vertical-align: middle;
+                                  padding-left: 10px;
+                                  padding-left: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                "
+                              >
+                                &euro;\${price}
+                              </td>
+                            </tr>
+
+                            <tr>
+                              <td 
+                                style="
+                                  vertical-align:middle;
+                                  padding-top: 10px;
+                                  padding-top: clamp(5px, 0.063rem + 0.625vw, 10px);
+                                  font-size: 16px;
+                                  font-size: clamp(16px, 0.8rem + 0.5vw, 20px);
+                                "
+                              >
+                                ${VAT}
+                              </td>
+
+                              <td 
+                                align="right" 
+                                style="
+                                  vertical-align: middle;
+                                  padding: 10px 0 0 10px;
+                                  padding: clamp(5px, 0.063rem + 0.625vw, 10px) 0 0 clamp(5px, 0.063rem + 0.625vw, 10px);
                                 "
                               >
                                 &euro;\${tax}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                           
                       </div>
                     `
@@ -229,8 +256,8 @@ const getHTMLEmail = ({
                           color: #474747;
                           background: #FAF4F2;
                           border-radius: 10px;
-                          margin-top: 30px 0;
-                          margin-top: clamp(25px, 1.313rem + 0.625vw, 30px) 0;
+                          margin-top: 30px;
+                          margin-top: clamp(25px, 1.313rem + 0.625vw, 30px);
                         "
                       >
                         <h2 
