@@ -77,8 +77,8 @@ export default async function sendEmail(paymentData) {
                 padding-bottom: clamp(5px, 0.063rem + 0.625vw, 10px);
               "
             >
-            \${name}
-          </td>
+              \${name}
+            </td>
 
             <td 
               align="right" 
