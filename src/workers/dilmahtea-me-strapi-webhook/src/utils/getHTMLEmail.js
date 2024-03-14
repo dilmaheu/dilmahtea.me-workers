@@ -178,7 +178,7 @@ const getHTMLEmail = ({
                                 </tr>
 
                                 <tr>
-                                  <td>
+                                  <td colspan="2">
                                     <div 
                                       style="
                                         border-bottom: 1px solid #B2CCCC;
