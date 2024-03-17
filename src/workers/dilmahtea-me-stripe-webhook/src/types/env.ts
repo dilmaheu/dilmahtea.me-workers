@@ -23,10 +23,6 @@ export interface ENV {
   // DKIM MAILCHANNELS
   DKIM_PRIVATE_KEY: string;
 
-  // STRAPI
-  STRAPI_ACCESS_TOKEN: string;
-  STRAPI_GRAPHQL_ENDPOINT: string;
-
   // DIMASS
   DIMASS_API_KEY: string;
   DIMASS_API_URL: string;
