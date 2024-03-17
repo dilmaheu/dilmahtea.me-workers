@@ -1,0 +1,22 @@
+fragment CheckoutRecurringElementAttributes on CheckoutRecurringElement {
+  locale
+  text_total
+  text_shipping
+}
+
+query {
+  checkoutRecurringElement {
+    data {
+      attributes {
+        ...CheckoutRecurringElementAttributes
+        localizations {
+          data {
+            attributes {
+              ...CheckoutRecurringElementAttributes
+            }
+          }
+        }
+      }
+    }
+  }
+}

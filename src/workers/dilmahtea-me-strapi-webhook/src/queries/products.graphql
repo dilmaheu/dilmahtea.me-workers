@@ -1,0 +1,22 @@
+query {
+  products {
+    data {
+      attributes {
+        locale
+        SKU
+        Title
+        Price
+        VatPercentage
+        Stock_amount
+        localizations {
+          data {
+            attributes {
+              locale
+              Title
+            }
+          }
+        }
+      }
+    }
+  }
+}

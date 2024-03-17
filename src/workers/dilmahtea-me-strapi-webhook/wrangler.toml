@@ -1,14 +1,18 @@
 name = "dilmahtea-me-strapi-webhook"
 account_id = "f0f636c746c8673c3905e9104b385251"
 compatibility_date = "2022-11-30"
-main = "./src/index.js"
+main = "./src/index.ts"
 workers_dev = false
 logpush = true
 placement = { mode = "smart" }
+build = { command = "node build-graphql-query-store.mjs" }
 routes = [
     { pattern = "cms-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 kv_namespaces = [{ binding = "MAILS", id = "51f5be62eaf64aa8a9c69bccb81d396e" }]
+d1_databases = [
+    { binding = "USERS", database_name = "users", database_id = "74a1dc02-0705-44fb-b009-fb2fe974e098" }
+]
 services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
 [env.development]
@@ -17,6 +21,9 @@ routes = [
     { pattern = "dev.cms-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
 kv_namespaces = [{ binding = "MAILS", id = "7001794de1f245c0b37792b9215c1acf" }]
+d1_databases = [
+    { binding = "USERS", database_name = "users_dev", database_id = "076751ed-7610-4965-b72d-e9d619227957" }
+]
 services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 
 # secrets

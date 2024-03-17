@@ -1,0 +1,9 @@
+query {
+  kindnessCauses {
+    data {
+      attributes {
+        cause
+      }
+    }
+  }
+}
