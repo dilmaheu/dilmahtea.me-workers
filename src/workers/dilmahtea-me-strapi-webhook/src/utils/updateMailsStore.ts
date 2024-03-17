@@ -60,7 +60,6 @@ export default async function updateMailsStore() {
         } = mail;
 
         const {
-          From_name,
           Company_email: From_email,
           Footer_text,
           Company_address,
@@ -108,8 +107,6 @@ export default async function updateMailsStore() {
 
         const mailData = {
           Subject,
-          From_name,
-          From_email,
           htmlEmail,
           SMS: mailKey === "Magic Link Email" ? Body : undefined,
         };

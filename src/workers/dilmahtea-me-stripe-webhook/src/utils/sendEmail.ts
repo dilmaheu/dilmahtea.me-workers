@@ -48,7 +48,7 @@ export default async function sendEmail(paymentData) {
   const mailData = JSON.parse(await env.MAILS.get(mailKey));
 
   const mail = mailData[locale],
-    { Subject, From_name, From_email, htmlEmail } = mail;
+    { Subject, htmlEmail } = mail;
 
   const finalSubject = Subject.replaceAll("<order_no>", orderNumber);
 
@@ -60,10 +60,13 @@ export default async function sendEmail(paymentData) {
     .replaceAll("${price}", price.toFixed(2).replace(".", ","))
     .replaceAll("${shipping_cost}", shipping_cost?.toFixed(2).replace(".", ","))
     .replaceAll("${tax}", tax.toFixed(2).replace(".", ","))
-    .replaceAll("${shipping_address}", `${street}, ${postal_code}, ${city}, ${country}`)
     .replaceAll(
-      "${billing_address}", 
-      `${billing_street}, ${billing_postal_code}, ${billing_city}, ${billing_country}`
+      "${shipping_address}",
+      `${street}, ${postal_code}, ${city}, ${country}`,
+    )
+    .replaceAll(
+      "${billing_address}",
+      `${billing_street}, ${billing_postal_code}, ${billing_city}, ${billing_country}`,
     )
     .replace(
       "${line_items}",
