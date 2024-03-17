@@ -5,9 +5,11 @@ main = "./src/index.ts"
 workers_dev = false
 logpush = true
 placement = { mode = "smart" }
-vars = { FROM_NAME = "Dilmah Europe", FROM_EMAIL = "hello@dilmahtea.me"  }
 routes = [
     { pattern = "email.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" },
+]
+d1_databases = [
+    { binding = "USERS", database_name = "users", database_id = "74a1dc02-0705-44fb-b009-fb2fe974e098" }
 ]
 services = [{ binding = "RETRY_WORKERS", service = "dilmahtea-me-retry-workers" }]
 

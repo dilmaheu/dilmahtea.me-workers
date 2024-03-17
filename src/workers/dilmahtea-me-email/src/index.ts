@@ -1,5 +1,6 @@
 import type { ENV } from "./types";
 
+import D1Strapi from "../../../utils/D1Strapi";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 declare interface Body {
@@ -10,6 +11,11 @@ declare interface Body {
 
 async function handlePOST(request: Request, env: ENV) {
   const { to, subject, content } = await request.json<Body>();
+
+  const { recurringElement } = await D1Strapi();
+
+  const { From_name: FROM_NAME, Company_email: FROM_EMAIL } =
+    recurringElement.data.attributes;
 
   if (
     request.headers.get("x-cf-secure-worker-token") !==
@@ -33,8 +39,8 @@ async function handlePOST(request: Request, env: ENV) {
         },
       ],
       from: {
-        name: env.FROM_NAME,
-        email: env.FROM_EMAIL,
+        name: FROM_NAME,
+        email: FROM_EMAIL,
       },
       subject,
       content,
