@@ -119,13 +119,13 @@ const handlePOST = async (request, env, ctx) => {
     });
   }
 
-  function convertPriceToCents(price, quantity = 1) {
-    return Math.round(price * quantity * 100);
+  function convertPriceToCents(price) {
+    return Math.round(price * 100); // price is already multiplied by quantity
   }
 
   const totalAmount =
     Object.values(cart).reduce(
-      (total, item) => total + convertPriceToCents(item.price, item.quantity),
+      (total, item) => total + convertPriceToCents(item.price),
       0,
     ) + (payment_type === "ecommerce" ? convertPriceToCents(shipping_cost) : 0);
 
