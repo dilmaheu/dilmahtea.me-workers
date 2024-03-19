@@ -33,6 +33,10 @@ const getHTMLEmail = ({
           .body-text a {
             color: #1E4848;
           }
+
+          h1, h2 {
+            font-family: ui-serif, serif;
+          }
         </style>
       </head>
       
@@ -45,7 +49,7 @@ const getHTMLEmail = ({
             max-width: 720px;
             padding: 50px 24px;
             margin: 0 auto;
-            font-family: Roboto Flex, sans-serif;
+            font-family: ui-sans-serif, system-ui, sans-serif;
             font-size: 24px;
             font-size: clamp(18px, 0.75vw + 13.2px, 24px);
             line-height: 150%;
@@ -67,7 +71,6 @@ const getHTMLEmail = ({
               <h1
                 class="preheader-text"
                 style="
-                  font-family: Recoleta, Alice, serif;
                   font-size: 42px;
                   font-size: clamp(28px, 1.05rem + 1.75vw, 42px);
                   font-weight: 700;
@@ -118,7 +121,6 @@ const getHTMLEmail = ({
                       >
                         <h2 
                           style="
-                            font-family: Recoleta, Alice, serif;
                             font-size: 32px;
                             font-size: clamp(24px, 1.1rem + 1vw, 32px);
                             font-weight: 700;
@@ -239,7 +241,6 @@ const getHTMLEmail = ({
                         <h2 
                           style="
                             margin: 0;
-                            font-family: Recoleta, Alice, serif;
                             font-size: 32px;
                             font-size: clamp(24px, 1.1rem + 1vw, 32px);
                             font-weight: 700;
