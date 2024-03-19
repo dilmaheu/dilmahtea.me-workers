@@ -20,21 +20,6 @@ const getHTMLEmail = ({
 
         <title>Je betaling is succesvol ontvangen. Dank hiervoor!</title>
 
-        <link
-          href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet"
-          rel="stylesheet"
-        />
-
-        <link
-          href="https://fonts.googleapis.com/css2?family=Alice&family=Roboto&display=swap"
-          rel="stylesheet"
-        />
-        
-        <link
-          href="https://drive.usercontent.google.com/u/0/uc?id=1hMgHTjfCIoDhXl_ZyKP_0_Lxv5WIVniZ&export=download"
-          rel="stylesheet"
-        />
-
         <style>
           .preheader-text a, .body-text a {          
             font-weight: 700;
