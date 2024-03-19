@@ -1,98 +1,13 @@
-// @ts-check
+import env from "../env";
 
 import getHTMLEmail from "./getHTMLEmail.js";
+
+import D1Strapi from "../../../../utils/D1Strapi";
 import { reply } from "../../../../utils/createModuleWorker.js";
 
-const query = `
-  fragment EmailAttributes on EMail {
-    locale
-    Type
-    Subject
-    Preview_text
-    Preheader_text
-    Body
-    VAT
-    Overview_Title
-    Billing_Details_Title
-  }
-
-  fragment RecurringElementAttributes on RecurringElement {
-    locale
-    Footer_text
-    From_name
-    Company_email
-    Company_address
-    text_shipping_address
-    text_billing_address
-  }
-
-  fragment CheckoutRecurringElementAttributes on CheckoutRecurringElement {
-    locale
-    text_total
-    text_shipping
-  }
-
-  {
-    eMails {
-      data {
-        attributes {
-          ...EmailAttributes
-          localizations {
-            data {
-              attributes {
-                ...EmailAttributes
-              }
-            }
-          }
-        }
-      }
-    }
-
-    recurringElement {
-      data {
-        attributes {
-          ...RecurringElementAttributes
-          localizations {
-            data {
-              attributes {
-                ...RecurringElementAttributes
-              }
-            }
-          }
-        }
-      }
-    }
-
-    checkoutRecurringElement {
-      data {
-        attributes {
-          ...CheckoutRecurringElementAttributes
-          localizations {
-            data {
-              attributes {
-                ...CheckoutRecurringElementAttributes
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-`;
-
-export async function updateMailsStore(env) {
-  const response = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
-    },
-    body: JSON.stringify({ query }),
-  });
-
-  const {
-    data: { eMails, recurringElement, checkoutRecurringElement },
-  } = await response.json();
+export default async function updateMailsStore() {
+  const { eMails, recurringElement, checkoutRecurringElement } =
+    await D1Strapi();
 
   const recurringElementData = Object.fromEntries(
       [
@@ -145,7 +60,6 @@ export async function updateMailsStore(env) {
         } = mail;
 
         const {
-          From_name,
           Company_email: From_email,
           Footer_text,
           Company_address,
@@ -193,8 +107,6 @@ export async function updateMailsStore(env) {
 
         const mailData = {
           Subject,
-          From_name,
-          From_email,
           htmlEmail,
           SMS: mailKey === "Magic Link Email" ? Body : undefined,
         };
@@ -209,5 +121,7 @@ export async function updateMailsStore(env) {
     }),
   );
 
-  return reply({ message: `Updated 'Mails' KV Namespace` }, 200);
+  console.log("Updated 'Mails' KV Namespace");
+
+  return true;
 }

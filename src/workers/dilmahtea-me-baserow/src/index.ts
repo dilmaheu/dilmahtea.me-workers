@@ -3,8 +3,8 @@ import type { ENV } from "./types";
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 
+import D1Strapi from "../../../utils/D1Strapi";
 import throwExtendedError from "../../../utils/throwExtendedError";
-import getValidationDataset from "../../../utils/getValidationDataset";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 const PaymentCupOfKindnessSchema = z.object({
@@ -42,9 +42,9 @@ async function updateCupOfKindness(
     "Cup of Kindness": cupOfKindness,
   } = paymentCupOfKindnessData;
 
-  const validationDataset = await getValidationDataset(origin, env);
+  const strapiCollections = await D1Strapi();
 
-  const kindnessCauses = validationDataset.kindnessCauses.data.map(
+  const kindnessCauses = strapiCollections.kindnessCauses.data.map(
     ({ attributes: { cause } }) => cause,
   );
 

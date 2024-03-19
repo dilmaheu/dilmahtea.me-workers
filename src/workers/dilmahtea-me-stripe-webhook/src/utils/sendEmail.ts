@@ -48,7 +48,7 @@ export default async function sendEmail(paymentData) {
   const mailData = JSON.parse(await env.MAILS.get(mailKey));
 
   const mail = mailData[locale],
-    { Subject, From_name, From_email, htmlEmail } = mail;
+    { Subject, htmlEmail } = mail;
 
   const finalSubject = Subject.replaceAll("<order_no>", orderNumber);
 
@@ -60,27 +60,40 @@ export default async function sendEmail(paymentData) {
     .replaceAll("${price}", price.toFixed(2).replace(".", ","))
     .replaceAll("${shipping_cost}", shipping_cost?.toFixed(2).replace(".", ","))
     .replaceAll("${tax}", tax.toFixed(2).replace(".", ","))
-    .replaceAll("${shipping_address}", `${street}, ${postal_code}, ${city}, ${country}`)
     .replaceAll(
-      "${billing_address}", 
-      `${billing_street}, ${billing_postal_code}, ${billing_city}, ${billing_country}`
+      "${shipping_address}",
+      `${street}, ${postal_code}, ${city}, ${country}`,
+    )
+    .replaceAll(
+      "${billing_address}",
+      `${billing_street}, ${billing_postal_code}, ${billing_city}, ${billing_country}`,
     )
     .replace(
       "${line_items}",
       lineItems
         .map(([name, price]) =>
-          `<div style="font-size: 16px; font-size: clamp(16px, 0.8rem + 0.5vw, 20px);">
-            <div style="margin-right:auto;">\${name}</div>
-
-            <div 
+          `<tr>
+            <td 
               style="
-                margin-left:10px; 
-                margin-left: clamp(5px, 0.063rem + 0.625vw, 10px);
+                vertical-align:middle;
+                padding-bottom: 10px;
+                padding-bottom: clamp(5px, 0.063rem + 0.625vw, 10px);
+              "
+            >
+              \${name}
+            </td>
+
+            <td 
+              align="right" 
+              style="
+                vertical-align: middle;
+                padding: 0 0 10px 10px;
+                padding: 0 0 clamp(5px, 0.063rem + 0.625vw, 10px) clamp(5px, 0.063rem + 0.625vw, 10px);
               "
             >
               &euro;\${price}
-            </div>
-          </div>`
+            </td>
+          </tr>`
             .replace("${name}", name)
             .replace("${price}", price),
         )

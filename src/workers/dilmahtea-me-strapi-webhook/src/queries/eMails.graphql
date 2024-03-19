@@ -1,0 +1,28 @@
+fragment EmailAttributes on EMail {
+  locale
+  Type
+  Subject
+  Preview_text
+  Preheader_text
+  Body
+  VAT
+  Overview_Title
+  Billing_Details_Title
+}
+
+query {
+  eMails {
+    data {
+      attributes {
+        ...EmailAttributes
+        localizations {
+          data {
+            attributes {
+              ...EmailAttributes
+            }
+          }
+        }
+      }
+    }
+  }
+}

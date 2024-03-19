@@ -1,0 +1,10 @@
+query {
+  crowdfundingPlans {
+    data {
+      attributes {
+        Perk
+        Price_EUR_excl_VAT
+      }
+    }
+  }
+}

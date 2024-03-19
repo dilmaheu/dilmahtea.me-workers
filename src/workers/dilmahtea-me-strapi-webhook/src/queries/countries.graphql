@@ -1,0 +1,10 @@
+query {
+  countries {
+    data {
+      attributes {
+        name
+        code
+      }
+    }
+  }
+}

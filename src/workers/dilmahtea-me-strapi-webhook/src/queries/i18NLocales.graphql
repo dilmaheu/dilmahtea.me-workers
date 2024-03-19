@@ -1,0 +1,9 @@
+query {
+  i18NLocales {
+    data {
+      attributes {
+        code
+      }
+    }
+  }
+}

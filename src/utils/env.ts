@@ -1,4 +1,4 @@
-type ENV = Record<string, string | KVNamespace>;
+type ENV = Record<string, string | KVNamespace | D1Database>;
 
 let env: ENV = {};
 

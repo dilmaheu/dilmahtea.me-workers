@@ -1,0 +1,26 @@
+fragment RecurringElementAttributes on RecurringElement {
+  locale
+  Footer_text
+  From_name
+  Company_email
+  Company_address
+  text_shipping_address
+  text_billing_address
+}
+
+query {
+  recurringElement {
+    data {
+      attributes {
+        ...RecurringElementAttributes
+        localizations {
+          data {
+            attributes {
+              ...RecurringElementAttributes
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+query {
+  products {
+    data {
+      attributes {
+        locale
+        SKU
+        Title
+        Price
+        VatPercentage
+        Stock_amount
+        brand {
+          data {
+            attributes {
+              Brand_name
+            }
+          }
+        }
+        category {
+          data {
+            attributes {
+              Title
+            }
+          }
+        }
+        sub_category {
+          data {
+            attributes {
+              Title
+            }
+          }
+        }
+        localizations {
+          data {
+            attributes {
+              locale
+              Title
+            }
+          }
+        }
+      }
+    }
+  }
+}

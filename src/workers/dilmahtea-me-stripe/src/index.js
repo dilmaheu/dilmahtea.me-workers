@@ -5,14 +5,14 @@ import getValidatedData from "./utils/getValidatedData";
 import createBaserowRecord from "./utils/createBaserowRecord";
 import getPaymentMethodTypes from "./utils/getPaymentMethodTypes";
 
-import getValidationDataset from "../../../utils/getValidationDataset";
+import D1Strapi from "../../../utils/D1Strapi";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
 const handlePOST = async (request, env, ctx) => {
   const body = await request.formData(),
     rawPaymentData = Object.fromEntries(body);
 
-  const CMSData = await getValidationDataset(rawPaymentData.origin_url, env),
+  const CMSData = await D1Strapi(),
     validatedData = await getValidatedData(rawPaymentData, CMSData, env);
 
   if (validatedData.errors) {

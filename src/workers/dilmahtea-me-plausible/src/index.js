@@ -1,56 +1,15 @@
 // @ts-check
 
+import D1Strapi from "../../../utils/D1Strapi";
 import throwExtendedError from "../../../utils/throwExtendedError";
 import createModuleWorker, { reply } from "../../../utils/createModuleWorker";
 
-async function getAddToCartEventProps({ SKU, Quantity }, env) {
-  const query = `
-    {      
-      products(filters: { SKU: { eq: "${SKU}" } }) {
-        data {
-          attributes {
-            Title
-            Price
+async function getAddToCartEventProps({ SKU, Quantity }) {
+  const { products } = await D1Strapi();
 
-            brand {
-              data {
-                attributes {
-                  Brand_name
-                }
-              }
-            }
-
-            category {
-              data {
-                attributes {
-                  Title
-                }
-              }
-            }
-
-            sub_category {
-              data {
-                attributes {
-                  Title
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  `;
-
-  const response = await fetch(env.STRAPI_GRAPHQL_ENDPOINT, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${env.STRAPI_ACCESS_TOKEN}`,
-    },
-    body: JSON.stringify({ query }),
-  }).then((response) => response.json());
-
-  const { attributes: productData } = response.data.products.data[0];
+  const { attributes: productData } = products.data.find(
+    ({ attributes }) => attributes.SKU === SKU,
+  );
 
   const subTotal = productData.Price * Quantity,
     tax = subTotal * 0.09,
@@ -67,7 +26,7 @@ async function getAddToCartEventProps({ SKU, Quantity }, env) {
   return productDetails;
 }
 
-async function handlePOST(request, env) {
+async function handlePOST(request) {
   const { event, originURL, props } = await request.json();
 
   switch (event) {
@@ -76,7 +35,7 @@ async function handlePOST(request, env) {
 
       responseHeaders.set("Content-Type", "application/json");
 
-      const eventProps = await getAddToCartEventProps(props, env);
+      const eventProps = await getAddToCartEventProps(props);
 
       const response = await fetch("https://plausible.io/api/event", {
         method: "POST",
