@@ -10,9 +10,12 @@ fragment RecurringElementAttributes on RecurringElement {
   text_shipping
   error_bad_request
   error_unauthorized
-  error_no_user_account_exists
+  error_too_many_requests
   error_contact_already_exists
+  text_contact_type_email
+  text_contact_type_phone
   error_invalid_i18n_phone
+  error_no_user_account_exists
   error_something_went_wrong
   error_magic_link_creation_failed
   error_magic_link_sending_failed
