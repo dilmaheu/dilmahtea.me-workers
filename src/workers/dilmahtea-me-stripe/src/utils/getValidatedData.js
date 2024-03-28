@@ -37,8 +37,11 @@ export default async function getValidatedData(paymentData, CMSData) {
   });
 
   const countries = CMSData.countries.data.map(
-    ({ attributes: { name } }) => name,
-  );
+      ({ attributes: { name } }) => name,
+    ),
+    countryCodes = CMSData.countries.data.map(
+      ({ attributes: { code } }) => code,
+    );
 
   const shippingMethods = {};
 
@@ -46,16 +49,12 @@ export default async function getValidatedData(paymentData, CMSData) {
     shippingMethods[method] = cost;
   });
 
-  const paymentMethodNames = await getPaymentMethodTypes(
-    paymentData.billing_country,
-    CMSData,
-  );
-
   // validate data
   paymentData.tax &&= +paymentData.tax;
   paymentData.price &&= +paymentData.price;
   paymentData.shipping_cost &&= +paymentData.shipping_cost;
   paymentData.cart &&= JSON.parse(paymentData.cart);
+  paymentData.customer &&= JSON.parse(paymentData.customer);
 
   const BasePaymentIntentSchema = z.object({
     first_name: z.string(),
@@ -72,6 +71,25 @@ export default async function getValidatedData(paymentData, CMSData) {
     locale: z.enum(locales),
     origin_url: z.string().url(),
     success_url: z.string().url(),
+    customer: z.object({
+      email: z.string().email(),
+      name: z.string(),
+      address: z.object({
+        country: z.enum(countryCodes),
+        city: z.string(),
+        postal_code: z.string().regex(/^[\w- ]+$/),
+        line1: z.string(),
+      }),
+      shipping: z.object({
+        name: z.string(),
+        address: z.object({
+          country: z.enum(countryCodes),
+          city: z.string(),
+          postal_code: z.string().regex(/^[\w- ]+$/),
+          line1: z.string(),
+        }),
+      }),
+    }),
   });
 
   const CrowdfundingPaymentIntentSchema = BasePaymentIntentSchema.extend({
@@ -79,9 +97,7 @@ export default async function getValidatedData(paymentData, CMSData) {
     country: z.literal("Netherlands"),
     billing_country: z.literal("Netherlands"),
     favorite_tea: z.string(),
-    payment_method_name: z.enum(paymentMethodNames),
     // @ts-ignore
-    stripeToken: z.string(),
     perk: z.enum(Object.keys(crowdfundingPerks)),
     product_desc: z
       .string()
@@ -95,9 +111,7 @@ export default async function getValidatedData(paymentData, CMSData) {
     payment_type: z.literal("ecommerce"),
     country: z.enum(countries),
     billing_country: z.enum(countries),
-    payment_method_name: z.enum(paymentMethodNames),
     // @ts-ignore
-    stripeToken: z.string(),
     shipping_method: z.enum(Object.keys(shippingMethods)),
     shipping_cost: z
       .number()

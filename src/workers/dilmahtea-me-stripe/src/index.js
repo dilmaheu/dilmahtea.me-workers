@@ -44,12 +44,10 @@ const handlePOST = async (request, env, ctx) => {
     price,
     tax,
     payment_type,
-    payment_method_name,
-    stripeToken,
-    bank,
     locale,
     origin_url,
     success_url,
+    customer,
   } = validatedData;
 
   const paymentID = crypto.randomUUID(),
@@ -65,7 +63,7 @@ const handlePOST = async (request, env, ctx) => {
     apiVersion: "2022-11-15",
   });
 
-  const customer = await getCustomerID(stripe, paymentData, CMSData),
+  const stripeCustomer = await getCustomerID(stripe, customer),
     payment_method_types = await getPaymentMethodTypes(
       billing_country,
       CMSData,
@@ -82,7 +80,7 @@ const handlePOST = async (request, env, ctx) => {
     ) + (payment_type === "ecommerce" ? convertPriceToCents(shipping_cost) : 0);
 
   const paymentIntent = await stripe.paymentIntents.create({
-    customer: customer.id,
+    customer: stripeCustomer.id,
     payment_method_types,
     amount: totalAmount,
     currency: "eur",
@@ -119,11 +117,6 @@ const handlePOST = async (request, env, ctx) => {
       success: true,
       client_secret: paymentIntent.client_secret,
       successURL,
-      billing_details: {
-        email: customer.email,
-        name: customer.name,
-        address: customer.address,
-      },
     },
     200,
   );
