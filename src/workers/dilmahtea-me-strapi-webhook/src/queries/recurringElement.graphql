@@ -29,6 +29,7 @@ fragment RecurringElementAttributes on RecurringElement {
   error_expired_token
   error_invalid_email
   error_invalid_phone
+  error_provide_email_or_phone
 }
 
 query {
