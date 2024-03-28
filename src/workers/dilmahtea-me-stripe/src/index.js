@@ -14,10 +14,6 @@ const handlePOST = async (request, env, ctx) => {
   const CMSData = await D1Strapi(),
     validatedData = await getValidatedData(rawPaymentData, CMSData, env);
 
-  if (validatedData.errors) {
-    return reply(validatedData, 400);
-  }
-
   const request_headers = Object.fromEntries(request.headers);
 
   const {

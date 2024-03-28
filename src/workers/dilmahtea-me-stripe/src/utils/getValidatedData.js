@@ -190,9 +190,11 @@ export default async function getValidatedData(paymentData, CMSData) {
   try {
     return PaymentIntentSchema.parse(paymentData);
   } catch (error) {
-    return {
-      message: "Validation error!",
-      errors: fromZodError(error).toString().slice(18).split(";"),
-    };
+    throw new Error(
+      `Validation error! ${fromZodError(error)
+        .toString()
+        .slice(18)
+        .split(";")}`,
+    );
   }
 }
