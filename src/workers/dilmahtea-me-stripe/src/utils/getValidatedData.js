@@ -3,8 +3,6 @@
 import { z } from "zod";
 import { fromZodError } from "zod-validation-error";
 
-import getPaymentMethodTypes from "./getPaymentMethodTypes";
-
 export default async function getValidatedData(paymentData, CMSData) {
   // process data for validation
   const {
