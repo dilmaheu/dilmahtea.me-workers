@@ -3,6 +3,8 @@ fragment RecurringElementAttributes on RecurringElement {
   Footer_text
   From_name
   Company_email
+  DEV_EMAIL
+  SALES_EMAIL
   Company_address
   text_shipping_address
   text_billing_address
