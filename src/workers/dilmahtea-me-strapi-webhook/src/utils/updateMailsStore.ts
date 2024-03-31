@@ -3,25 +3,16 @@ import env from "../env";
 import getHTMLEmail from "./getHTMLEmail.js";
 
 import D1Strapi from "../../../../utils/D1Strapi";
-import { reply } from "../../../../utils/createModuleWorker.js";
 
 export default async function updateMailsStore() {
-  const { eMails, recurringElement, checkoutRecurringElement } =
-    await D1Strapi();
+  const { eMails, recurringElement } = await D1Strapi();
 
   const recurringElementData = Object.fromEntries(
-      [
-        recurringElement.data,
-        ...recurringElement.data.attributes.localizations.data,
-      ].map(({ attributes }) => [attributes.locale, attributes]),
-    ),
-    checkoutRecurringElementData = Object.fromEntries(
-      [
-        checkoutRecurringElement.data,
-        ...checkoutRecurringElement.data.attributes.localizations.data,
-      ].map(({ attributes }) => [attributes.locale, attributes]),
-    );
-
+    [
+      recurringElement.data,
+      ...recurringElement.data.attributes.localizations.data,
+    ].map(({ attributes }) => [attributes.locale, attributes]),
+  );
   const {
     crowdfunding_payment_confirmation_email,
     ecommerce_payment_confirmation_email,
@@ -65,10 +56,9 @@ export default async function updateMailsStore() {
           Company_address,
           text_shipping_address,
           text_billing_address,
+          text_total: Total,
+          text_shipping: Shipping,
         } = recurringElementData[locale];
-
-        const { text_total: Total, text_shipping: Shipping } =
-          checkoutRecurringElementData[locale];
 
         const previewText = Preview_text + "&nbsp;".repeat(100),
           preheaderText = Preheader_text.replaceAll("\n", "<br />"),

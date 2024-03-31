@@ -28,9 +28,7 @@ async function handlePOST(request: Request, env: ENV) {
     if (
       event === "trigger-test" ||
       (["entry.update", "entry.publish"].includes(event) &&
-        ["e-mail", "recurring-element", "checkout-recurring-element"].includes(
-          model,
-        ))
+        ["e-mail", "recurring-element"].includes(model))
     ) {
       try {
         updatedMailsStore = await updateMailsStore();

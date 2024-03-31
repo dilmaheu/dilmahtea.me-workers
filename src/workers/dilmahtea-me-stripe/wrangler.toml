@@ -5,7 +5,6 @@ main = "./src/index.js"
 workers_dev = false
 logpush = true
 placement = { mode = "smart" }
-vars = { ORIGIN = "https://dilmahtea.me" }
 routes = [
     { pattern = "pay.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]
@@ -19,7 +18,7 @@ d1_databases = [
 
 [env.development]
 name = "dilmahtea-me-stripe-dev"
-vars = { ORIGIN = "https://dev.dilmahtea-me.pages.dev", CF_PAGES_DOMAIN = "https://*.dilmahtea-me.pages.dev" }
+vars = { CF_PAGES_DOMAIN = "https://*.dilmahtea-me.pages.dev" }
 routes = [
     { pattern = "dev.pay.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
 ]

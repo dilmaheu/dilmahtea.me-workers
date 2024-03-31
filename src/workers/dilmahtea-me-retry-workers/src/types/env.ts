@@ -1,9 +1,5 @@
 export interface ENV {
   // ENVIRONMENTAL VARIABLES
-  FROM_EMAIL: string;
-  FROM_NAME: string;
-  DEV_EMAIL: string;
-  SALES_EMAIL: string;
   EMAIL_WORKER_URL: string;
 
   // KV

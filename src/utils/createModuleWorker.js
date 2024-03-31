@@ -88,7 +88,7 @@ export default function (paths) {
             error = err;
 
             if (methodHandler.catchError) {
-              return reply({ error: `Error: ${err.message}` }, 500);
+              return reply({ success: false, error: err.message }, 500);
             }
 
             if (!methodHandler.retry) {

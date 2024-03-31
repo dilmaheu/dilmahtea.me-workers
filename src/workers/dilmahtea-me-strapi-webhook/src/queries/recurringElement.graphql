@@ -3,9 +3,35 @@ fragment RecurringElementAttributes on RecurringElement {
   Footer_text
   From_name
   Company_email
+  DEV_EMAIL
+  SALES_EMAIL
   Company_address
   text_shipping_address
   text_billing_address
+  text_total
+  text_shipping
+  error_bad_request
+  error_unauthorized
+  error_too_many_requests
+  error_contact_already_exists
+  text_contact_type_email
+  text_contact_type_phone
+  error_invalid_i18n_phone
+  error_no_user_account_exists
+  error_something_went_wrong
+  error_magic_link_creation_failed
+  error_magic_link_sending_failed
+  error_invalid_address_details
+  error_address_tag_exists
+  error_duplicate_address
+  error_address_not_found
+  error_nothing_to_update
+  error_delete_default_delivery_address
+  error_invalid_token
+  error_expired_token
+  error_invalid_email
+  error_invalid_phone
+  error_provide_email_or_phone
 }
 
 query {
