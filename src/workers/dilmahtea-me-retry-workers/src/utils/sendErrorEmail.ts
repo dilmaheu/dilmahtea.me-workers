@@ -1,11 +1,17 @@
 import type { ENV, ExtendedError } from "../types";
 
-export default function sendErrorEmail(
+import D1Strapi from "../../../../utils/D1Strapi";
+
+export default async function sendErrorEmail(
   error: undefined | ExtendedError,
   requestID: string,
   env: ENV,
 ) {
   let notifySales, subject, body;
+
+  const { recurringElement } = await D1Strapi();
+
+  const { DEV_EMAIL, SALES_EMAIL } = recurringElement.data.attributes;
 
   if (error) {
     const { message, bodyText, responseData } = error;
@@ -32,17 +38,16 @@ export default function sendErrorEmail(
     body = "Request #" + requestID + " retry completed successfully.";
   }
 
-  return env.EMAIL.fetch(env.EMAIL_WORKER_URL, {
+  return await env.EMAIL.fetch(env.EMAIL_WORKER_URL, {
     method: "POST",
     headers: {
       "content-type": "application/json",
       "x-cf-secure-worker-token": env.CF_SECURE_WORKER_TOKEN,
     },
     body: JSON.stringify({
-      to: [
-        { email: env.DEV_EMAIL },
-        notifySales && { email: env.SALES_EMAIL },
-      ].filter(Boolean),
+      to: [{ email: DEV_EMAIL }, notifySales && { email: SALES_EMAIL }].filter(
+        Boolean,
+      ),
       subject,
       content: [{ type: "text/plain", value: body }],
     }),

@@ -6,13 +6,12 @@ workers_dev = false
 logpush = true
 triggers = { crons = ["*/1 * * * *"]}
 kv_namespaces = [{ binding = "WORKER_REQUESTS", id = "49c94598e0654db8a2064d4f1874ff26" }]
+d1_databases = [
+    { binding = "USERS", database_name = "users", database_id = "74a1dc02-0705-44fb-b009-fb2fe974e098" }
+]
 services = [{ binding = "EMAIL", service = "dilmahtea-me-email" }]
 
 [vars]
-FROM_NAME = "Dilmah Europe"
-FROM_EMAIL = "hello@dilmahtea.me"
-DEV_EMAIL = "dev@dilmahtea.me"
-SALES_EMAIL = "hello@dilmahtea.me"
 EMAIL_WORKER_URL = "https://email.scripts.dilmahtea.me"
 
 # secrets
