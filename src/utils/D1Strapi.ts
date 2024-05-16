@@ -8,7 +8,7 @@ export default async function D1Strapi(
   alternateENV?: typeof env,
 ): Promise<StrapiCollections> {
   if (!strapiCollections) {
-    const { results } = await ((env || alternateENV).USERS as D1Database)
+    const { results } = await ({ ...alternateENV, ...env }.USERS as D1Database)
       .prepare("SELECT * FROM strapi")
       .all();
 
