@@ -9,7 +9,8 @@ export default async function sendErrorEmail(
 ) {
   let notifySales, subject, body;
 
-  const { recurringElement } = await D1Strapi();
+  // @ts-ignore
+  const { recurringElement } = await D1Strapi(env);
 
   const { DEV_EMAIL, SALES_EMAIL } = recurringElement.data.attributes;
 

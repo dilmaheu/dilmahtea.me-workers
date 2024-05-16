@@ -5,6 +5,9 @@ export interface ENV {
   // KV
   WORKER_REQUESTS: KVNamespace;
 
+  // D1
+  USERS: D1Database;
+
   // SERVICES
   EMAIL: Fetcher;
 
