@@ -3,6 +3,9 @@ export interface ENV {
   CROWDFUNDINGS: KVNamespace;
   ECOMMERCE_PAYMENTS: KVNamespace;
 
+  // D1
+  USERS: D1Database;
+
   // BASEROW
   BASEROW_TOKEN: string;
   BASEROW_CROWDFUNDING_TABLE_ID: string;

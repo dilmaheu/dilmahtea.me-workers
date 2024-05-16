@@ -7,6 +7,9 @@ export interface ENV {
   // KV NAMESPACES
   MAILS: KVNamespace;
 
+  // D1
+  USERS: D1Database;
+
   // SECRETS
   CF_SECURE_WORKER_TOKEN: string;
 }
