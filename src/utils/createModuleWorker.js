@@ -103,36 +103,36 @@ export default function (paths) {
               shouldClearRetrySchedule =
                 retryEnabled && (lastAttempt || (!error && isAnAttempt));
 
-            await Promise.all([
-              storeContext(),
-              (shouldRetry || shouldClearRetrySchedule) &&
-                env.RETRY_WORKERS.fetch(request.url, {
-                  method: shouldRetry ? "POST" : "DELETE",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    requestID,
-                    stringifiedRequest: shouldRetry
-                      ? stringifiedRequest
-                      : undefined,
-                    error: error
-                      ? {
-                          message: error.message,
-                          subject: error.subject || "Error in " + origin,
-                          bodyText:
-                            error.bodyText || "An error occurred in " + origin,
-                          requestData: error.requestData,
-                          responseData: error.responseData,
-                          notifySales:
-                            error.notifySales &&
-                            lastAttempt &&
-                            !hostname.startsWith("dev."),
-                        }
-                      : undefined,
-                  }),
-                }).then((res) => res.text()),
-            ]);
+            await storeContext();
+
+            if (shouldRetry || shouldClearRetrySchedule) {
+              await env.RETRY_WORKERS.fetch(request.url, {
+                method: shouldRetry ? "POST" : "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  requestID,
+                  stringifiedRequest: shouldRetry
+                    ? stringifiedRequest
+                    : undefined,
+                  error: error
+                    ? {
+                        message: error.message,
+                        subject: error.subject || "Error in " + origin,
+                        bodyText:
+                          error.bodyText || "An error occurred in " + origin,
+                        requestData: error.requestData,
+                        responseData: error.responseData,
+                        notifySales:
+                          error.notifySales &&
+                          lastAttempt &&
+                          !hostname.startsWith("dev."),
+                      }
+                    : undefined,
+                }),
+              }).then((res) => res.text());
+            }
 
             if (error) {
               return reply(
