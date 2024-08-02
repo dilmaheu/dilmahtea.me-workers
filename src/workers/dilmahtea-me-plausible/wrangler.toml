@@ -4,9 +4,9 @@ compatibility_date = "2022-11-30"
 main = "./src/index.js"
 workers_dev = false
 logpush = true
-routes = [
-    { pattern = "analytics.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
-]
+# routes = [
+#     { pattern = "analytics.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+# ]
 d1_databases = [
     { binding = "USERS", database_name = "users", database_id = "74a1dc02-0705-44fb-b009-fb2fe974e098" }
 ]

@@ -6,9 +6,9 @@ workers_dev = false
 logpush = true
 placement = { mode = "smart" }
 vars = { ENVIRONMENT = "PRODUCTION", PAYMENT_CONDITION = "VB", EMAIL_WORKER_URL = "https://email.scripts.dilmahtea.me", EXACT_ACCOUNT_WORKER_URL = "https://exact-account.scripts.dilmahtea.me" }
-routes = [
-    { pattern = "pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
-]
+# routes = [
+#     { pattern = "pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+# ]
 kv_namespaces = [
     { binding = "MAILS", id = "51f5be62eaf64aa8a9c69bccb81d396e" },
     { binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" },
@@ -28,9 +28,9 @@ services = [
 [env.development]
 name = "dilmahtea-me-stripe-webhook-dev"
 vars = { ENVIRONMENT = "DEVELOPMENT", PAYMENT_CONDITION = "VB", EMAIL_WORKER_URL = "https://email.scripts.dilmahtea.me", EXACT_ACCOUNT_WORKER_URL = "https://dev.exact-account.scripts.dilmahtea.me" }
-routes = [
-    { pattern = "dev.pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
-]
+# routes = [
+#     { pattern = "dev.pay-webhook.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+# ]
 kv_namespaces = [
     { binding = "MAILS", id = "7001794de1f245c0b37792b9215c1acf" },
     { binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" },

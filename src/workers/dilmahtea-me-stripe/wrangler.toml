@@ -5,9 +5,9 @@ main = "./src/index.js"
 workers_dev = false
 logpush = true
 placement = { mode = "smart" }
-routes = [
-    { pattern = "pay.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
-]
+# routes = [
+#     { pattern = "pay.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+# ]
 kv_namespaces = [
     { binding = "CROWDFUNDINGS", id = "c971dd86589647799fb64dde47563fac" },
     { binding = "ECOMMERCE_PAYMENTS", id = "5086c43e26a14fa3a177ea876f514a8f" }
@@ -19,9 +19,9 @@ d1_databases = [
 [env.development]
 name = "dilmahtea-me-stripe-dev"
 vars = { CF_PAGES_DOMAIN = "https://*.dilmahtea-me.pages.dev" }
-routes = [
-    { pattern = "dev.pay.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
-]
+# routes = [
+#     { pattern = "dev.pay.scripts.dilmahtea.me", custom_domain = true, zone_name = "dilmahtea.me" }
+# ]
 kv_namespaces = [
     { binding = "CROWDFUNDINGS", id = "bce59b3e55474063abce8ef8f5d755e7" },
     { binding = "ECOMMERCE_PAYMENTS", id = "acd54db867fe4fa18351d3b89a00c05a" }
