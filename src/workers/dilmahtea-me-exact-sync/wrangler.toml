@@ -4,7 +4,8 @@ compatibility_date = "2022-11-30"
 main = "./src/index.js"
 workers_dev = false
 logpush = true
-triggers = { crons = ["0 * * * *"]}
+# re-enabling the worker requires optimization # EXCEEDED RESOURCES (Cloudflare)
+# triggers = { crons = ["0 * * * *"]}
 vars = { ENVIRONMENT = "PRODUCTION" }
 kv_namespaces = [{ binding = "EXACT_TOKENS", id = "0cbeb7b84a6a4e31b9c3360f97c9cef5" }]
 
